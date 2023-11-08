@@ -42,6 +42,9 @@ void plotGraph() {
 
         // Define the function and fit it to the graph
         TF1 *f1 = new TF1(("f" + filenames[i]).c_str(), "[0]*x + [1]*x*sin([2]*x+[3]) + [4]", 0, 2e-9); // adjust the range as needed
+
+ ///FIXME: before fitting
+
         f1->SetParLimits(0,1e5,1e7);//R_bol
         f1->SetParLimits(1,1e4,1e6);//Amplitude
         f1->SetParLimits(2,1e10,1e11);//omega
@@ -67,6 +70,15 @@ void plotGraph() {
 
         f1->SetParNames("R_bol","Amp","omega","phi","Const");
         graph->Fit(f1,"RES+"); // 
+
+        // Print the sum of the parameters "R_bol" and "Amp"
+        std::cout << "+-----------------------------------------------------------------------------+" << std::endl;
+        std::cout << std::scientific;
+        std::cout << "|  Sum of R_bol and Amp        for " << filenames[i] << ": " << f1->GetParameter("R_bol") + f1->GetParameter("Amp") << "                   |" << std::endl;
+        std::cout << "|  R_bol                       for " << filenames[i] << ": " << f1->GetParameter("R_bol") << "                   |" << std::endl;
+        std::cout << "|  Difference of R_bol and Amp for " << filenames[i] << ": " << f1->GetParameter("R_bol") - f1->GetParameter("Amp") << "                   |" << std::endl;
+        std::cout << std::defaultfloat;
+        std::cout << "+-----------------------------------------------------------------------------+" << std::endl;
 
         TCanvas *c1 = new TCanvas(("c" + filenames[i]).c_str(), ("TGraph Example " + std::to_string(i+1)).c_str(), 200, 10, 700, 500);
 
