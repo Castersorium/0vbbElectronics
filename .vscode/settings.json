@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "Resplot.C": "cpp",
+        "plotGraph.C": "cpp"
+    }
+}
