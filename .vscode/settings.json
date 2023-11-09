@@ -81,6 +81,7 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "list": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "NewRead.C": "cpp"
     }
 }
