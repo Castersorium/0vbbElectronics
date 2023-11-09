@@ -14,12 +14,15 @@
 ├── doc
 │   └── doc.tmp
 ├── output
-│   ├── 19T20.jpg
+│   ├── 19T20@38-42mK.jpg
 │   ├── RTCurve.xlsx
+│   ├── RTCurve_20-100mK.png
+│   ├── RTCurve_20-50mK.png
 │   ├── output.root
 │   ├── outputFit.root
 │   ├── outputFuAnQuXian.root
-│   └── testFit.root
+│   ├── testFit.root
+│   └── ~$RTCurve.xlsx
 └── src
     └── plotGraph.C
 ```
@@ -40,6 +43,7 @@
 ## output
 
 Graphs and Fit results
+For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/RTCurve_20-100mK.png) or [RTCurve_20-50mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/RTCurve_20-50mK.png)
 
 ### `RTCurve.xlsx`
 
