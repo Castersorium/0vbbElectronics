@@ -17,6 +17,10 @@ void plotGraph() {
         "../data/2023Nov/20p0mK/19T20.txt"
         };
     TFile *file = new TFile("../output/2023Nov/20p0mK/outputFit.root", "RECREATE");
+    
+    // Create a new canvas for the PDF
+    TCanvas *cAll = new TCanvas("cAll", "All Graphs", 200, 10, 700, 500);
+    cAll->Print("../output/2023Nov/20p0mK/allGraphs.pdf["); // Open the PDF file
 
     for (int i = 0; i < filenames.size(); i++) {
         std::ifstream dataFile(filenames[i]);
@@ -43,7 +47,7 @@ void plotGraph() {
         // Define the function and fit it to the graph
         TF1 *f1 = new TF1(("f" + filenames[i]).c_str(), "[0]*x + [1]", 0, 3e-10); // adjust the range as needed
 
- ///FIXME: before fitting
+///FIXME: before fitting
 
         switch (i)
         {
@@ -80,7 +84,11 @@ void plotGraph() {
 
         // Save the canvas to the ROOT file
         c1->Write();
+        // Save the canvas to the PDF file
+        c1->Print("../output/2023Nov/20p0mK/allGraphs.pdf"); // Add the canvas to the PDF file
     }
+
+    cAll->Print("../output/2023Nov/20p0mK/allGraphs.pdf]"); // Close the PDF file
 
     file->Close();
 }
