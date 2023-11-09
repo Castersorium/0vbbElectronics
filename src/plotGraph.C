@@ -12,11 +12,11 @@ void plotGraph() {
     gStyle->SetOptFit(111);
 
     std::vector<std::string> filenames = {
-        "3x3NTD.txt", 
-        "3x1NTD.txt",
-        "19T20.txt"
+        "../data/3x3NTD.txt", 
+        "../data/3x1NTD.txt",
+        "../data/19T20.txt"
         };
-    TFile *file = new TFile("outputFit.root", "RECREATE");
+    TFile *file = new TFile("../output/outputFit.root", "RECREATE");
 
     for (int i = 0; i < filenames.size(); i++) {
         std::ifstream dataFile(filenames[i]);
