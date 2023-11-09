@@ -30,13 +30,16 @@ mv $temp_file README.md
 
 git add .
 
-# Check if a message was provided
-if [ -z "$1" ]
+if [ "$1" == "-m" ] && [ ! -z "$2" ]
 then
-    echo "Please provide a commit message."
-    exit 1
+    # If -m option and a commit message are provided, perform the git commit
+    git commit -m "$2"
+    git log --graph --pretty=format:'%Cred%h%Creset - %C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+
 fi
 
-git commit -m "$1"
-
-git log --graph --pretty=format:'%Cred%h%Creset - %C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --ab  brev-commit --date=relative
+if [ "$1" == "-h" ] 
+then
+    echo "You can try to git commit using the -m option"
+    exit 1
+fi
