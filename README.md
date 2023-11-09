@@ -19,8 +19,8 @@
 
 ## output
 
-Graphs and Fit results
-For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/2023Nov/RTCurve_20-100mK.png) or [RTCurve_20-50mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/2023Nov/RTCurve_20-50mK.png)
+- Graphs and Fit results. 
+- For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/2023Nov/RTCurve_20-100mK.png) or [RTCurve_20-50mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/2023Nov/RTCurve_20-50mK.png)
 
 ### `RTCurve.xlsx`
 
@@ -30,6 +30,7 @@ For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Caste
 
 ### `plotGraph.C`
 
+- Draw the plots from data
 - Use linear fit $$V = R_\mathrm{bol} \times I + C$$
 - Results are stored in output
 - The excluded range that was not fit was due to electronics saturation
@@ -92,11 +93,12 @@ For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Caste
 │       │   └── testFit.root
 │       ├── RTCurve.xlsx
 │       ├── RTCurve_20-100mK.png
-│       └── RTCurve_20-50mK.png
+│       ├── RTCurve_20-50mK.png
+│       └── RTCurve_20-50mK.svg
 ├── src
 │   ├── plotGraph.C
 │   └── plotSinGraph.C
 └── wrapUp.sh
 
-14 directories, 37 files
+14 directories, 38 files
 ```
