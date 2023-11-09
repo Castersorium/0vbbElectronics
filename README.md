@@ -44,7 +44,7 @@
 - $\max{R_\mathrm{bol}}=R_\mathrm{bol} + Amp$, at the lowest temperature
 - $\min{R_\mathrm{bol}}=R_\mathrm{bol} - Amp$, at the highest temperature
 
-<!-- For Tree -->
+<!-- TREE START -->
 ```
 .
 ├── README.md
@@ -72,7 +72,8 @@
 │           └── 3x3NTD.txt
 ├── doc
 │   ├── Resistance_measurement.md
-│   └── doc.tmp
+│   ├── doc.tmp
+│   └── test.sh
 ├── output
 │   └── 2023Nov
 │       ├── 20p0mK
@@ -100,5 +101,8 @@
 │   └── plotSinGraph.C
 └── wrapUp.sh
 
-14 directories, 38 files
+14 directories, 39 files
 ```
+<!-- TREE END -->
+
+# END

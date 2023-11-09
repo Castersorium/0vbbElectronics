@@ -22,21 +22,3 @@ fi
 
 # Replace the README.md file with the temporary file
 mv $temp_file README.md
-
-
-#echo "\`\`\`" >> README.md
-#tree          >> README.md
-#echo "\`\`\`" >> README.md
-
-git add .
-
-# Check if a message was provided
-if [ -z "$1" ]
-then
-    echo "Please provide a commit message."
-    exit 1
-fi
-
-git commit -m "$1"
-
-git log --graph --pretty=format:'%Cred%h%Creset - %C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --ab  brev-commit --date=relative
