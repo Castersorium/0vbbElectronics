@@ -13,6 +13,7 @@
 ├── doc
 ├── output
 │   ├── 19T20.jpg
+│   ├── Resistance_measurement.md
 │   ├── RTCurve.xlsx
 │   ├── output.root
 │   ├── outputFit.root
@@ -37,6 +38,8 @@
 
 Graphs and Fit results
 
+### `[Resistance_measurement.md](https://github.com/Castersorium/0vbbElectronics/blob/master/output/Resistance_measurement.md)`
+
 ### `RTCurve.xlsx`
 
 - Preliminary results for temperature fit
@@ -47,8 +50,7 @@ Graphs and Fit results
 
 - Draw the plots from data
 - The data is fluctuated caused by **PID** controlling phase
-- Fit the result with the function
-    $$ V = R_\mathrm{bol} \times I + Amp \times I \times \sin(\omega I + \varphi) + C$$
+- Fit the result with the function $ V = R_\mathrm{bol} \times I + Amp \times I \times \sin(\omega I + \varphi) + C$
 - Results are stored in output
 - $\max{R_\mathrm{bol}}=R_\mathrm{bol} + Amp$, at the lowest temperature
 - $\min{R_\mathrm{bol}}=R_\mathrm{bol} - Amp$, at the highest temperature
