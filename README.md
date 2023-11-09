@@ -3,28 +3,41 @@
 <!-- For Tree -->
 
 ```
-.
+
 ├── README.md
 ├── data
-│   ├── 19T20.txt
-│   ├── 20231108T140000.xlsx
-│   ├── 3x1NTD.txt
-│   ├── 3x3NTD.txt
-│   └── Resistance_measurement.md
+│   └── 2023Nov
+│       ├── 20p0mK
+│       │   ├── 19T20.txt
+│       │   ├── 20231109T175700.xlsx
+│       │   ├── 3x1NTD.txt
+│       │   └── 3x3NTD.txt
+│       ├── 39p9mK_PIDbad
+│       │   ├── 19T20.txt
+│       │   ├── 20231108T140000.xlsx
+│       │   ├── 3x1NTD.txt
+│       │   └── 3x3NTD.txt
+│       └── Resistance_measurement.md
 ├── doc
 │   └── doc.tmp
 ├── output
-│   ├── 19T20@38-42mK.jpg
-│   ├── RTCurve.xlsx
-│   ├── RTCurve_20-100mK.png
-│   ├── RTCurve_20-50mK.png
-│   ├── output.root
-│   ├── outputFit.root
-│   ├── outputFuAnQuXian.root
-│   ├── testFit.root
-│   └── ~$RTCurve.xlsx
+│   └── 2023Nov
+│       ├── 19T20@38-42mK.jpg
+│       ├── 20p0mK
+│       │   ├── allGraphs.pdf
+│       │   └── outputFit.root
+│       ├── 39p9mK_PIDbad
+│       │   ├── allGraphs.pdf
+│       │   ├── output.root
+│       │   ├── outputFit.root
+│       │   ├── outputFuAnQuXian.root
+│       │   └── testFit.root
+│       ├── RTCurve.xlsx
+│       ├── RTCurve_20-100mK.png
+│       └── RTCurve_20-50mK.png
 └── src
-    └── plotGraph.C
+    ├── plotGraph.C
+    └── plotSinGraph.C
 ```
 
 ## data
@@ -40,6 +53,8 @@
 
 ### [Resistance_measurement.md](https://github.com/Castersorium/0vbbElectronics/blob/master/data/Resistance_measurement.md)
 
+- Table which recorded measurement conditions and other details
+
 ## output
 
 Graphs and Fit results
@@ -52,6 +67,12 @@ For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Caste
 ## src
 
 ### `plotGraph.C`
+
+- Use linear fit $$V = R_\mathrm{bol} \times I + C$$
+- Results are stored in output
+- The excluded range that was not fit was due to electronics saturation
+
+### `plotSinGraph.C`
 
 - Draw the plots from data
 - The data is fluctuated caused by **PID** controlling phase

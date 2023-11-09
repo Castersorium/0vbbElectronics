@@ -18,6 +18,10 @@ void plotSinGraph() {
         };
     TFile *file = new TFile("../output/2023Nov/39p9mK_PIDbad/outputFit.root", "RECREATE");
 
+    // Create a new canvas for the PDF
+    TCanvas *cAll = new TCanvas("cAll", "All Graphs", 200, 10, 700, 500);
+    cAll->Print("../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf["); // Open the PDF file
+
     for (int i = 0; i < filenames.size(); i++) {
         std::ifstream dataFile(filenames[i]);
         if (!dataFile.is_open()) {
@@ -43,7 +47,7 @@ void plotSinGraph() {
         // Define the function and fit it to the graph
         TF1 *f1 = new TF1(("f" + filenames[i]).c_str(), "[0]*x + [1]*x*sin([2]*x+[3]) + [4]", 0, 2e-9); // adjust the range as needed
 
- ///FIXME: before fitting
+///FIXME: before fitting
 
         f1->SetParLimits(0,1e5,1e7);//R_bol
         f1->SetParLimits(1,1e4,1e6);//Amplitude
@@ -90,11 +94,17 @@ void plotSinGraph() {
         st->SetX2NDC(0.45);//new x end position
         st->SetY1NDC(0.5);//new y start position
         st->SetY2NDC(0.85);//new y end position
+
+        c1->SetGrid();
         c1->Modified();
 
         // Save the canvas to the ROOT file
         c1->Write();
+        // Save the canvas to the PDF file
+        c1->Print("../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf"); // Add the canvas to the PDF file
     }
+
+    cAll->Print("../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf]"); // Close the PDF file
 
     file->Close();
 }
