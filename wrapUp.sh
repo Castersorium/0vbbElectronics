@@ -34,7 +34,7 @@ if [ "$1" == "-m" ] && [ ! -z "$2" ]
 then
     # If -m option and a commit message are provided, perform the git commit
     git commit -m "$2"
-    git log --graph --pretty=format:'%Cred%h%Creset - %C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative | sed -n '1,5p'
+    git log --graph --pretty=format:'%Cred%h%Creset - %C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --color=always | head -n 5
 
 fi
 
