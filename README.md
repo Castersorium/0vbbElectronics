@@ -17,6 +17,7 @@
 ### [Resistance_measurement.md](https://github.com/Castersorium/0vbbElectronics/blob/master/doc/Resistance_measurement.md)
 
 - Table which recorded measurement conditions and other details
+- Currently all of the data was acquired through Milan electronics
 
 ## output
 
@@ -44,7 +45,6 @@
 - Results are stored in output
 - $\max{R_\mathrm{bol}}=R_\mathrm{bol} + Amp$, at the lowest temperature
 - $\min{R_\mathrm{bol}}=R_\mathrm{bol} - Amp$, at the highest temperature
-
 
 ## directory tree
 <!-- TREE START -->
