@@ -1,5 +1,9 @@
+# For programming environment
 .vscode/
-
 .vs/
-
 .DS_Store
+
+# For cpp compiling by-product
+*.d
+*.so
+*.pcm
