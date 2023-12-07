@@ -7,3 +7,6 @@
 *.d
 *.so
 *.pcm
+
+# For stream data
+*.csv

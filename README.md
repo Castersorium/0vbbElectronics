@@ -52,27 +52,32 @@
 .
 ├── README.md
 ├── data
-│   └── 2023Nov
-│       ├── 20p0mK
-│       │   ├── 19T20.txt
-│       │   ├── 20231109T175700.xlsx
-│       │   ├── 3x1NTD.txt
-│       │   └── 3x3NTD.txt
-│       ├── 22p2mK
-│       │   ├── 19T20.txt
-│       │   ├── 20231107T093800.xlsx
-│       │   ├── 3x1NTD.txt
-│       │   └── 3x3NTD.txt
-│       ├── 29p9mK
-│       │   ├── 19T20.txt
-│       │   ├── 20231107T184800.xlsx
-│       │   ├── 3x1NTD.txt
-│       │   └── 3x3NTD.txt
-│       └── 39p9mK_PIDbad
-│           ├── 19T20.txt
-│           ├── 20231108T140000.xlsx
-│           ├── 3x1NTD.txt
-│           └── 3x3NTD.txt
+│   ├── 2023Nov
+│   │   ├── 20p0mK
+│   │   │   ├── 19T20.txt
+│   │   │   ├── 20231109T175700.xlsx
+│   │   │   ├── 3x1NTD.txt
+│   │   │   └── 3x3NTD.txt
+│   │   ├── 22p2mK
+│   │   │   ├── 19T20.txt
+│   │   │   ├── 20231107T093800.xlsx
+│   │   │   ├── 3x1NTD.txt
+│   │   │   └── 3x3NTD.txt
+│   │   ├── 29p9mK
+│   │   │   ├── 19T20.txt
+│   │   │   ├── 20231107T184800.xlsx
+│   │   │   ├── 3x1NTD.txt
+│   │   │   └── 3x3NTD.txt
+│   │   └── 39p9mK_PIDbad
+│   │       ├── 19T20.txt
+│   │       ├── 20231108T140000.xlsx
+│   │       ├── 3x1NTD.txt
+│   │       └── 3x3NTD.txt
+│   └── electronics
+│       └── streamdata
+│           └── chassistest
+│               └── data20231207
+│                   └── README.md
 ├── doc
 │   ├── Resistance_measurement.md
 │   ├── doc.tmp
@@ -101,10 +106,13 @@
 │       └── RTCurve_20-50mK.svg
 ├── src
 │   ├── plotGraph.C
+│   ├── plotGraph_C.d
+│   ├── plotGraph_C.so
+│   ├── plotGraph_C_ACLiC_dict_rdict.pcm
 │   └── plotSinGraph.C
 └── wrapUp.sh
 
-14 directories, 39 files
+18 directories, 43 files
 ```
 <!-- TREE END -->
 
