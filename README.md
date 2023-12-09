@@ -2,11 +2,6 @@
 
 ## data
 
-### [Resistance_measurement.md](https://github.com/Castersorium/0vbbElectronics/blob/master/data/2023Dec/Resistance_measurement.md)
-
-- Table which recorded measurement conditions and other details
-- Currently all of the data was acquired through Milan electronics
-
 ### `*.txt`
 
 - Column1: V_bol(V)
@@ -36,6 +31,11 @@ Here is the list of testing done:
     - Detailed configuration: [README.md](https://github.com/Castersorium/0vbbElectronics/blob/master/data/electronics/streamdata/chassis_test/data20231207/README.md)
 
 ## doc
+
+### [Resistance_measurement.md](https://github.com/Castersorium/0vbbElectronics/blob/master/doc/Resistance_measurement.md)
+
+- Table which recorded measurement conditions and other details
+- Currently all of the data was acquired through Milan electronics
 
 ## output
 
