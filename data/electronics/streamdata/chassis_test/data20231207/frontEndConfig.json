@@ -1,0 +1,19 @@
+{
+    "frontEndConfiguration": {
+      "connectedResistance": "1 MOhm",
+      "preGain": {
+        "setting": "High",
+        "value": 206
+      },
+      "pgaGain": 3,
+      "biasResistance": "10 GOhm",
+      "biasSupply": {
+        "type": "External",
+        "voltage": "+/- 5 V"
+      },
+      "biasVoltage": 8,
+      "offsetVoltage": 0,
+      "besselFilter": "disabled"
+    }
+  }
+  

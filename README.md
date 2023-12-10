@@ -73,6 +73,8 @@ Here is the list of testing done:
 .
 ├── README.md
 ├── data
+│   ├── 2023Dec
+│   │   └── Resistance_measurement.md
 │   ├── 2023Nov
 │   │   ├── 20p0mK
 │   │   │   ├── 19T20.txt
@@ -89,25 +91,27 @@ Here is the list of testing done:
 │   │   │   ├── 20231107T184800.xlsx
 │   │   │   ├── 3x1NTD.txt
 │   │   │   └── 3x3NTD.txt
-│   │   └── 39p9mK_PIDbad
-│   │       ├── 19T20.txt
-│   │       ├── 20231108T140000.xlsx
-│   │       ├── 3x1NTD.txt
-│   │       └── 3x3NTD.txt
+│   │   ├── 39p9mK_PIDbad
+│   │   │   ├── 19T20.txt
+│   │   │   ├── 20231108T140000.xlsx
+│   │   │   ├── 3x1NTD.txt
+│   │   │   └── 3x3NTD.txt
+│   │   └── Resistance_measurement.md
 │   └── electronics
 │       └── streamdata
 │           └── chassis_test
 │               └── data20231207
+│                   ├── MatlabGUI_config2023-12-07.png
 │                   ├── README.md
-│                   └── Screenshot2023-12-07.png
+│                   └── frontEndConfig.json
 ├── doc
-│   ├── Resistance_measurement.md
 │   ├── doc.tmp
 │   ├── prefix
 │   │   └── COM_configure.md
 │   ├── slides
 │   │   ├── 电子学测试20231026_20231026211355.pdf
-│   │   └── 电子学测试20231110_20231110143147.pdf
+│   │   ├── 电子学测试20231110_20231110143147.pdf
+│   │   └── 电子学测试20231208_20231208115638.pdf
 │   └── test.sh
 ├── output
 │   └── 2023Nov
@@ -131,15 +135,14 @@ Here is the list of testing done:
 │       ├── RTCurve_20-100mK.png
 │       ├── RTCurve_20-50mK.png
 │       └── RTCurve_20-50mK.svg
+├── photo
+│   └── logo_cupid_alpha_beta_transparent.png
 ├── src
 │   ├── plotGraph.C
-│   ├── plotGraph_C.d
-│   ├── plotGraph_C.so
-│   ├── plotGraph_C_ACLiC_dict_rdict.pcm
 │   └── plotSinGraph.C
 └── wrapUp.sh
 
-20 directories, 47 files
+22 directories, 48 files
 ```
 <!-- TREE END -->
 

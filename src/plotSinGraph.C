@@ -11,11 +11,12 @@
 void plotSinGraph() {
     gStyle->SetOptFit(111);
 
+    src/plotGraph.C
     std::vector<std::string> filenames = {
         "../data/2023Nov/39p9mK_PIDbad/3x3NTD.txt", 
         "../data/2023Nov/39p9mK_PIDbad/3x1NTD.txt",
         "../data/2023Nov/39p9mK_PIDbad/19T20.txt"
-        };
+    };
     TFile *file = new TFile("../output/2023Nov/39p9mK_PIDbad/outputFit.root", "RECREATE");
 
     // Create a new canvas for the PDF
