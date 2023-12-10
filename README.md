@@ -2,10 +2,13 @@
 
 ## data
 
-### [Resistance_measurement.md](https://github.com/Castersorium/0vbbElectronics/blob/master/data/2023Dec/Resistance_measurement.md)
+### `Resistance_measurement.md`
 
 - Table which recorded measurement conditions and other details
 - Currently all of the data was acquired through Milan electronics
+
+1. [2023Nov](https://github.com/Castersorium/0vbbElectronics/blob/master/data/2023Nov/Resistance_measurement.md)
+2. [2023Dec](https://github.com/Castersorium/0vbbElectronics/blob/master/data/2023Dec/Resistance_measurement.md)(latest)
 
 ### `*.txt`
 
