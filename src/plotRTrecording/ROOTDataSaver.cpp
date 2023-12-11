@@ -30,13 +30,10 @@ void RootDataSaver::saveToRootFile( const std::string & filename )
     // 使用std::unique_ptr创建第一个TTree
     auto tree1 = std::make_unique<TTree>( "GeneralInfo", "General Information" );
     // 创建分支
-    for ( size_t i = 0; i < m_extractor.getChannelNames_string_vec_size(); ++i )
-    {
-        tree1->Branch( ( "ChannelName" + std::to_string( i ) ).c_str(), &channelNames_string_vec[i] );
-        tree1->Branch( ( "PinNumber" + std::to_string( i ) ).c_str(), &pinNumbers_string_vec[i] );
-        tree1->Branch( ( "DetectorName" + std::to_string( i ) ).c_str(), &detectorNames_string_vec[i] );
-        tree1->Branch( ( "DetectorComment" + std::to_string( i ) ).c_str(), &detectorComments_string_vec[i] );
-    }
+    tree1->Branch( "ChannelName", &channelNames_string_vec );
+    tree1->Branch( "PinNumber", &pinNumbers_string_vec );
+    tree1->Branch( "DetectorName", &detectorNames_string_vec );
+    tree1->Branch( "DetectorComment", &detectorComments_string_vec );
     tree1->Fill(); // 填充TTree
 
     // 使用std::unique_ptr创建第二个TTree
