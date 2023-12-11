@@ -17,7 +17,9 @@ int main( int argc, char * argv[] )
     // 创建markdownFileInput类的实例并读取文件
     MDFIO::markdownFileInput mdfInput;
     mdfInput.readMarkdownTable( filePath );
-    mdfInput.printTableContent();
+    mdfInput.readGeneralInformation();
+    // 打印通道9的基本信息
+    mdfInput.printGeneralInformation( 9 );
 
     return 0;
 }
