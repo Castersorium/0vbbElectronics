@@ -19,6 +19,7 @@ int main( int argc, char * argv[] )
     mdfInput.readMarkdownTable( filePath );
     mdfInput.readGeneralInformation();
     mdfInput.readMeasurementEntries();
+    mdfInput.convertTemperature();
     mdfInput.convertStringToDouble();
 
     // 打印通道9的基本信息
