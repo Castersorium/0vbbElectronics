@@ -6,6 +6,55 @@
 namespace MDFIO
 {
 
+void markdownTableDataExtractor::convertTemperature()
+{
+    for ( const auto & str : temperature_string_vec )
+    {
+        double temperature;
+        double temperature_err;
+
+        if ( str == "---" )
+        {
+            temperature = std::numeric_limits<double>::quiet_NaN();
+            temperature_err = std::numeric_limits<double>::quiet_NaN();
+        }
+        else if ( str.find( "room" ) != std::string::npos )
+        {
+            temperature = 295;
+            temperature_err = 2;
+        }
+        else if ( str.find( "T5: " ) != std::string::npos )
+        {
+            std::string value_str = str.substr( str.find( "T5: " ) + 4 );
+            temperature = std::stod( value_str );
+            if ( value_str.find( "m" ) != std::string::npos )
+            {
+                temperature *= 1e-3;
+            }
+            temperature_err = 0.1 * temperature;
+        }
+        else if ( str.find( "T6: " ) != std::string::npos )
+        {
+            std::string value_str = str.substr( str.find( "T6: " ) + 4 );
+            temperature = std::stod( value_str );
+            if ( value_str.find( "m" ) != std::string::npos )
+            {
+                temperature *= 1e-3;
+            }
+            temperature_err = 0.02 * temperature;
+        }
+        else
+        {
+            // 如果字符串不符合任何已知模式，可以抛出异常或者处理为未定义
+            temperature = std::numeric_limits<double>::quiet_NaN();
+            temperature_err = std::numeric_limits<double>::quiet_NaN();
+        }
+
+        temperature_d_vec.push_back( temperature );
+        temperature_err_d_vec.push_back( temperature_err );
+    }
+}
+
 void markdownTableDataExtractor::convertStringToDouble()
 {
     // 定义一个lambda函数来转换字符串为double
@@ -73,17 +122,19 @@ void markdownTableDataExtractor::convertStringToDouble()
 
 void markdownTableDataExtractor::printAllDoubleVectors() const
 {
-    printDoubleVector( resistance_ch7_d_vec, "CH7 " );
-    printDoubleVector( resistance_ch8_d_vec, "CH8 " );
-    printDoubleVector( resistance_ch9_d_vec, "CH9 " );
-    printDoubleVector( resistance_ch10_d_vec, "CH10" );
-    printDoubleVector( resistance_ch11_d_vec, "CH11" );
-    printDoubleVector( resistance_ch12_d_vec, "CH12" );
+    printDoubleVector( temperature_d_vec, "Temperature              [K]" );
+    printDoubleVector( temperature_err_d_vec, "Temperature uncertainty  [K]" );
+    printDoubleVector( resistance_ch7_d_vec, "CH7  Resistance Values [Ohm]" );
+    printDoubleVector( resistance_ch8_d_vec, "CH8  Resistance Values [Ohm]" );
+    printDoubleVector( resistance_ch9_d_vec, "CH9  Resistance Values [Ohm]" );
+    printDoubleVector( resistance_ch10_d_vec, "CH10 Resistance Values [Ohm]" );
+    printDoubleVector( resistance_ch11_d_vec, "CH11 Resistance Values [Ohm]" );
+    printDoubleVector( resistance_ch12_d_vec, "CH12 Resistance Values [Ohm]" );
 }
 
 void markdownTableDataExtractor::printDoubleVector( const std::vector<double> & vec, const std::string & name ) const
 {
-    std::cout << name << " Resistance Values [Ohm]: {";
+    std::cout << name << ": {";
     for ( size_t i = 0; i < vec.size(); ++i )
     {
         std::cout << vec[i];
