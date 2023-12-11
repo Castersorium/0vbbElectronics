@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 namespace MDFIO
 {
@@ -19,6 +20,16 @@ protected:
 public:
     void readMarkdownTable( const std::string & filename );
     void printTableContent() const;
+
+protected:
+    std::vector<std::string> channelNames;
+    std::vector<std::string> pinNumbers;
+    std::vector<std::string> detectorNames;
+    std::vector<std::string> detectorComments;
+
+public:
+    void readGeneralInformation();
+    void printGeneralInformation( unsigned int channel_num ) const;
 };
 
 } // namespace MDFIO
