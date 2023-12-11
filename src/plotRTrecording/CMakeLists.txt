@@ -5,7 +5,7 @@
 set(EXECUTABLE_NAME "plotRTrecording")
 
 # 将源代码添加到此项目的可执行文件。
-add_executable(${EXECUTABLE_NAME} "plotRTrecording.cpp" "markdownFileInput.cpp" "markdownTableAnalyzer.cpp")
+add_executable(${EXECUTABLE_NAME} "plotRTrecording.cpp" "markdownFileInput.cpp" "markdownTableAnalyzer.cpp" "markdownTableDataExtractor.cpp")
 
 message("========Printing EXECUTABLE_NAME...")
 message("${EXECUTABLE_NAME}")

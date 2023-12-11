@@ -1,6 +1,6 @@
 #include <iostream> // C++ header
 
-#include "markdownTableAnalyzer.hpp" // my header
+#include "markdownTableDataExtractor.hpp" // my header
 
 int main( int argc, char * argv[] )
 {
@@ -15,18 +15,20 @@ int main( int argc, char * argv[] )
     std::string filePath = argv[1];
 
     // 创建markdownFileInput类的实例并读取文件
-    MDFIO::markdownTableAnalyzer mdfInput;
+    MDFIO::markdownTableDataExtractor  mdfInput;
     mdfInput.readMarkdownTable( filePath );
     mdfInput.readGeneralInformation();
     mdfInput.readMeasurementEntries();
+    mdfInput.convertStringToDouble();
 
     // 打印通道9的基本信息
-    mdfInput.printGeneralInformation( 9 );
+    //mdfInput.printGeneralInformation( 9 );
 
     // 打印第一个测量条目的信息
-    mdfInput.printMeasurementEntry( 0 );
+    //mdfInput.printMeasurementEntry( 0 
+
+    // 调用函数打印所有double向量中的数据结果
+    mdfInput.printAllDoubleVectors();
 
     return 0;
 }
-
-

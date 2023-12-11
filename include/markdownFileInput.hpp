@@ -3,12 +3,11 @@
 #ifndef MARKDOWNFILEINPUT_HPP
 #define MARKDOWNFILEINPUT_HPP
 
-#include <iostream>
+#include <iostream> // C++ header
 #include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
 
 namespace MDFIO
 {

@@ -3,12 +3,7 @@
 #ifndef MARKDOWNTABLEANALYZER_HPP
 #define MARKDOWNTABLEANALYZER_HPP
 
-#include <iostream> // C++ header
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
+#include <algorithm> // C++ header
 
 #include "markdownFileInput.hpp" // my header
 

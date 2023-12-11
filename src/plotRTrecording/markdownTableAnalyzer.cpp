@@ -1,4 +1,4 @@
-#include "markdownTableAnalyzer.hpp"
+#include "markdownTableAnalyzer.hpp" // my header
 
 //#define DEBUGGING
 //#define DEBUGGINGVERBOSE
@@ -253,5 +253,3 @@ void markdownTableAnalyzer::printMeasurementEntry( unsigned int entry_num ) cons
 }
 
 } // namespace MDFIO
-
-
