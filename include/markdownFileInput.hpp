@@ -60,3 +60,4 @@ public:
 } // namespace MDFIO
 
 #endif // MARKDOWNFILEINPUT_HPP
+

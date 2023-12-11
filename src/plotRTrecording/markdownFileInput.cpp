@@ -31,29 +31,29 @@ void markdownFileInput::printTableContent() const
 
 void markdownFileInput::readGeneralInformation()
 {
-    // ¼ÙÉèÍ¨µÀÃû³Æ¡¢Òı½Å±àºÅ¡¢Ì½²âÆ÷Ãû³ÆºÍ×¢ÊÍ¶¼ÔÚÇ°ÎåĞĞ£¬µÚ¶şĞĞÊÇ·Ö¸ô·ûĞĞ
+    // å‡è®¾é€šé“åç§°ã€å¼•è„šç¼–å·ã€æ¢æµ‹å™¨åç§°å’Œæ³¨é‡Šéƒ½åœ¨å‰äº”è¡Œï¼Œç¬¬äºŒè¡Œæ˜¯åˆ†éš”ç¬¦è¡Œ
     if ( tableContent_string_vec.size() >= 5 )
     {
         std::istringstream channelStream( tableContent_string_vec[0] );
-        // Ìø¹ıµÚ¶şĞĞ£¨·Ö¸ô·ûĞĞ£©
+        // è·³è¿‡ç¬¬äºŒè¡Œï¼ˆåˆ†éš”ç¬¦è¡Œï¼‰
         std::istringstream pinStream( tableContent_string_vec[2] );
         std::istringstream detectorStream( tableContent_string_vec[3] );
         std::istringstream commentStream( tableContent_string_vec[4] );
 
         std::string token;
-        bool isCommentSection = false; // ÓÃÓÚ¸ú×ÙÊÇ·ñµ½´ï×¢ÊÍ²¿·Ö
+        bool isCommentSection = false; // ç”¨äºè·Ÿè¸ªæ˜¯å¦åˆ°è¾¾æ³¨é‡Šéƒ¨åˆ†
         while ( std::getline( channelStream, token, '|' ) )
         {
-            token = trim( token ); // Ê¹ÓÃĞÂµÄtrimº¯ÊıÈ¥³ıÍ·Î²¿Õ¸ñ
+            token = trim( token ); // ä½¿ç”¨æ–°çš„trimå‡½æ•°å»é™¤å¤´å°¾ç©ºæ ¼
             if ( !token.empty() )
             {
                 channelNames_string_vec.push_back( token );
             }
         }
-        // ºöÂÔ·Ö¸ô·ûĞĞ£¬²»½øĞĞ´¦Àí
+        // å¿½ç•¥åˆ†éš”ç¬¦è¡Œï¼Œä¸è¿›è¡Œå¤„ç†
         while ( std::getline( pinStream, token, '|' ) )
         {
-            token = trim( token ); // Ê¹ÓÃĞÂµÄtrimº¯ÊıÈ¥³ıÍ·Î²¿Õ¸ñ
+            token = trim( token ); // ä½¿ç”¨æ–°çš„trimå‡½æ•°å»é™¤å¤´å°¾ç©ºæ ¼
             if ( !token.empty() && token.find_first_not_of( " \t\r" ) != std::string::npos )
             {
                 pinNumbers_string_vec.push_back( token );
@@ -61,8 +61,8 @@ void markdownFileInput::readGeneralInformation()
         }
         while ( std::getline( detectorStream, token, '|' ) )
         {
-            token = trim( token ); // Ê¹ÓÃĞÂµÄtrimº¯ÊıÈ¥³ıÍ·Î²¿Õ¸ñ
-            // È·±£×Ö·û´®²»Îª¿ÕÇÒ°üº¬·Ç¿Õ°××Ö·û
+            token = trim( token ); // ä½¿ç”¨æ–°çš„trimå‡½æ•°å»é™¤å¤´å°¾ç©ºæ ¼
+            // ç¡®ä¿å­—ç¬¦ä¸²ä¸ä¸ºç©ºä¸”åŒ…å«éç©ºç™½å­—ç¬¦
             if ( !token.empty() && token.find_first_not_of( " \t\r" ) != std::string::npos )
             {
                 detectorNames_string_vec.push_back( token );
@@ -73,20 +73,20 @@ void markdownFileInput::readGeneralInformation()
         }
         while ( std::getline( commentStream, token, '|' ) )
         {
-            token = trim( token ); // Ê¹ÓÃĞÂµÄtrimº¯ÊıÈ¥³ıÍ·Î²¿Õ¸ñ
-            // È·±£×Ö·û´®²»Îª¿Õ
+            token = trim( token ); // ä½¿ç”¨æ–°çš„trimå‡½æ•°å»é™¤å¤´å°¾ç©ºæ ¼
+            // ç¡®ä¿å­—ç¬¦ä¸²ä¸ä¸ºç©º
             if ( !token.empty() )
             {
-                // Èç¹ûÒÑ¾­ÔÚ×¢ÊÍ²¿·Ö£¬»òÕßÓöµ½µÚÒ»¸ö"Comment"
+                // å¦‚æœå·²ç»åœ¨æ³¨é‡Šéƒ¨åˆ†ï¼Œæˆ–è€…é‡åˆ°ç¬¬ä¸€ä¸ª"Comment"
                 if ( isCommentSection || token == "Comment" )
                 {
                     if ( token == "Comment" && !isCommentSection )
                     {
-                        isCommentSection = true; // µ±Óöµ½µÚÒ»¸ö"Comment"Ê±£¬±ê¼ÇÎª×¢ÊÍ²¿·Ö¿ªÊ¼
-                        continue; // Ìø¹ıÕâ¸ö"Comment"±êÌâ
+                        isCommentSection = true; // å½“é‡åˆ°ç¬¬ä¸€ä¸ª"Comment"æ—¶ï¼Œæ ‡è®°ä¸ºæ³¨é‡Šéƒ¨åˆ†å¼€å§‹
+                        continue; // è·³è¿‡è¿™ä¸ª"Comment"æ ‡é¢˜
                     }
-                    // Ö»ÓĞÔÚ×¢ÊÍ²¿·Ö²ÅÌí¼Óµ½detectorComments_string_vec
-                    // È·±£×Ö·û´®²»Îª¿ÕÇÒ°üº¬·Ç¿Õ°××Ö·û
+                    // åªæœ‰åœ¨æ³¨é‡Šéƒ¨åˆ†æ‰æ·»åŠ åˆ°detectorComments_string_vec
+                    // ç¡®ä¿å­—ç¬¦ä¸²ä¸ä¸ºç©ºä¸”åŒ…å«éç©ºç™½å­—ç¬¦
                     if ( token.find_first_not_of( " \t\r" ) != std::string::npos )
                     {
                         detectorComments_string_vec.push_back( token );
@@ -103,10 +103,10 @@ void markdownFileInput::readGeneralInformation()
 void markdownFileInput::printGeneralInformation( unsigned int channel_num ) const
 {
     std::cout << "=======Printing General Information ..." << std::endl;
-    // ¹¹½¨Í¨µÀÃû³Æ×Ö·û´®£¬Èç"CH7", "CH8"µÈ
+    // æ„å»ºé€šé“åç§°å­—ç¬¦ä¸²ï¼Œå¦‚"CH7", "CH8"ç­‰
     std::string channelName = "CH" + std::to_string( channel_num );
 
-    // ²éÕÒÍ¨µÀÃû³ÆµÄË÷Òı
+    // æŸ¥æ‰¾é€šé“åç§°çš„ç´¢å¼•
     auto it = std::find( channelNames_string_vec.begin(), channelNames_string_vec.end(), channelName );
     if ( it != channelNames_string_vec.end() )
     {
@@ -142,18 +142,18 @@ std::string markdownFileInput::trim( const std::string & str )
 
 void markdownFileInput::readMeasurementEntries()
 {
-    // ´ÓtableContent_string_vec[5]¿ªÊ¼¶ÁÈ¡²âÁ¿Êı¾İ
+    // ä»tableContent_string_vec[5]å¼€å§‹è¯»å–æµ‹é‡æ•°æ®
     for ( size_t i = 5; i < tableContent_string_vec.size(); ++i )
     {
         std::istringstream entryStream( tableContent_string_vec[i] );
         std::string token;
         std::vector<std::string> entryTokens;
 
-        // ½«Ã¿Ò»ĞĞ·Ö¸î³Éµ¥¶ÀµÄ×Ö·û´®²¢´æ´¢ÔÚentryTokensÖĞ
+        // å°†æ¯ä¸€è¡Œåˆ†å‰²æˆå•ç‹¬çš„å­—ç¬¦ä¸²å¹¶å­˜å‚¨åœ¨entryTokensä¸­
         while ( std::getline( entryStream, token, '|' ) )
         {
-            token = trim( token ); // Ê¹ÓÃtrimº¯ÊıÈ¥³ıÍ·Î²¿Õ¸ñ
-            // È·±£×Ö·û´®²»Îª¿ÕÇÒ°üº¬·Ç¿Õ°××Ö·û
+            token = trim( token ); // ä½¿ç”¨trimå‡½æ•°å»é™¤å¤´å°¾ç©ºæ ¼
+            // ç¡®ä¿å­—ç¬¦ä¸²ä¸ä¸ºç©ºä¸”åŒ…å«éç©ºç™½å­—ç¬¦
             if ( token.find_first_not_of( " \t\r" ) != std::string::npos )
             {
                 entryTokens.push_back( token );
@@ -169,7 +169,7 @@ void markdownFileInput::readMeasurementEntries()
         std::cout << "checking size: \"" << static_cast<unsigned long>( 7 ) + channelNames_string_vec.size() << "\"" << std::endl;
 #endif // DEBUGGING
 
-        // ¼ì²éentryTokensµÄ´óĞ¡ÊÇ·ñÕıÈ·
+        // æ£€æŸ¥entryTokensçš„å¤§å°æ˜¯å¦æ­£ç¡®
         if ( entryTokens.size() == static_cast<unsigned long>( 7 ) + channelNames_string_vec.size() )
         {
             date_string_vec.push_back( entryTokens[0] );
@@ -180,14 +180,14 @@ void markdownFileInput::readMeasurementEntries()
             temperature_string_vec.push_back( entryTokens[5] );
             comment_string_vec.push_back( entryTokens[6] );
 
-            // ¼ì²é"R [Ohm]"×Ö¶ÎÊÇ·ñ´æÔÚ
+            // æ£€æŸ¥"R [Ohm]"å­—æ®µæ˜¯å¦å­˜åœ¨
             if ( entryTokens[7] == "R [Ohm]" )
             {
-                // ´ÓµÚ8¸ötoken¿ªÊ¼£¬°´Ë³Ğò¶ÁÈ¡µç×èÖµ
+                // ä»ç¬¬8ä¸ªtokenå¼€å§‹ï¼ŒæŒ‰é¡ºåºè¯»å–ç”µé˜»å€¼
                 for ( size_t j = 0; j < channelNames_string_vec.size(); ++j )
                 {
                     std::string resistanceValue = entryTokens[8 + j];
-                    // ¸ù¾İÍ¨µÀÃû³Æ½«µç×èÖµ´æ´¢µ½ÏàÓ¦µÄÏòÁ¿ÖĞ
+                    // æ ¹æ®é€šé“åç§°å°†ç”µé˜»å€¼å­˜å‚¨åˆ°ç›¸åº”çš„å‘é‡ä¸­
                     if ( channelNames_string_vec[j + 1] == "CH7" )
                     {
                         resistance_ch7_string_vec.push_back( resistanceValue );
@@ -239,7 +239,7 @@ void markdownFileInput::printMeasurementEntry( unsigned int entry_num ) const
         std::cout << "Temperature [K]   : " << temperature_string_vec[entry_num] << std::endl;
         std::cout << "Comment           : " << comment_string_vec[entry_num] << std::endl;
 
-        // ´òÓ¡Ã¿¸öÍ¨µÀµÄ×èÖµ´óĞ¡
+        // æ‰“å°æ¯ä¸ªé€šé“çš„é˜»å€¼å¤§å°
         std::cout << "-----------Resistance Values:" << std::endl;
         if ( entry_num < resistance_ch7_string_vec.size() )
         {
@@ -276,3 +276,5 @@ void markdownFileInput::printMeasurementEntry( unsigned int entry_num ) const
 }
 
 } // namespace MDFIO
+
+

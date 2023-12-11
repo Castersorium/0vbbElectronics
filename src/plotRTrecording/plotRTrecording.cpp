@@ -4,27 +4,29 @@
 
 int main( int argc, char * argv[] )
 {
-    // ¼ì²éÊÇ·ñÌá¹©ÁËÎÄ¼şÂ·¾¶
+    // æ£€æŸ¥æ˜¯å¦æä¾›äº†æ–‡ä»¶è·¯å¾„
     if ( argc < 2 )
     {
         std::cerr << "Usage: " << argv[0] << " <markdown_file_path>" << std::endl;
         return EXIT_FAILURE;
     }
 
-    // »ñÈ¡ÎÄ¼şÂ·¾¶
+    // è·å–æ–‡ä»¶è·¯å¾„
     std::string filePath = argv[1];
 
-    // ´´½¨markdownFileInputÀàµÄÊµÀı²¢¶ÁÈ¡ÎÄ¼ş
+    // åˆ›å»ºmarkdownFileInputç±»çš„å®ä¾‹å¹¶è¯»å–æ–‡ä»¶
     MDFIO::markdownFileInput mdfInput;
     mdfInput.readMarkdownTable( filePath );
     mdfInput.readGeneralInformation();
     mdfInput.readMeasurementEntries();
 
-    // ´òÓ¡Í¨µÀ9µÄ»ù±¾ĞÅÏ¢
+    // æ‰“å°é€šé“9çš„åŸºæœ¬ä¿¡æ¯
     mdfInput.printGeneralInformation( 9 );
 
-    // ´òÓ¡µÚÒ»¸ö²âÁ¿ÌõÄ¿µÄĞÅÏ¢
+    // æ‰“å°ç¬¬ä¸€ä¸ªæµ‹é‡æ¡ç›®çš„ä¿¡æ¯
     mdfInput.printMeasurementEntry( 0 );
 
     return 0;
 }
+
+

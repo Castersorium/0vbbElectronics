@@ -43,3 +43,4 @@ then
     echo "You can try to git commit using the -m option"
     exit 1
 fi
+
