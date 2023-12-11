@@ -18,8 +18,13 @@ int main( int argc, char * argv[] )
     MDFIO::markdownFileInput mdfInput;
     mdfInput.readMarkdownTable( filePath );
     mdfInput.readGeneralInformation();
+    mdfInput.readMeasurementEntries();
+
     // 打印通道9的基本信息
     mdfInput.printGeneralInformation( 9 );
+
+    // 打印第一个测量条目的信息
+    mdfInput.printMeasurementEntry( 0 );
 
     return 0;
 }
