@@ -5,7 +5,7 @@
 set(EXECUTABLE_NAME "plotRTrecording")
 
 # 将源代码添加到此项目的可执行文件。
-add_executable(${EXECUTABLE_NAME} "plotRTrecording.cpp" "markdownFileInput.cpp")
+add_executable(${EXECUTABLE_NAME} "plotRTrecording.cpp" "markdownFileInput.cpp" "markdownTableAnalyzer.cpp")
 
 message("========Printing EXECUTABLE_NAME...")
 message("${EXECUTABLE_NAME}")
@@ -39,5 +39,3 @@ target_include_directories(${EXECUTABLE_NAME}
 )
 
 unset(EXECUTABLE_NAME)
-
-

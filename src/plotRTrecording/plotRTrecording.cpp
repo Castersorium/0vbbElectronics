@@ -1,6 +1,6 @@
 #include <iostream> // C++ header
 
-#include "markdownFileInput.hpp" // my header
+#include "markdownTableAnalyzer.hpp" // my header
 
 int main( int argc, char * argv[] )
 {
@@ -15,7 +15,7 @@ int main( int argc, char * argv[] )
     std::string filePath = argv[1];
 
     // 创建markdownFileInput类的实例并读取文件
-    MDFIO::markdownFileInput mdfInput;
+    MDFIO::markdownTableAnalyzer mdfInput;
     mdfInput.readMarkdownTable( filePath );
     mdfInput.readGeneralInformation();
     mdfInput.readMeasurementEntries();

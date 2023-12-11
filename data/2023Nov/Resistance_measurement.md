@@ -27,4 +27,3 @@
 | 2023/NOV/09 | 11:06 | Cryostat | MiB-Front-end | Front-end input      | 100 mK      | Improved temperature stability     | R [Ohm]  | 5.775e+03       | 2.19813e+04     | ---      | 4.942e+03  | ---                | ---       |
 | 2023/NOV/09 | 15:14 | Cryostat | MiB-Front-end | Front-end input      | 20 mK       | Use Matlab GUI in-built fit        | R [Ohm]  | 3.32e+07        | 3.22e+07        | ---      | 2.63e+07   | ---                | ---       |
 | 2023/NOV/09 | 18:04 | Cryostat | MiB-Front-end | Front-end input      | 20 mK       | Use Linear fit ROI                 | R [Ohm]  | 4.511e+07       | 5.628e+07       | ---      | 3.331e+07  | ---                | ---       |
-
