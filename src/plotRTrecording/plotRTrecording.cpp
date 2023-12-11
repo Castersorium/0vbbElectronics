@@ -1,8 +1,23 @@
-#include <iostream>
+#include <iostream> // C++ header
 
-int main()
+#include "markdownFileInput.hpp" // my header
+
+int main( int argc, char * argv[] )
 {
-    std::cout << "Hello World!\n";
+    // 检查是否提供了文件路径
+    if ( argc < 2 )
+    {
+        std::cerr << "Usage: " << argv[0] << " <markdown_file_path>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // 获取文件路径
+    std::string filePath = argv[1];
+
+    // 创建markdownFileInput类的实例并读取文件
+    MDFIO::markdownFileInput mdfInput;
+    mdfInput.readMarkdownTable( filePath );
+    mdfInput.printTableContent();
 
     return 0;
 }
