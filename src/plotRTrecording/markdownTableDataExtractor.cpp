@@ -6,6 +6,48 @@
 namespace MDFIO
 {
 
+// 返回temperature_d_vec的引用
+const std::vector<double> & markdownTableDataExtractor::getTemperature() const
+{
+    return temperature_d_vec;
+}
+
+// 返回temperature_err_d_vec的引用
+const std::vector<double> & markdownTableDataExtractor::getTemperature_err() const
+{
+    return temperature_err_d_vec;
+}
+
+const std::vector<double> & markdownTableDataExtractor::getResistance_ch7() const
+{
+    return resistance_ch7_d_vec;
+}
+
+const std::vector<double> & markdownTableDataExtractor::getResistance_ch8() const
+{
+    return resistance_ch8_d_vec;
+}
+
+const std::vector<double> & markdownTableDataExtractor::getResistance_ch9() const
+{
+    return resistance_ch9_d_vec;
+}
+
+const std::vector<double> & markdownTableDataExtractor::getResistance_ch10() const
+{
+    return resistance_ch10_d_vec;
+}
+
+const std::vector<double> & markdownTableDataExtractor::getResistance_ch11() const
+{
+    return resistance_ch11_d_vec;
+}
+
+const std::vector<double> & markdownTableDataExtractor::getResistance_ch12() const
+{
+    return resistance_ch12_d_vec;
+}
+
 void markdownTableDataExtractor::convertTemperature()
 {
     for ( const auto & str : temperature_string_vec )

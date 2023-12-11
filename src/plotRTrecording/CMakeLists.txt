@@ -5,7 +5,7 @@
 set(EXECUTABLE_NAME "plotRTrecording")
 
 # 将源代码添加到此项目的可执行文件。
-add_executable(${EXECUTABLE_NAME} "plotRTrecording.cpp" "markdownFileInput.cpp" "markdownTableAnalyzer.cpp" "markdownTableDataExtractor.cpp")
+add_executable(${EXECUTABLE_NAME} "plotRTrecording.cpp" "markdownFileInput.cpp" "markdownTableAnalyzer.cpp" "markdownTableDataExtractor.cpp" "ROOTDataSaver.cpp")
 
 message("========Printing EXECUTABLE_NAME...")
 message("${EXECUTABLE_NAME}")
@@ -31,6 +31,7 @@ target_link_libraries(${EXECUTABLE_NAME}
     PUBLIC ROOT::Thread
     PUBLIC ROOT::MultiProc
     PUBLIC ROOT::Net
+    PUBLIC ROOT::Tree
 )
 
 # 包含相关的头文件

@@ -6,6 +6,50 @@
 namespace MDFIO
 {
 
+size_t markdownTableAnalyzer::getChannelNames_string_vec_size() const
+{
+    return channelNames_string_vec.size();
+}
+
+size_t markdownTableAnalyzer::getPinNumbers_string_vec_size() const
+{
+    return pinNumbers_string_vec.size();
+}
+
+size_t markdownTableAnalyzer::getDetectorNames_string_vec_size() const
+{
+    return detectorNames_string_vec.size();
+}
+
+size_t markdownTableAnalyzer::getDetectorComments_string_vec_size() const
+{
+    return detectorComments_string_vec.size();
+}
+
+// 返回channelNames_string_vec的引用
+const std::vector<std::string> & markdownTableAnalyzer::getChannelNames() const
+{
+    return channelNames_string_vec;
+}
+
+// 返回pinNumbers_string_vec的引用
+const std::vector<std::string> & markdownTableAnalyzer::getPinNumbers() const
+{
+    return pinNumbers_string_vec;
+}
+
+// 返回detectorNames_string_vec的引用
+const std::vector<std::string> & markdownTableAnalyzer::getDetectorNames() const
+{
+    return detectorNames_string_vec;
+}
+
+// 返回detectorComments_string_vec的引用
+const std::vector<std::string> & markdownTableAnalyzer::getDetectorComments() const
+{
+    return detectorComments_string_vec;
+}
+
 void markdownTableAnalyzer::readGeneralInformation()
 {
     // 假设通道名称、引脚编号、探测器名称和注释都在前五行，第二行是分隔符行
@@ -46,8 +90,8 @@ void markdownTableAnalyzer::readGeneralInformation()
 #ifdef DEBUGGINGVERBOSE
                 std::cout << "detectorNames_string_vec pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
-            }
         }
+    }
         while ( std::getline( commentStream, token, '|' ) )
         {
             token = trim( token ); // 使用新的trim函数去除头尾空格
@@ -70,11 +114,11 @@ void markdownTableAnalyzer::readGeneralInformation()
 #ifdef DEBUGGINGVERBOSE
                         std::cout << "detectorComments_string_vec pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
-                    }
                 }
             }
         }
-    }
+}
+}
 }
 
 void markdownTableAnalyzer::printGeneralInformation( unsigned int channel_num ) const
@@ -200,8 +244,8 @@ void markdownTableAnalyzer::readMeasurementEntries()
         {
             std::cerr << "Invalid entry format at line " << i << std::endl;
         }
+        }
     }
-}
 
 void markdownTableAnalyzer::printMeasurementEntry( unsigned int entry_num ) const
 {

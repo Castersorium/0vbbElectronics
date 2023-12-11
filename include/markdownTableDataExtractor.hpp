@@ -11,12 +11,24 @@ namespace MDFIO
 class markdownTableDataExtractor
     : public markdownTableAnalyzer
 {
+public:
+    const std::vector<double> & getTemperature() const;
+    const std::vector<double> & getTemperature_err() const;
+
 private:
     std::vector<double> temperature_d_vec;
     std::vector<double> temperature_err_d_vec;
 
 public:
     void convertTemperature();
+
+public:
+    const std::vector<double> & getResistance_ch7() const;
+    const std::vector<double> & getResistance_ch8() const;
+    const std::vector<double> & getResistance_ch9() const;
+    const std::vector<double> & getResistance_ch10() const;
+    const std::vector<double> & getResistance_ch11() const;
+    const std::vector<double> & getResistance_ch12() const;
 
 private:
     std::vector<double> resistance_ch7_d_vec;

@@ -1,6 +1,7 @@
 #include <iostream> // C++ header
 
 #include "markdownTableDataExtractor.hpp" // my header
+#include "ROOTDataSaver.hpp"
 
 int main( int argc, char * argv[] )
 {
@@ -14,9 +15,12 @@ int main( int argc, char * argv[] )
     // 获取文件路径
     std::string filePath = argv[1];
 
+    // 读取默认markdown输入文件
+    std::string filePathandName = filePath + "./Resistance_measurement.md";
+
     // 创建markdownFileInput类的实例并读取文件
     MDFIO::markdownTableDataExtractor  mdfInput;
-    mdfInput.readMarkdownTable( filePath );
+    mdfInput.readMarkdownTable( filePathandName );
     mdfInput.readGeneralInformation();
     mdfInput.readMeasurementEntries();
     mdfInput.convertTemperature();
@@ -29,7 +33,14 @@ int main( int argc, char * argv[] )
     //mdfInput.printMeasurementEntry( 0 );
 
     // 调用函数打印所有double向量中的数据结果
-    mdfInput.printAllDoubleVectors();
+    //mdfInput.printAllDoubleVectors();
+
+    TTREEIO::RootDataSaver saver( mdfInput );
+
+    // 创建默认root输出文件
+    filePathandName = filePath + "./Resistance_measurement.root";
+
+    saver.saveToRootFile( filePathandName );
 
     return 0;
 }

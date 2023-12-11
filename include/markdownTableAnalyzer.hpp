@@ -14,6 +14,18 @@ namespace MDFIO
 class markdownTableAnalyzer
     : public markdownFileInput
 {
+public:
+    size_t getChannelNames_string_vec_size() const;
+    size_t getPinNumbers_string_vec_size() const;
+    size_t getDetectorNames_string_vec_size() const;
+    size_t getDetectorComments_string_vec_size() const;
+
+public:
+    const std::vector<std::string> & getChannelNames() const;
+    const std::vector<std::string> & getPinNumbers() const;
+    const std::vector<std::string> & getDetectorNames() const;
+    const std::vector<std::string> & getDetectorComments() const;
+
 private:
     std::vector<std::string> channelNames_string_vec;
     std::vector<std::string> pinNumbers_string_vec;
