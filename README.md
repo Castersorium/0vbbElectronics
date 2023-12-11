@@ -126,7 +126,7 @@ Here is the list of testing done:
 │   ├── markdownTableAnalyzer.hpp
 │   └── markdownTableDataExtractor.hpp
 ├── macro
-│   └── EasyDraw.txt
+│   └── EasyDraw.snippet.C
 ├── output
 │   └── 2023Nov
 │       ├── 20p0mK
