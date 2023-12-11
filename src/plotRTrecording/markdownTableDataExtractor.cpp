@@ -23,6 +23,12 @@ void markdownTableDataExtractor::convertTemperature()
             temperature = 295;
             temperature_err = 2;
         }
+        else if ( str.find( "T0: " ) != std::string::npos )
+        {
+            std::string value_str = str.substr( str.find( "T0: " ) + 4 );
+            temperature = std::stod( value_str );
+            temperature_err = 1;
+        }
         else if ( str.find( "T5: " ) != std::string::npos )
         {
             std::string value_str = str.substr( str.find( "T5: " ) + 4 );
