@@ -79,6 +79,7 @@ Here is the list of testing done:
 │       └── plotRTrecording.exe
 ├── data
 │   ├── 2023Dec
+│   │   ├── JYCanvas.root
 │   │   ├── Resistance_measurement.md
 │   │   └── Resistance_measurement.root
 │   ├── 2023Nov
@@ -124,6 +125,8 @@ Here is the list of testing done:
 │   ├── markdownFileInput.hpp
 │   ├── markdownTableAnalyzer.hpp
 │   └── markdownTableDataExtractor.hpp
+├── macro
+│   └── EasyDraw.txt
 ├── output
 │   └── 2023Nov
 │       ├── 20p0mK
@@ -163,7 +166,7 @@ Here is the list of testing done:
 │   └── plotSinGraph.C
 └── wrapUp.sh
 
-27 directories, 62 files
+28 directories, 64 files
 ```
 <!-- TREE END -->
 
