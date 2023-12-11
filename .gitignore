@@ -8,5 +8,11 @@
 *.so
 *.pcm
 
+# For CMake
+src/out/**
+
+# For make
+build/
+
 # For stream data
 *.csv
