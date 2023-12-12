@@ -90,8 +90,8 @@ void markdownTableAnalyzer::readGeneralInformation()
 #ifdef DEBUGGINGVERBOSE
                 std::cout << "detectorNames_string_vec pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
+            }
         }
-    }
         while ( std::getline( commentStream, token, '|' ) )
         {
             token = trim( token ); // 使用新的trim函数去除头尾空格
@@ -114,11 +114,11 @@ void markdownTableAnalyzer::readGeneralInformation()
 #ifdef DEBUGGINGVERBOSE
                         std::cout << "detectorComments_string_vec pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
+                    }
                 }
             }
         }
-}
-}
+    }
 }
 
 void markdownTableAnalyzer::printGeneralInformation( unsigned int channel_num ) const
@@ -205,7 +205,7 @@ void markdownTableAnalyzer::readMeasurementEntries()
             if ( entryTokens[7] == "R [Ohm]" )
             {
                 // 从第8个token开始，按顺序读取电阻值
-                for ( size_t j = 0; j < channelNames_string_vec.size(); ++j )
+                for ( size_t j = 0; j + 1 < channelNames_string_vec.size(); ++j )
                 {
                     std::string resistanceValue = entryTokens[8 + j];
                     // 根据通道名称将电阻值存储到相应的向量中
@@ -244,8 +244,8 @@ void markdownTableAnalyzer::readMeasurementEntries()
         {
             std::cerr << "Invalid entry format at line " << i << std::endl;
         }
-        }
     }
+}
 
 void markdownTableAnalyzer::printMeasurementEntry( unsigned int entry_num ) const
 {
