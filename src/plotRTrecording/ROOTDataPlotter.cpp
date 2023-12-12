@@ -58,15 +58,24 @@ void ROOTDataPlotter::createGraph( const char * branchName )
 
     // 创建TGraphErrors
     auto graph = std::make_unique<TGraphErrors>( tree->GetEntries() );
+    int validPointIndex = 0;
     for ( int i = 0; i < tree->GetEntries(); ++i )
     {
         tree->GetEntry( i );
-        graph->SetPoint( i, temperature, resistance );
+        // 检查数据点是否包含NaN值
+        if ( std::isnan( temperature ) || std::isnan( temperatureErr ) || std::isnan( resistance ) )
+        {
+            std::clog << "Skipping NaN value at entry " << i << " in branch \"" << branchName << "\"..." << std::endl;
+            continue; // 跳过包含NaN的数据点
+        }
+        graph->SetPoint( validPointIndex, temperature, resistance );
+
 #ifdef DEBUGGINGVERBOSE
-        std::cout << "Set #" << i << "\tPoint (" << temperature << ", " << resistance << ") to graph of \"" << branchName << "\"." << std::endl;
+        std::cout << "Set #" << validPointIndex << "\tPoint (" << temperature << ", " << resistance << ") to graph of \"" << branchName << "\"." << std::endl;
 #endif // DEBUGGINGVERBOSE
 
-        graph->SetPointError( i, temperatureErr, 0.01 * resistance ); // 假设电阻误差为1%
+        graph->SetPointError( validPointIndex, temperatureErr, 0.01 * resistance ); // 假设电阻误差为1%
+        validPointIndex++;
     }
 
     graph->SetMarkerColor( 4 );
