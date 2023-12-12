@@ -42,7 +42,7 @@ Here is the list of testing done:
 
 ## doc
 
-## prefix/COM_configure.md
+### prefix/COM_configure.md
 
 [A configuration file](https://github.com/Castersorium/0vbbElectronics/blob/master/doc/prefix/COM_configure.md) for the Milan Electronics USB-COM. Please make sure these parameters are set correctly. Otherwise the Matlab GUI could fail finding VSCOM.
 
