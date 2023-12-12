@@ -51,7 +51,16 @@ void RootDataSaver::saveToRootFile( const std::string & filename )
 
     // 写入文件并关闭
     file->Write();
-    file->Close();
+    //file->Close();
+    /* The line file->Close();; invokes the destructor on the TTrees.
+    * The destructor for a TFile first calls the Close() method.
+    * The destructors of std::unique_ptr are called in the reverse
+    *  order of the variable declarations.
+    * The destructors of std::unique_ptr as the TFile actually deletes
+    *  the resource meant to be managed by std::unique_ptr as TTree.
+    * This results in a double free error, invoked by the destructor
+    *  for the std::unique_ptr as some other object has ownership.
+    */
 
     // 不需要手动删除智能指针，它们会在离开作用域时自动释放资源
 }
