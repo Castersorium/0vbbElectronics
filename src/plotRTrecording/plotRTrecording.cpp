@@ -2,6 +2,7 @@
 
 #include "markdownTableDataExtractor.hpp" // my header
 #include "ROOTDataSaver.hpp"
+#include "ROOTDataPlotter.hpp"
 
 int main( int argc, char * argv[] )
 {
@@ -41,6 +42,18 @@ int main( int argc, char * argv[] )
     filePathandName = filePath + "./Resistance_measurement.root";
 
     saver.saveToRootFile( filePathandName );
+
+    // 创建ROOTDataPlotter实例
+    TTREEIO::ROOTDataPlotter dataPlotter( filePathandName );
+
+    // 创建并填充图形
+    dataPlotter.plotData();
+
+    // 创建默认RTPlot输出文件
+    filePathandName = filePath + "./FJYRTPlot.root";
+
+    // 绘制并保存所有图形
+    dataPlotter.plotAllGraphs( filePathandName );
 
     return 0;
 }
