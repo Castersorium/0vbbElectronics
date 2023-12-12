@@ -46,7 +46,7 @@ with uproot.recreate(output_file) as file:
     file["channelTree"] = data_dict
 print(storing_data)
 
-# Print the channel map and output to a file
+# Print the channel map and output to channels_map.csv
 show_columns = ['DAQCH', 'Name']
 channel_map = df[show_columns]
 #show_data=show_data[show_data['DAQCH']<7] #If you need to apply channel cut
