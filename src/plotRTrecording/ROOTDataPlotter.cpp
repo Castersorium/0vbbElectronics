@@ -5,13 +5,13 @@
 #include "ROOTDataPlotter.hpp" // my header
 
 //#define DEBUGGING
-#define DEBUGGINGVERBOSE
+//#define DEBUGGINGVERBOSE
 
 namespace TTREEIO
 {
 
 ROOTDataPlotter::ROOTDataPlotter( const std::string & filePath )
-    : filePath( filePath ), canvas( std::make_unique<TCanvas>( "canvas", "Plot Canvas", 800, 600 ) ),
+    : filePath( filePath ), canvas( std::make_unique<TCanvas>( "RTcanvas", "R-T Plot Canvas", 800, 600 ) ),
     multiGraph( std::make_unique<TMultiGraph>() )
 {
     // 打开ROOT文件
@@ -30,11 +30,6 @@ ROOTDataPlotter::ROOTDataPlotter( const std::string & filePath )
     }
 
     canvas->SetGrid();
-}
-
-ROOTDataPlotter::~ROOTDataPlotter()
-{
-    // 不需要手动释放资源，智能指针会自动管理
 }
 
 void ROOTDataPlotter::plotData()
@@ -98,9 +93,11 @@ void ROOTDataPlotter::plotAllGraphs( const std::string & filename )
     multiGraph->Draw( "AP" );
     canvas->Update(); // 更新canvas内容
 
-    // 保存图形到ROOT文件
-    auto outputFile = std::make_unique<TFile>( filename.c_str(), "RECREATE" );
+    // 初始化outputFile并保存图形到ROOT文件
+    outputFile = std::make_unique<TFile>( filename.c_str(), "RECREATE" );
     canvas->Write();
+
+    graphs.clear(); // 清空向量并销毁所有图形
 
     //outputFile->Close();
 }
