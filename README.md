@@ -73,6 +73,7 @@ Here is the list of testing done:
 <!-- TREE START -->
 ```
 .
+├── Makefile
 ├── README.md
 ├── build
 │   └── plotRTrecording
@@ -156,20 +157,20 @@ Here is the list of testing done:
 ├── src
 │   ├── CMakeLists.txt
 │   ├── CMakePresets.json
-│   ├── out
-│   ├── plotGraph.C
-│   ├── plotRTrecording
-│   │   ├── CMakeLists.txt
-│   │   ├── ROOTDataPlotter.cpp
-│   │   ├── ROOTDataSaver.cpp
-│   │   ├── markdownFileInput.cpp
-│   │   ├── markdownTableAnalyzer.cpp
-│   │   ├── markdownTableDataExtractor.cpp
-│   │   └── plotRTrecording.cpp
-│   └── plotSinGraph.C
+│   ├── archived
+│   │   ├── plotGraph.C
+│   │   └── plotSinGraph.C
+│   └── plotRTrecording
+│       ├── CMakeLists.txt
+│       ├── ROOTDataPlotter.cpp
+│       ├── ROOTDataSaver.cpp
+│       ├── markdownFileInput.cpp
+│       ├── markdownTableAnalyzer.cpp
+│       ├── markdownTableDataExtractor.cpp
+│       └── plotRTrecording.cpp
 └── wrapUp.sh
 
-28 directories, 67 files
+28 directories, 68 files
 ```
 <!-- TREE END -->
 

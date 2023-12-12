@@ -13,15 +13,15 @@ void plotSinGraph() {
 
     src/plotGraph.C
     std::vector<std::string> filenames = {
-        "../data/2023Nov/39p9mK_PIDbad/3x3NTD.txt", 
-        "../data/2023Nov/39p9mK_PIDbad/3x1NTD.txt",
-        "../data/2023Nov/39p9mK_PIDbad/19T20.txt"
+        "../../data/2023Nov/39p9mK_PIDbad/3x3NTD.txt", 
+        "../../data/2023Nov/39p9mK_PIDbad/3x1NTD.txt",
+        "../../data/2023Nov/39p9mK_PIDbad/19T20.txt"
     };
-    TFile *file = new TFile("../output/2023Nov/39p9mK_PIDbad/outputFit.root", "RECREATE");
+    TFile *file = new TFile("../../output/2023Nov/39p9mK_PIDbad/outputFit.root", "RECREATE");
 
     // Create a new canvas for the PDF
     TCanvas *cAll = new TCanvas("cAll", "All Graphs", 200, 10, 700, 500);
-    cAll->Print("../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf["); // Open the PDF file
+    cAll->Print("../../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf["); // Open the PDF file
 
     for (int i = 0; i < filenames.size(); i++) {
         std::ifstream dataFile(filenames[i]);
@@ -102,10 +102,10 @@ void plotSinGraph() {
         // Save the canvas to the ROOT file
         c1->Write();
         // Save the canvas to the PDF file
-        c1->Print("../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf"); // Add the canvas to the PDF file
+        c1->Print("../../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf"); // Add the canvas to the PDF file
     }
 
-    cAll->Print("../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf]"); // Close the PDF file
+    cAll->Print("../../output/2023Nov/39p9mK_PIDbad/allGraphs.pdf]"); // Close the PDF file
 
     file->Close();
 }
