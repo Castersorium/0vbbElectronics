@@ -2,7 +2,7 @@
 
 ## data
 
-
+[Plot data](https://github.com/Castersorium/0vbbElectronics/pull/3)
 
 ### `Resistance_measurement.md`
 
