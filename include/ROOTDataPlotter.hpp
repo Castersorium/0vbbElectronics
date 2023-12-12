@@ -12,6 +12,7 @@
 #include <TGraphErrors.h>
 #include <TCanvas.h>
 #include <TMultiGraph.h>
+#include <TLegend.h>
 
 namespace TTREEIO
 {

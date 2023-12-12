@@ -82,16 +82,36 @@ void ROOTDataPlotter::createGraph( const char * branchName )
 
 void ROOTDataPlotter::plotAllGraphs( const std::string & filename )
 {
-    // 将所有图形添加到TMultiGraph中
-    for ( auto & graph : graphs )
+    canvas->cd();
+
+    // 创建一个图例
+    auto legend = std::make_unique<TLegend>( 0.7, 0.7, 0.9, 0.9 ); // 调整图例位置和大小
+
+    // 定义一组颜色用于不同的图形
+    std::vector<int> colors = { kRed, kBlue, kGreen, kBlack, kMagenta, kCyan, kYellow, kOrange };
+
+    // 将所有图形添加到TMultiGraph中，并设置颜色和图例
+    for ( size_t i = 0; i < graphs.size(); ++i )
     {
-        multiGraph->Add( graph.get(), "AP" );
+        graphs[i]->SetLineColor( colors[i % colors.size()] ); // 设置颜色
+        graphs[i]->SetMarkerColor( colors[i % colors.size()] ); // 设置标记颜色
+        multiGraph->Add( graphs[i].get(), "AP" );
+
+        // 添加图例条目
+        legend->AddEntry( graphs[i].get(), ( "Graph " + std::to_string( i + 1 ) ).c_str(), "lep" );
     }
 
     // 绘制所有图形
-    canvas->cd();
     multiGraph->Draw( "AP" );
-    canvas->Update(); // 更新canvas内容
+
+    // 设置坐标轴名称和标题
+    multiGraph->SetTitle( "Measurement Data;Temperature [K];Resistance [#Omega]" ); // 格式: "标题;X轴名称;Y轴名称"
+
+    // 绘制图例
+    legend->Draw();
+
+    // 更新canvas内容
+    canvas->Update();
 
     // 初始化outputFile并保存图形到ROOT文件
     outputFile = std::make_unique<TFile>( filename.c_str(), "RECREATE" );
