@@ -83,14 +83,14 @@ void RootDataSaver::saveToRootFile( const std::string & filename )
     double temperature = 0.0, temperatureErr = 0.0;
     double resistanceCh7 = 0.0, resistanceCh8 = 0.0, resistanceCh9 = 0.0, resistanceCh10 = 0.0, resistanceCh11 = 0.0, resistanceCh12 = 0.0;
 
-    tree2->Branch( "Temperature", &temperature );
-    tree2->Branch( "TemperatureErr", &temperatureErr );
-    tree2->Branch( "ResistanceCh7", &resistanceCh7 );
-    tree2->Branch( "ResistanceCh8", &resistanceCh8 );
-    tree2->Branch( "ResistanceCh9", &resistanceCh9 );
-    tree2->Branch( "ResistanceCh10", &resistanceCh10 );
-    tree2->Branch( "ResistanceCh11", &resistanceCh11 );
-    tree2->Branch( "ResistanceCh12", &resistanceCh12 );
+    tree2->Branch( "Temperature", &temperature, "Temperature/D" );
+    tree2->Branch( "TemperatureErr", &temperatureErr, "TemperatureErr/D" );
+    tree2->Branch( "ResistanceCh7", &resistanceCh7, "ResistanceCh7/D" );
+    tree2->Branch( "ResistanceCh8", &resistanceCh8, "ResistanceCh8/D" );
+    tree2->Branch( "ResistanceCh9", &resistanceCh9, "ResistanceCh9/D" );
+    tree2->Branch( "ResistanceCh10", &resistanceCh10, "ResistanceCh10/D" );
+    tree2->Branch( "ResistanceCh11", &resistanceCh11, "ResistanceCh11/D" );
+    tree2->Branch( "ResistanceCh12", &resistanceCh12, "ResistanceCh12/D" );
 
     for ( size_t i = 0; i < measurementData_vec_size; ++i )
     {
