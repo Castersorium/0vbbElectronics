@@ -105,7 +105,7 @@ void ROOTDataPlotter::plotAllGraphs( const std::string & filename )
     multiGraph->Draw( "AP" );
 
     // 设置坐标轴名称和标题
-    multiGraph->SetTitle( "Measurement Data;Temperature [K];Resistance [#Omega]" ); // 格式: "标题;X轴名称;Y轴名称"
+    multiGraph->SetTitle( "Measurement Data;MXC Temperature [K];Resistance [#Omega]" ); // 格式: "标题;X轴名称;Y轴名称"
 
     // 绘制图例
     legend->Draw();
