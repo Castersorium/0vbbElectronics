@@ -3,7 +3,6 @@ import numpy as np
 import glob
 import uproot
 
-
 def process_run(data_path, output_path, run_name, temperature):
 
     data_path   = data_path   + run_name + temperature
