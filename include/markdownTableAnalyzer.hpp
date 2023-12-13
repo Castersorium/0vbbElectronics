@@ -10,7 +10,7 @@
 namespace MDFIO
 {
 
-// 派生类：负责分析Markdown表格数据
+// 娲剧敓绫伙細璐熻矗鍒嗘瀽Markdown琛ㄦ牸鏁版嵁
 class markdownTableAnalyzer
     : public markdownFileInput
 {
@@ -64,3 +64,4 @@ public:
 } // namespace MDFIO
 
 #endif // MARKDOWNTABLEANALYZER_HPP
+

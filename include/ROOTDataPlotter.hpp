@@ -28,13 +28,14 @@ private:
     std::string filePath;
     std::unique_ptr<TFile> file;
     std::unique_ptr<TTree> tree;
-    std::vector< std::unique_ptr<TGraphErrors> > graphs; // ´æ´¢ËùÓĞÍ¼ĞÎ
-    std::unique_ptr<TFile> outputFile; // ÓÃÓÚ±£´æÊä³öÎÄ¼ş
-    std::unique_ptr<TCanvas> canvas; // ÓÃÓÚ»æÖÆÍ¼ĞÎ
-    std::unique_ptr<TMultiGraph> multiGraph; // ÓÃÓÚ×éºÏ¶à¸öÍ¼ĞÎ
+    std::vector< std::unique_ptr<TGraphErrors> > graphs; // å­˜å‚¨æ‰€æœ‰å›¾å½¢
+    std::unique_ptr<TFile> outputFile; // ç”¨äºä¿å­˜è¾“å‡ºæ–‡ä»¶
+    std::unique_ptr<TCanvas> canvas; // ç”¨äºç»˜åˆ¶å›¾å½¢
+    std::unique_ptr<TMultiGraph> multiGraph; // ç”¨äºç»„åˆå¤šä¸ªå›¾å½¢
     void createGraph( const char * branchName );
 };
 
 } // namespace TTREEIO
 
 #endif // ROOTDATAPLOTTER_HPP
+
