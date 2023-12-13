@@ -297,3 +297,4 @@ void markdownTableAnalyzer::printMeasurementEntry( unsigned int entry_num ) cons
 }
 
 } // namespace MDFIO
+

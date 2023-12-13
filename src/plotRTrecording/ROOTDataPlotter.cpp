@@ -23,9 +23,10 @@ ROOTDataPlotter::ROOTDataPlotter( const std::string & filePath )
     }
     // 获取TTree
     tree.reset( dynamic_cast<TTree *>( file->Get( "MeasurementData" ) ) );
-    if ( !tree )
+    generalInfoTree.reset( dynamic_cast<TTree *>( file->Get( "GeneralInfo" ) ) ); // 获取GeneralInfo树
+    if ( !tree || !generalInfoTree )
     {
-        std::cerr << "Error getting TTree from file: " << filePath << std::endl;
+        std::cerr << "Error getting TTrees from file: " << filePath << std::endl;
         return;
     }
 
@@ -51,12 +52,17 @@ void ROOTDataPlotter::createGraph( const char * branchName )
     tree->SetBranchAddress( "TemperatureErr", &temperatureErr );
     tree->SetBranchAddress( branchName, &resistance );
 
-    // 创建TGraphErrors
-    auto graph = std::make_unique<TGraphErrors>( tree->GetEntries() );
+    // 创建TGraphErrors，不指定点数
+    auto graph = std::make_unique<TGraphErrors>();
     int validPointIndex = 0;
     for ( int i = 0; i < tree->GetEntries(); ++i )
     {
         tree->GetEntry( i );
+
+#ifdef DEBUGGINGVERBOSE
+        std::cout << "GetEntry #" << i << "\t (" << temperature << ", " << resistance << ") from branch \"" << branchName << "\"." << std::endl;
+#endif // DEBUGGINGVERBOSE
+
         // 检查数据点是否包含NaN值
         if ( std::isnan( temperature ) || std::isnan( temperatureErr ) || std::isnan( resistance ) )
         {
@@ -73,8 +79,15 @@ void ROOTDataPlotter::createGraph( const char * branchName )
         validPointIndex++;
     }
 
-    graph->SetMarkerColor( 4 );
-    graph->SetMarkerStyle( 21 );
+    // 添加图例条目
+    std::string detectorComment = getDetectorComment( branchName ); // 获取探测器备注
+
+#ifdef DEBUGGING
+    std::cout << "For branch \"" << branchName << "\", got Detector Comment: " << detectorComment << std::endl;
+#endif // DEBUGGING
+
+    // 将图例条目添加到向量中
+    detectorComments.push_back( detectorComment );
 
     // 将图形添加到向量中
     graphs.push_back( std::move( graph ) );
@@ -85,20 +98,22 @@ void ROOTDataPlotter::plotAllGraphs( const std::string & filename )
     canvas->cd();
 
     // 创建一个图例
-    auto legend = std::make_unique<TLegend>( 0.7, 0.7, 0.9, 0.9 ); // 调整图例位置和大小
+    auto legend = std::make_unique<TLegend>( 0.5, 0.7, 0.9, 0.9 ); // 调整图例位置和大小
 
-    // 定义一组颜色用于不同的图形
+    // 定义一组颜色和标记样式用于不同的图形
     std::vector<int> colors = { kRed, kBlue, kGreen, kBlack, kMagenta, kCyan, kYellow, kOrange };
+    std::vector<int> markerStyles = { 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 }; // 预定义的标记样式
 
-    // 将所有图形添加到TMultiGraph中，并设置颜色和图例
+    // 将所有图形添加到TMultiGraph中，并设置颜色、标记样式和图例
     for ( size_t i = 0; i < graphs.size(); ++i )
     {
         graphs[i]->SetLineColor( colors[i % colors.size()] ); // 设置颜色
         graphs[i]->SetMarkerColor( colors[i % colors.size()] ); // 设置标记颜色
+        graphs[i]->SetMarkerStyle( markerStyles[i % markerStyles.size()] ); // 设置标记样式
         multiGraph->Add( graphs[i].get(), "AP" );
 
         // 添加图例条目
-        legend->AddEntry( graphs[i].get(), ( "Graph " + std::to_string( i + 1 ) ).c_str(), "lep" );
+        legend->AddEntry( graphs[i].get(), ( detectorComments[i] ).c_str(), "lep" );
     }
 
     // 绘制所有图形
@@ -122,4 +137,32 @@ void ROOTDataPlotter::plotAllGraphs( const std::string & filename )
     //outputFile->Close();
 }
 
+std::string ROOTDataPlotter::getDetectorComment( const std::string & channelName )
+{
+    // 将channelName转换为ChannelName分支中的格式
+    std::string channelNameInBranch = "CH" + channelName.substr( channelName.find( "Ch" ) + 2 );
+
+    // 在GeneralInfo树中查找对应的探测器备注
+    std::string * channelNameInTree_str_ptr = new std::string( "" );
+    std::string * detectorComment_str_ptr = new std::string( "" );
+    generalInfoTree->SetBranchAddress( "ChannelName", &channelNameInTree_str_ptr );
+    generalInfoTree->SetBranchAddress( "DetectorComment", &detectorComment_str_ptr );
+    for ( int i = 0; i < generalInfoTree->GetEntries(); ++i )
+    {
+        generalInfoTree->GetEntry( i );
+        if ( channelNameInBranch == *channelNameInTree_str_ptr )
+        {
+            std::string detectorComment = *detectorComment_str_ptr;
+            delete channelNameInTree_str_ptr;
+            delete detectorComment_str_ptr;
+            return detectorComment;
+        }
+    }
+
+    delete channelNameInTree_str_ptr;
+    delete detectorComment_str_ptr;
+    return "Undefined detector"; // 如果没有找到对应的备注，返回未定义探测器
+}
+
 } // namespace TTREEIO
+
