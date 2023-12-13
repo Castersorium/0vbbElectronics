@@ -11,7 +11,7 @@
 #include <string>
 #include <map>
 
-void draw_graphs(const std::string& runName, const std::string& temperature) {
+void save_graphs(const std::string& runName, const std::string& temperature) {
     // Open the ROOT file
     std::string dataPath = "../../data/";
     std::string outputPath = "../../output/";
@@ -59,29 +59,26 @@ void draw_graphs(const std::string& runName, const std::string& temperature) {
     }
 
     // Create TGraphs for DAQCH 1 through 12
+    // TODO : DAQCH is not necessarily only 12
     std::map<Long64_t, TGraph*> channelGraphs;
 
     for (Long64_t i = 1; i <= 12; ++i) {
         channelGraphs[i] = new TGraph();
-        channelGraphs[i]->SetNameTitle((channelNames[i]).c_str(),(channelNames[i]).c_str());
+        channelGraphs[i]->SetNameTitle(("g_"+channelNames[i]).c_str(),(channelNames[i]).c_str());
         channelGraphs[i]->GetXaxis()->SetTitle("I_Bol(A)");
         channelGraphs[i]->GetYaxis()->SetTitle("V_Bol(V)");
-
+        channelGraphs[i]->SetMarkerStyle(20);
     }
 
-
+    int pointIndex = 0;
     // Fill the TGraphs with data
     for (Long64_t treeEntryNumber = 0; treeEntryNumber < tree->GetEntries(); ++treeEntryNumber) {
         tree->GetEntry(treeEntryNumber);
-
-        int pointIndex;        
+                
         // Iterate over all channels
-        for (const auto& entry : channelGraphs) {
-            pointIndex = channelGraphs[DAQCH]->GetN();
-            channelGraphs[DAQCH] ->SetPoint(pointIndex, I_Bol, V_Bol);
-            //std::cout << V_Bol << std::endl;
-            //std::cout << DAQCH << "\t" << pointIndex << "\t"<< I_Bol<< "\t"<< V_Bol << "\n";
-        }
+        pointIndex = channelGraphs[DAQCH]->GetN();
+        channelGraphs[DAQCH]->SetPoint(pointIndex, I_Bol, V_Bol);
+        //std::cout << DAQCH << "\t" << pointIndex << "\t"<< I_Bol<< "\t"<< V_Bol << "\n";
 
     }
 
@@ -91,6 +88,7 @@ void draw_graphs(const std::string& runName, const std::string& temperature) {
     for (const auto& entry : channelGraphs) {
         Long64_t channel = entry.first;
         channelGraphs[channel]->Write();
+        //std::cout << channel << "\t" << channelGraphs[channel]->GetN() << "\t" << "\n";
     }
 
     // Close the TFile
@@ -98,19 +96,24 @@ void draw_graphs(const std::string& runName, const std::string& temperature) {
 }
 
 int main() {
+   
     // List of run_names and temperatures
     std::vector<std::string> run_name_list = {"2023Nov/"};//, "2023Dec/"};
-    //td::vector<std::string> temperature_list = {"20p0mK/", "22p2mK/", "29p9mK/","39p9mK_PIDbad/"};
-    std::vector<std::string> temperature_list = {"20p0mK/"};
+    std::vector<std::string> temperature_list = {"20p0mK/", "22p2mK/", "29p9mK/","39p9mK_PIDbad/"};
+    //std::vector<std::string> temperature_list = {"20p0mK/"};
+
+    //TODO:  Idealy, the list should be input from a certain list outside the code
 
     //TODO: Add selected channels
 
     // Iterate over combinations of run_name and temperature
     for (const auto& run_name : run_name_list) {
         for (const auto& temperature : temperature_list) {
-            draw_graphs(run_name, temperature);
+            save_graphs(run_name, temperature);
         }
     }
+
+
 
     // Keep the program open to view the plot
     //std::cout << "Press enter to exit..." << std::endl;
