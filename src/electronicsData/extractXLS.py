@@ -54,6 +54,7 @@ def process_run(data_path, output_path, run_name, temperature):
 
 # List of run_names and temperatures
 run_name_list = ["2023Nov/"]#, "2023Dec/"]
+# TODO: Scan the possible directory under this directory and save it into the temperature_list
 temperature_list = ["20p0mK/", "22p2mK/", "29p9mK/","39p9mK_PIDbad/"]
 
 data_path    = "../../data/"
