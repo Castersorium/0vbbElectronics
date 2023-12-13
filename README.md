@@ -65,7 +65,7 @@ Here is the list of testing done:
 
 Save the configuration file `*.xls` from Matlab GUI. Using the python uproot package to save it into ROOT tree. Check `ColumnInfo.root` in output.
 
-Requirements:
+Prerequisites:
 ```bash
 pip install uproot pandas numpy
 ```
@@ -73,10 +73,11 @@ pip install uproot pandas numpy
 #### `saveVAGraph.cpp`
 
 Draw all the channels's U-I curve graph, and write it into one single root file `allCh_VAgraphs.root` in output.
+It still needs to compile before it works.
 
 > TODO: 
 >   - Add fit.
->   - Use file list.
+>   - Use file list as input.
 >   - Q: Directly read from `.mat` files
 
 ### archived
