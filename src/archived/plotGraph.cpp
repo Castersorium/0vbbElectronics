@@ -11,8 +11,8 @@
 void plotGraph() {
     gStyle->SetOptFit(111);
 
-    std::string dataPath = "../data/";
-    std::string outputPath = "../output/";
+    std::string dataPath = "../../data/";
+    std::string outputPath = "../../output/";
     std::string runName = "2023Nov/";
     std::string temperature = "29p9mK/";
 

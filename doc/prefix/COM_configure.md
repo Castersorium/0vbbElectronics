@@ -1,4 +1,4 @@
-# USB Serial Port(COM3) 屋性
+# USB Serial Port(COM3) 属性
 
 ## 端口设置
 

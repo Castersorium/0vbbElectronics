@@ -2,7 +2,7 @@
 
 ## data
 
-
+[Plot data](https://github.com/Castersorium/0vbbElectronics/pull/3)
 
 ### `Resistance_measurement.md`
 
@@ -42,6 +42,10 @@ Here is the list of testing done:
 
 ## doc
 
+### prefix/COM_configure.md
+
+[A configuration file](https://github.com/Castersorium/0vbbElectronics/blob/master/doc/prefix/COM_configure.md) for the Milan Electronics USB-COM. Please make sure these parameters are set correctly. Otherwise the Matlab GUI could fail finding VSCOM.
+
 ## output
 
 - Graphs and Fit results. 
@@ -53,14 +57,20 @@ Here is the list of testing done:
 
 ## src
 
-### `plotGraph.C`
+<!--### plotRTrecording-->
+
+### archived
+
+This is for the codes or documents which could be no longer needed to use.
+
+#### `plotGraph.C`
 
 - Draw the plots from data
 - Use linear fit $$V = R_\mathrm{bol} \cdot I + C$$
 - Results are stored in output
 - The excluded range that was not fit was due to electronics saturation
 
-### `plotSinGraph.C`
+#### `plotSinGraph.C`
 
 - Draw the plots from data
 - The data is fluctuated caused by **PID** controlling phase
@@ -73,12 +83,14 @@ Here is the list of testing done:
 <!-- TREE START -->
 ```
 .
+├── Makefile
 ├── README.md
 ├── build
 │   └── plotRTrecording
 │       └── plotRTrecording.exe
 ├── data
 │   ├── 2023Dec
+│   │   ├── FJYRTPlot.root
 │   │   ├── JYCanvas.root
 │   │   ├── Resistance_measurement.md
 │   │   └── Resistance_measurement.root
@@ -115,18 +127,18 @@ Here is the list of testing done:
 │   ├── doc.tmp
 │   ├── prefix
 │   │   └── COM_configure.md
-│   ├── slides
-│   │   ├── 电子学测试20231026_20231026211355.pdf
-│   │   ├── 电子学测试20231110_20231110143147.pdf
-│   │   └── 电子学测试20231208_20231208115638.pdf
-│   └── test.sh
+│   └── slides
+│       ├── 电子学测试20231026_20231026211355.pdf
+│       ├── 电子学测试20231110_20231110143147.pdf
+│       └── 电子学测试20231208_20231208115638.pdf
 ├── include
+│   ├── ROOTDataPlotter.hpp
 │   ├── ROOTDataSaver.hpp
 │   ├── markdownFileInput.hpp
 │   ├── markdownTableAnalyzer.hpp
 │   └── markdownTableDataExtractor.hpp
 ├── macro
-│   └── EasyDraw.snippet.C
+│   └── EasyDraw.snippet.cpp
 ├── output
 │   └── 2023Nov
 │       ├── 20p0mK
@@ -154,19 +166,21 @@ Here is the list of testing done:
 ├── src
 │   ├── CMakeLists.txt
 │   ├── CMakePresets.json
-│   ├── out
-│   ├── plotGraph.C
-│   ├── plotRTrecording
-│   │   ├── CMakeLists.txt
-│   │   ├── ROOTDataSaver.cpp
-│   │   ├── markdownFileInput.cpp
-│   │   ├── markdownTableAnalyzer.cpp
-│   │   ├── markdownTableDataExtractor.cpp
-│   │   └── plotRTrecording.cpp
-│   └── plotSinGraph.C
+│   ├── archived
+│   │   ├── plotGraph.cpp
+│   │   ├── plotSinGraph.cpp
+│   │   └── test.sh
+│   └── plotRTrecording
+│       ├── CMakeLists.txt
+│       ├── ROOTDataPlotter.cpp
+│       ├── ROOTDataSaver.cpp
+│       ├── markdownFileInput.cpp
+│       ├── markdownTableAnalyzer.cpp
+│       ├── markdownTableDataExtractor.cpp
+│       └── plotRTrecording.cpp
 └── wrapUp.sh
 
-28 directories, 64 files
+28 directories, 68 files
 ```
 <!-- TREE END -->
 
