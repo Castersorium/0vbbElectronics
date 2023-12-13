@@ -64,4 +64,3 @@ public:
 } // namespace MDFIO
 
 #endif // MARKDOWNTABLEANALYZER_HPP
-
