@@ -33,4 +33,4 @@
 | 2023/DEC/12 | 13:10 | Cryostat  | DB-25      | DB-25 Junction box | T6: 1.02        | Measurement during temperature recovering     | R [Ohm]  | 82.4            | 87.8       | 50.4                      | ---                     | 168.4           | 58.3         |
 | 2023/DEC/12 | 15:38 | Cryostat  | DB-25      | DB-25 Junction box | T6: 1.31        | Measurement during temperature recovering     | R [Ohm]  | 77.3            | 87.9       | 50.9                      | ---                     | 147.1           | 58.5         |
 | 2023/DEC/13 | 11:51 | Cryostat  | DB-25      | DB-25 Junction box | T6: 148.0 m     | Measurement during temperature recovering     | R [Ohm]  | 422             | 101.3      | 57.0                      | ---                     | 726             | 72.7         |
-
+| 2023/DEC/13 | 14:26 | Cryostat  | DB-25      | DB-25 Junction box | T6: 145.57 m    | Measurement during temperature recovering     | R [Ohm]  | 424             | 90.7       | 57.6                      | ---                     | 726             | 74.8         |
