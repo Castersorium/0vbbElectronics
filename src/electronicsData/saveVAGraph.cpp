@@ -64,7 +64,7 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
 
     for (Long64_t i = 1; i <= 12; ++i) {
         channelGraphs[i] = new TGraph();
-        channelGraphs[i]->SetNameTitle(("g_"+channelNames[i]).c_str(),(channelNames[i]).c_str());
+        channelGraphs[i]->SetNameTitle(("g"+channelNames[i]).c_str(),(channelNames[i]).c_str());
         channelGraphs[i]->GetXaxis()->SetTitle("I_Bol(A)");
         channelGraphs[i]->GetYaxis()->SetTitle("V_Bol(V)");
         channelGraphs[i]->SetMarkerStyle(20);
@@ -82,7 +82,7 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
 
     }
 
-    TFile* outputFile = new TFile((outputPath + "AllCh_VAgraphs.root").c_str(), "RECREATE");
+    TFile* outputFile = new TFile((outputPath + "allCh_VAgraphs.root").c_str(), "RECREATE");
 
     // Write each TGraph to the TFile
     for (const auto& entry : channelGraphs) {
@@ -112,8 +112,6 @@ int main() {
             save_graphs(run_name, temperature);
         }
     }
-
-
 
     // Keep the program open to view the plot
     //std::cout << "Press enter to exit..." << std::endl;
