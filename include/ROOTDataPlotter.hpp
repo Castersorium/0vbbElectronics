@@ -24,7 +24,7 @@ public:
     void plotData();
     void plotAllGraphs( const std::string & filename );
 
-private:
+protected:
     std::string filePath;
     std::unique_ptr<TFile> file;
     std::unique_ptr<TTree> tree;
@@ -37,6 +37,8 @@ private:
 
 private:
     void createGraph( const char * branchName );
+
+protected:
     std::string getDetectorComment( const std::string & channelName );
 };
 
