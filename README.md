@@ -57,11 +57,32 @@ Here is the list of testing done:
 
 ## src
 
-<!--### plotRTrecording-->
+<!--### plotRTrecording; Waiting for SH-->
+
+### electronicsData
+
+#### `extractXLS.py`
+
+Save the configuration file `*.xls` from Matlab GUI. Using the python uproot package to save it into ROOT tree. Check `ColumnInfo.root` in output.
+
+Prerequisites:
+```bash
+pip install uproot pandas numpy
+```
+
+#### `saveVAGraph.cpp`
+
+Draw all the channels's U-I curve graph, and write it into one single root file `allCh_VAgraphs.root` in output.
+It still needs to compile before it works.
+
+> TODO: 
+>   - Add fit.
+>   - Use file list as input.
+>   - Q: Directly read from `.mat` files
 
 ### archived
 
-This is for the codes or documents which could be no longer needed to use.
+This is for the codes or documents which could be no longer needed to use or check.
 
 #### `plotGraph.C`
 
@@ -86,6 +107,7 @@ This is for the codes or documents which could be no longer needed to use.
 ├── Makefile
 ├── README.md
 ├── build
+│   ├── Sav.exe
 │   └── plotRTrecording
 │       └── plotRTrecording.exe
 ├── data
@@ -142,20 +164,36 @@ This is for the codes or documents which could be no longer needed to use.
 ├── output
 │   └── 2023Nov
 │       ├── 20p0mK
-│       │   ├── allGraphs.pdf
+│       │   ├── ColumnInfo.root
+│       │   ├── VACanvas.root
+│       │   ├── all3Graphs.pdf
+│       │   ├── allCh_VAgraphs.root
+│       │   ├── channels_map.txt
 │       │   └── outputFit.root
 │       ├── 22p2mK
-│       │   ├── allGraphs.pdf
+│       │   ├── ColumnInfo.root
+│       │   ├── VACanvas.root
+│       │   ├── all3Graphs.pdf
+│       │   ├── allCh_VAgraphs.root
+│       │   ├── channels_map.txt
 │       │   └── outputFit.root
 │       ├── 29p9mK
-│       │   ├── allGraphs.pdf
+│       │   ├── ColumnInfo.root
+│       │   ├── VACanvas.root
+│       │   ├── all3Graphs.pdf
+│       │   ├── allCh_VAgraphs.root
+│       │   ├── channels_map.txt
 │       │   └── outputFit.root
 │       ├── 39p9mK_PIDbad
 │       │   ├── 19T20@38-42mK.jpg
-│       │   ├── allGraphs.pdf
-│       │   ├── output.root
+│       │   ├── ColumnInfo.root
+│       │   ├── VACanvas.root
+│       │   ├── all3Graphs.pdf
+│       │   ├── allCh_VAgraphs.root
+│       │   ├── channels_map.txt
 │       │   ├── outputFit.root
 │       │   ├── outputFuAnQuXian.root
+│       │   ├── outputXYInversed.root
 │       │   └── testFit.root
 │       ├── RTCurve.xlsx
 │       ├── RTCurve_20-100mK.png
@@ -170,6 +208,10 @@ This is for the codes or documents which could be no longer needed to use.
 │   │   ├── plotGraph.cpp
 │   │   ├── plotSinGraph.cpp
 │   │   └── test.sh
+│   ├── electronicsData
+│   │   ├── drawFuAnCurve.cpp
+│   │   ├── extractXLS.py
+│   │   └── saveVAGraph.cpp
 │   └── plotRTrecording
 │       ├── CMakeLists.txt
 │       ├── ROOTDataPlotter.cpp
@@ -180,7 +222,7 @@ This is for the codes or documents which could be no longer needed to use.
 │       └── plotRTrecording.cpp
 └── wrapUp.sh
 
-28 directories, 68 files
+29 directories, 88 files
 ```
 <!-- TREE END -->
 

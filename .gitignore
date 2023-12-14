@@ -16,3 +16,6 @@ build/
 
 # For stream data
 *.csv
+
+# For testing root files
+test*.root
