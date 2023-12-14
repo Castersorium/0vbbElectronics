@@ -25,6 +25,7 @@ datas = cell(1,length(filenames));
 wint = 5;       % Window time in s
 % gain = 100.122;       % Default gain
 gain = 412;       % Italy DAQ
+% gain = 1648;       % Italy DAQ
 % rmsf0 = 0.2; %rms REG1 begin frequency
 % rmsf1 = 40; %rms REG1 end frequency
 % rmsf2 = 2500; %rms REG2 end frequency
