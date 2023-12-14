@@ -19,3 +19,6 @@ build/
 
 # For testing root files
 test*.root
+
+# For MatLab .mat files
+src/MatlabCode/matdata/**
