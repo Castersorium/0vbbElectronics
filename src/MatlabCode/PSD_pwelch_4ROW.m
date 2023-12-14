@@ -42,26 +42,26 @@ for i = 1:rows
     % Get the current filename and read in the data
     filename = filenames{j};
 %     filename = filenames{i};
-    data = readmatrix(fullfile(path, filename));
+    fullcsv = readmatrix(fullfile(path, filename));
 
     % Remove the first 4 rows of data and reshape into a vector
-    data = data(5:end, :); 
-    time = data(:,1);
-    data = data(:,2*i);
-    datas{k} = data;
+    rawcsv = fullcsv(5:end, 2*i-1:2*i); 
+    time = rawcsv(:,1);
+    rawdata = rawcsv(:,2);
+    datas{k} = rawdata;
 
     %calculate fs
     fs = round(1/(time(220)-time(219)));
 
-    % Set the gain based on the filename
-    if contains(filename,"1gain")
-        gain = 1; %set the gain to 1 if the filename contains "1gain"
-    elseif contains(filename,"10gain")
-        gain = 10.003; %set the gain to 10.003 if the filename contains "10gain"
-    elseif contains(filename,"100gain")
-        gain = 100.122; %set the gain to 100.122 if the filename contains "100gain"
-    end
-    data = data/gain;
+%     % Set the gain based on the filename
+%     if contains(filename,"1gain")
+%         gain = 1; %set the gain to 1 if the filename contains "1gain"
+%     elseif contains(filename,"10gain")
+%         gain = 10.003; %set the gain to 10.003 if the filename contains "10gain"
+%     elseif contains(filename,"100gain")
+%         gain = 100.122; %set the gain to 100.122 if the filename contains "100gain"
+%     end
+    data = rawdata/gain;
 
     % Define the window length and overlap
     win_len = wint * fs; 
@@ -100,7 +100,6 @@ for i = 1:rows
 %     save(fullfile(sub_dir, strcat(filename, '.mat')), 'f','data','psd');
 
 end
-i=1;
 end
 
 % plot_psd(fres, psds, 'a',wint,fs,legends);

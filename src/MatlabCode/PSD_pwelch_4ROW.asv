@@ -11,54 +11,58 @@ if ~iscell(filenames)
     filenames = {filenames};
 end
 
+rows = 4;
+
 % Initialize cell arrays
-legends = cell(1,length(filenames)); 
-psds = cell(1,length(filenames));
-fres = cell(1,length(filenames));
-datas = cell(1,length(filenames));
+legends = cell(1,rows*length(filenames)); 
+psds = cell(1,rows*length(filenames));
+fres = cell(1,rows*length(filenames));
+datas = cell(1,rows*length(filenames));
 % psd_ds = cell(1,length(filenames));
-% rms = cell(1,2*length(filenames));
+% rms = cell(1,rows*length(filenames));
 
 % Set parameters for the PSD calculation
 % sen = 1.026;    % Sensitivity in V/g
 % g = 9.79;       % m/s2
 wint = 1;       % Window time in s
 % gain = 100.122;       % Default gain
-gain = 412;       % Italy DAQ
+gain = 618;       % Italy DAQ
+% gain = 412;       % Italy DAQ
+% gain = 1648;       % Italy DAQ
 % rmsf0 = 0.2; %rms REG1 begin frequency
 % rmsf1 = 40; %rms REG1 end frequency
 % rmsf2 = 2500; %rms REG2 end frequency
 
 
 % Loop over selected files
+k=1;
 for j = 1:length(filenames)
 % for i = 1:4
-for i = 1:2
-    k = 1;
-    k++;
+for i = 1:rows
     % Get the current filename and read in the data
     filename = filenames{j};
 %     filename = filenames{i};
-    data = readmatrix(fullfile(path, filename));
+    fullcsv = readmatrix(fullfile(path, filename));
 
     % Remove the first 4 rows of data and reshape into a vector
-    data = data(5:end, :); 
-    time = data(:,1);
-    data = data(:,2*i);
-    datas{i+j-1} = data;
+    rawcsv = fullcsv(5:end, 2*i-1:2*i); 
+    time = rawcsv(:,1);
+    rawdata = rawcsv(:,2);
+    datas{k} = rawdata;
 
     %calculate fs
-    fs = round(1/(time(220)-time(219)));
+    time_difference = mean(diff(time)); % 计算时间间隔的均值
+    fs = 1 / time_difference; % 计算采样率
 
-    % Set the gain based on the filename
-    if contains(filename,"1gain")
-        gain = 1; %set the gain to 1 if the filename contains "1gain"
-    elseif contains(filename,"10gain")
-        gain = 10.003; %set the gain to 10.003 if the filename contains "10gain"
-    elseif contains(filename,"100gain")
-        gain = 100.122; %set the gain to 100.122 if the filename contains "100gain"
-    end
-    data = data/gain;
+%     % Set the gain based on the filename
+%     if contains(filename,"1gain")
+%         gain = 1; %set the gain to 1 if the filename contains "1gain"
+%     elseif contains(filename,"10gain")
+%         gain = 10.003; %set the gain to 10.003 if the filename contains "10gain"
+%     elseif contains(filename,"100gain")
+%         gain = 100.122; %set the gain to 100.122 if the filename contains "100gain"
+%     end
+    data = rawdata/gain;
 
     % Define the window length and overlap
     win_len = wint * fs; 
@@ -80,26 +84,25 @@ for i = 1:2
 %     %give value to the cell arrays
 %     rms{2*i-1} = rmsl;
 %     rms{2*i} = rmsh;
-    psds{i+j-1} = psd;
-    fres{i+j-1} = f ;
+    psds{k} = psd;
+    fres{k} = f ;
 %     psd_ds{i} = psd_d;
 
     % Set legend for current file
     [~, name, ~] = fileparts(filename);
-    legends{i+j-1} = name;
-
-    % Save data as .mat file
-    sub_dir = 'matdata';
-        if ~exist(sub_dir, 'dir')
-            mkdir(sub_dir);
-        end
-%     save(fullfile(sub_dir, strcat(filename, '.mat')), 'f','data','psd', 'psd_d', 'rmsl','rmsh');
-    save(fullfile(sub_dir, strcat(filename, '.mat')), 'f','data','psd');
+    legends{k} = name;
+    k = k+1;
+%     % Save data as .mat file
+%     sub_dir = 'matdata';
+%         if ~exist(sub_dir, 'dir')
+%             mkdir(sub_dir);
+%         end
+% %     save(fullfile(sub_dir, strcat(filename, '.mat')), 'f','data','psd', 'psd_d', 'rmsl','rmsh');
+%     save(fullfile(sub_dir, strcat(filename, '.mat')), 'f','data','psd');
 
 end
-i=1;
 end
 
-plot_psd(fres, psds, 'a',wint,fs,legends);
+% plot_psd(fres, psds, 'a',wint,fs,legends);
 % plot_psd(fres, psd_ds, 'd',wint,fs,legends);
-% plot_psd(fres, psds, 'v',wint,fs,legends);
+plot_psd(fres, psds, 'v',wint,fs,legends);
