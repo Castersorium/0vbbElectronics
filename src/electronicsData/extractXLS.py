@@ -40,16 +40,18 @@ def process_run(data_path, output_path, run_name, temperature):
     with uproot.recreate(output_file) as file:
         # Create a TTree with the name 'channelTree'
         file["channelTree"] = data_dict
-    print(storing_data)
+    # print(storing_data)
+    print("Results stored in " + output_file)
 
     # Print the channel map and output to channels_map.csv
     show_columns = ['DAQCH', 'Name']
     channel_map = df[show_columns]
     #show_data=show_data[show_data['DAQCH']<7] #If you need to apply channel cut
     channel_map_unique = channel_map.drop_duplicates(subset='DAQCH', keep='first')
-    print(channel_map_unique)
+    # print(channel_map_unique)
     #channel_map_unique.to_csv(output_path+'channels_map.csv', index=False)
     channel_map_unique.to_csv(output_path + 'channels_map.txt', index=False, sep='\t')
+    
 
 
 # List of run_names and temperatures
@@ -59,6 +61,9 @@ temperature_list = ["20p0mK/", "22p2mK/", "29p9mK/","39p9mK_PIDbad/"]
 
 data_path    = "../../data/"
 output_path  = "../../output/"
+
+print("Using run list: " + ", ".join(run_name_list))
+print("Under temperature: " + ", ".join(temperature_list))
 
 for run_name in run_name_list:
     for temperature in temperature_list:

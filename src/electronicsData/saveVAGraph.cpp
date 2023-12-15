@@ -15,11 +15,13 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
     // Open the ROOT file
     std::string dataPath = "../../data/";
     std::string outputPath = "../../output/";
+    std::string inputFileName  = "ColumnInfo.root";
+    std::string outputFileName = "allCh_VAgraphs.root";
 
     dataPath   = dataPath   + runName + temperature;
     outputPath = outputPath + runName + temperature;
 
-    TFile* file = TFile::Open((outputPath + "ColumnInfo.root").c_str());
+    TFile* file = TFile::Open((outputPath + inputFileName).c_str(), "READ");
 
     // Access the "channelTree" tree
     TTree* tree = dynamic_cast<TTree*>(file->Get("channelTree"));
@@ -82,7 +84,7 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
 
     }
 
-    TFile* outputFile = new TFile((outputPath + "allCh_VAgraphs.root").c_str(), "RECREATE");
+    TFile* outputFile = new TFile((outputPath + outputFileName).c_str(), "RECREATE");
 
     // Write each TGraph to the TFile
     for (const auto& entry : channelGraphs) {
@@ -93,6 +95,7 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
 
     // Close the TFile
     outputFile->Close();
+    std::cout << "Graphs stored in" << outputPath << "\n";
 }
 
 int main() {
