@@ -61,6 +61,14 @@ Here is the list of testing done:
 
 ### electronicsData
 
+#### `readXLSdraw.sh`
+
+A simple bash script that
+- Checks whether your environment has uproot
+- Runs the `extractXLS.py`
+    - This check and python script can be ignored if you add "-nex"
+- Compiles and run `saveVAGraph.cpp`
+
 #### `extractXLS.py`
 
 Save the configuration file `*.xls` from Matlab GUI. Using the python uproot package to save it into ROOT tree. Check `ColumnInfo.root` in output.
@@ -107,7 +115,8 @@ This is for the codes or documents which could be no longer needed to use or che
 ├── Makefile
 ├── README.md
 ├── build
-│   ├── Sav.exe
+│   ├── electronicsData
+│   │   └── saveVAGraph.exe
 │   └── plotRTrecording
 │       └── plotRTrecording.exe
 ├── data
@@ -160,8 +169,10 @@ This is for the codes or documents which could be no longer needed to use or che
 │   ├── markdownTableAnalyzer.hpp
 │   └── markdownTableDataExtractor.hpp
 ├── macro
-│   └── EasyDraw.snippet.cpp
+│   └── EasyDraw.cpp
 ├── output
+│   ├── 2023Dec
+│   │   └── testJYCanvas.root
 │   └── 2023Nov
 │       ├── 20p0mK
 │       │   ├── ColumnInfo.root
@@ -209,8 +220,10 @@ This is for the codes or documents which could be no longer needed to use or che
 │   │   ├── plotSinGraph.cpp
 │   │   └── test.sh
 │   ├── electronicsData
+│   │   ├── Makefile
 │   │   ├── drawFuAnCurve.cpp
 │   │   ├── extractXLS.py
+│   │   ├── readXLSdraw.sh
 │   │   └── saveVAGraph.cpp
 │   └── plotRTrecording
 │       ├── CMakeLists.txt
@@ -222,7 +235,7 @@ This is for the codes or documents which could be no longer needed to use or che
 │       └── plotRTrecording.cpp
 └── wrapUp.sh
 
-29 directories, 88 files
+31 directories, 91 files
 ```
 <!-- TREE END -->
 
