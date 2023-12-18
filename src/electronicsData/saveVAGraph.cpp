@@ -13,12 +13,12 @@
 #include <string>
 #include <map>
 
-void save_graphs(const std::string& runName, const std::string& temperature) {
+void save_graphs(const std::string& runName, const std::string& temperature, int kEnableFit) {
     // Open the ROOT file
     std::string dataPath = "../../data/";
     std::string outputPath = "../../output/";
     std::string inputFileName  = "ColumnInfo.root";
-    std::string outputFileName = "test_allCh_VAgraphs.root";
+    std::string outputFileName = "testFitVAgraphs.root";
 
     dataPath   = dataPath   + runName + temperature;
     outputPath = outputPath + runName + temperature;
@@ -91,31 +91,30 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
     // Write each TGraph to the TFile
     for (const auto& entry : channelGraphs) {
         Long64_t channel = entry.first;
+        if (channelGraphs[channel]->GetN() == 0) continue;
         channelGraphs[channel]->Write();
         //std::cout << channel << "\t" << channelGraphs[channel]->GetN() << "\t" << "\n";
     }
 
-    // Fit each TGraph
-    gStyle->SetOptFit(111);
+    // Fit each TGraph    
     for (const auto& entry : channelGraphs) {
         Long64_t channel = entry.first;
         TGraph* graph = channelGraphs[channel];
-        if (graph->GetN() == 0) continue;
+        if (graph->GetN() == 0 && kEnableFit == 0) continue;
         // Fit with a simple linear function (you can change this to any other fitting function)
         TF1* linearFitFunc = new TF1("linearFitFunc", "[0] + [1]*x", 0, 1e10); // Set I_Bol_min and I_Bol_max accordingly
         graph->Fit(linearFitFunc, "RES+");
 
         // Optionally, you can draw the fit function on the same canvas
         TCanvas* canvas = new TCanvas("canvas", "Fit Result", 800, 600);
-        canvas->SetTitle(("c_fit_" + channelNames[channel] ).c_str());
-        canvas->SetName (("c_fit_" + channelNames[channel] ).c_str());
+        canvas->SetTitle(("c_fit" + channelNames[channel] ).c_str());
+        canvas->SetName (("c_fit" + channelNames[channel] ).c_str());
         graph->Draw("AP");
         //linearFitFunc->SetLineColor(kRed);
         //linearFitFunc->SetLineWidth(2);
         linearFitFunc->Draw("same");
 
         // Save the canvas as an image if needed
-        //canvas->SaveAs((outputPath + "test_fit_result_channel_" + std::to_string(channel) + ".root").c_str());
         canvas->Write();
 
         // Store the fit function parameters or any other information if needed
@@ -132,6 +131,8 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
 }
 
 int main() {
+
+    gStyle->SetOptFit(111);
    
     // List of run_names and temperatures
     std::vector<std::string> run_name_list = {"2023Nov/"};//, "2023Dec/"};
@@ -142,10 +143,12 @@ int main() {
 
     //TODO: Add selected channels
 
+    int kEnableFit = 1;
+
     // Iterate over combinations of run_name and temperature
     for (const auto& run_name : run_name_list) {
         for (const auto& temperature : temperature_list) {
-            save_graphs(run_name, temperature);
+            save_graphs(run_name, temperature , kEnableFit);
         }
     }
 
