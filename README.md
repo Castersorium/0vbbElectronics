@@ -70,7 +70,7 @@ A simple bash script that
   - This check will check the py environment
   - Running the python script can be ignored if you add "-nex"
 - Compiles and run `saveVAGraph.cpp`
-- Output filed is stored in `out/` , which is not tracked by git
+- Output filed is stored in `build/` , which is not tracked by git
 
 #### `extractXLS.py`
 
