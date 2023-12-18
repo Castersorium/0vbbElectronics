@@ -20,5 +20,5 @@ if [ "$1" != "-nex" ]; then # nex = no need to extract
 fi
 
 echo "Now saving and drawing the VA Graph in a root file"
-make
+make debug
 ../../build/electronicsData/*.exe

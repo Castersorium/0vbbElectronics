@@ -22,6 +22,7 @@ def process_run(data_path, output_path, run_name, temperature):
     selected_columns = ['DAQCH', 'Onoff', 'V_Bol', 'I_Bol', 'Pre_gain', 'PGA_gain', 'Tot_gain', 'Bias_res', 'Filt_en','Cut_freq']
     extracted_data = df[selected_columns]
     filtered_data = extracted_data[extracted_data['Onoff'] == 1]
+    #filtered_data = extracted_data
 
     # Create a new DataFrame to store the extracted values
     storing_data = filtered_data.copy()

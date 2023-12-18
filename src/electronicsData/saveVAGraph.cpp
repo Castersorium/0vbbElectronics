@@ -76,10 +76,11 @@ void save_graphs(const std::string& runName, const std::string& temperature, int
 
     int pointIndex = 0;
     // Fill the TGraphs with data
-    for (Long64_t treeEntryNumber = 0; treeEntryNumber < tree->GetEntries(); ++treeEntryNumber) {
+    for (Long64_t treeEntryNumber = 0; treeEntryNumber < tree->GetEntries(); treeEntryNumber++) {
         tree->GetEntry(treeEntryNumber);
                 
         // Iterate over all channels
+        
         pointIndex = channelGraphs[DAQCH]->GetN();
         channelGraphs[DAQCH]->SetPoint(pointIndex, I_Bol, V_Bol);
         //std::cout << DAQCH << "\t" << pointIndex << "\t"<< I_Bol<< "\t"<< V_Bol << "\n";
@@ -99,17 +100,18 @@ void save_graphs(const std::string& runName, const std::string& temperature, int
     // Fit each TGraph    
     for (const auto& entry : channelGraphs) {
         Long64_t channel = entry.first;
-        TGraph* graph = channelGraphs[channel];
-        if (graph->GetN() == 0 && kEnableFit == 0) continue;
+        TGraph* graphFit = channelGraphs[channel];
+        if (graphFit->GetN() == 0 ) continue;
+        if (kEnableFit == 0) continue;
         // Fit with a simple linear function (you can change this to any other fitting function)
         TF1* linearFitFunc = new TF1("linearFitFunc", "[0] + [1]*x", 0, 1e10); // Set I_Bol_min and I_Bol_max accordingly
-        graph->Fit(linearFitFunc, "RES+");
+        graphFit->Fit(linearFitFunc, "RES+");
 
         // Optionally, you can draw the fit function on the same canvas
         TCanvas* canvas = new TCanvas("canvas", "Fit Result", 800, 600);
         canvas->SetTitle(("c_fit" + channelNames[channel] ).c_str());
         canvas->SetName (("c_fit" + channelNames[channel] ).c_str());
-        graph->Draw("AP");
+        graphFit->Draw("AP");
         //linearFitFunc->SetLineColor(kRed);
         //linearFitFunc->SetLineWidth(2);
         linearFitFunc->Draw("same");
