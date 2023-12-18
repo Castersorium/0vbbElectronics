@@ -1,8 +1,10 @@
 #include <TAxis.h>
 #include <TCanvas.h>
 #include <TFile.h>
+#include <TF1.h>
 #include <TGraph.h>
 #include <TLegend.h>
+#include <TStyle.h>
 #include <TTree.h>
 
 #include <iostream>
@@ -16,7 +18,7 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
     std::string dataPath = "../../data/";
     std::string outputPath = "../../output/";
     std::string inputFileName  = "ColumnInfo.root";
-    std::string outputFileName = "allCh_VAgraphs.root";
+    std::string outputFileName = "test_allCh_VAgraphs.root";
 
     dataPath   = dataPath   + runName + temperature;
     outputPath = outputPath + runName + temperature;
@@ -93,6 +95,37 @@ void save_graphs(const std::string& runName, const std::string& temperature) {
         //std::cout << channel << "\t" << channelGraphs[channel]->GetN() << "\t" << "\n";
     }
 
+    // Fit each TGraph
+    gStyle->SetOptFit(111);
+    for (const auto& entry : channelGraphs) {
+        Long64_t channel = entry.first;
+        TGraph* graph = channelGraphs[channel];
+        if (graph->GetN() == 0) continue;
+        // Fit with a simple linear function (you can change this to any other fitting function)
+        TF1* linearFitFunc = new TF1("linearFitFunc", "[0] + [1]*x", 0, 1e10); // Set I_Bol_min and I_Bol_max accordingly
+        graph->Fit(linearFitFunc, "RES+");
+
+        // Optionally, you can draw the fit function on the same canvas
+        TCanvas* canvas = new TCanvas("canvas", "Fit Result", 800, 600);
+        canvas->SetTitle(("c_fit_" + channelNames[channel] ).c_str());
+        canvas->SetName (("c_fit_" + channelNames[channel] ).c_str());
+        graph->Draw("AP");
+        //linearFitFunc->SetLineColor(kRed);
+        //linearFitFunc->SetLineWidth(2);
+        linearFitFunc->Draw("same");
+
+        // Save the canvas as an image if needed
+        //canvas->SaveAs((outputPath + "test_fit_result_channel_" + std::to_string(channel) + ".root").c_str());
+        canvas->Write();
+
+        // Store the fit function parameters or any other information if needed
+        double fitParameters[2];
+        linearFitFunc->GetParameters(fitParameters);
+        // You can do something with fitParameters here
+
+        delete linearFitFunc;
+    }
+
     // Close the TFile
     outputFile->Close();
     std::cout << "Graphs stored in" << outputPath << "\n";
@@ -102,8 +135,8 @@ int main() {
    
     // List of run_names and temperatures
     std::vector<std::string> run_name_list = {"2023Nov/"};//, "2023Dec/"};
-    std::vector<std::string> temperature_list = {"20p0mK/", "22p2mK/", "29p9mK/","39p9mK_PIDbad/"};
-    //std::vector<std::string> temperature_list = {"20p0mK/"};
+    //std::vector<std::string> temperature_list = {"20p0mK/", "22p2mK/", "29p9mK/","39p9mK_PIDbad/"};
+    std::vector<std::string> temperature_list = {"20p0mK/"};
 
     //TODO:  Idealy, the list should be input from a certain list outside the code
 
