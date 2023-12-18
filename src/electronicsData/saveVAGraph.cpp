@@ -66,12 +66,17 @@ void save_graphs(const std::string& runName, const std::string& temperature, int
     // TODO : DAQCH is not necessarily only 12
     std::map<Long64_t, TGraph*> channelGraphs;
 
+    TGraph *graph1 = new TGraph();
+    graph1->SetTitle(("g1" + temperature + ";I_Bol(A);V_Bol(V)").c_str());
+    graph1->SetName("g1" );
+
     for (Long64_t i = 1; i <= 12; ++i) {
         channelGraphs[i] = new TGraph();
         channelGraphs[i]->SetNameTitle(("g"+channelNames[i]).c_str(),(channelNames[i]).c_str());
         channelGraphs[i]->GetXaxis()->SetTitle("I_Bol(A)");
         channelGraphs[i]->GetYaxis()->SetTitle("V_Bol(V)");
         channelGraphs[i]->SetMarkerStyle(20);
+        graph1->SetPoint(i,i,0.001);
     }
 
     int pointIndex = 0;
@@ -88,6 +93,7 @@ void save_graphs(const std::string& runName, const std::string& temperature, int
     }
 
     TFile* outputFile = new TFile((outputPath + outputFileName).c_str(), "RECREATE");
+    graph1->Write();
 
     // Write each TGraph to the TFile
     for (const auto& entry : channelGraphs) {
@@ -105,6 +111,7 @@ void save_graphs(const std::string& runName, const std::string& temperature, int
         if (kEnableFit == 0) continue;
         // Fit with a simple linear function (you can change this to any other fitting function)
         TF1* linearFitFunc = new TF1("linearFitFunc", "[0] + [1]*x", 0, 1e10); // Set I_Bol_min and I_Bol_max accordingly
+        linearFitFunc->SetParNames("R_bol","Const");
         graphFit->Fit(linearFitFunc, "RES+");
 
         // Optionally, you can draw the fit function on the same canvas
@@ -145,7 +152,7 @@ int main() {
 
     //TODO: Add selected channels
 
-    int kEnableFit = 1;
+    int kEnableFit = 0;
 
     // Iterate over combinations of run_name and temperature
     for (const auto& run_name : run_name_list) {
