@@ -5,7 +5,7 @@
 #include "ROOTDataPlotter.hpp" // my header
 
 //#define DEBUGGING
-//#define DEBUGGINGVERBOSE
+#define DEBUGGINGVERBOSE
 
 namespace TTREEIO
 {

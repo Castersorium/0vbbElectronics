@@ -1,7 +1,7 @@
 #include "markdownTableAnalyzer.hpp" // my header
 
 //#define DEBUGGING
-//#define DEBUGGINGVERBOSE
+#define DEBUGGINGVERBOSE
 
 namespace MDFIO
 {
