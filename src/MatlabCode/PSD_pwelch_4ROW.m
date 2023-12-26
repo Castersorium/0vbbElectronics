@@ -24,7 +24,7 @@ datas = cell(1,rows*length(filenames));
 % Set parameters for the PSD calculation
 % sen = 1.026;    % Sensitivity in V/g
 % g = 9.79;       % m/s2
-wint = 1;       % Window time in s
+wint = 10;       % Window time in s
 % gain = 100.122;       % Default gain
 gain = 618;       % Italy DAQ
 % gain = 412;       % Italy DAQ
