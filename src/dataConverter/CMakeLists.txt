@@ -5,7 +5,7 @@
 set(EXECUTABLE_NAME "dataConverter")
 
 # 将源代码添加到此项目的可执行文件。
-add_executable(${EXECUTABLE_NAME} "dataConverter.cpp")
+add_executable(${EXECUTABLE_NAME} "dataConverter.cpp" "convert2TTree.cpp")
 
 message("========Printing EXECUTABLE_NAME...")
 message("${EXECUTABLE_NAME}")
