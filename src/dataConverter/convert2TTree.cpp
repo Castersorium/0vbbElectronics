@@ -19,6 +19,8 @@ void convert2TTree::convertTDMS2TTree( const std::string tdmsFileName, const std
     // 如果isDebugModeActive状态为true，打印出一条消息
     if ( isDebugModeActive )
     {
+
+        std::cout << " - Input root file read: " << tdmsFileName << std::endl;
         std::cout << " - Output root file created: " << rootFileName << std::endl;
     }
 

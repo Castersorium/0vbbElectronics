@@ -32,6 +32,7 @@ int main( int argc, char * argv[] )
         std::cout << "Error: ROOT path " << rootFilePath << "does not exist or is not a directory." << std::endl;
         return 1;
     }
+    std::string tdmsFilePath_str = tdmsFilePath.string();
     std::string rootFilePath_str = rootFilePath.string();
 
     // 创建convert2TTree的实例
@@ -41,12 +42,13 @@ int main( int argc, char * argv[] )
     myConverter->setDebug( true );
 
     // 遍历目录下的所有文件
-    for ( const auto & entry : std::filesystem::directory_iterator( tdmsFilePath ) )
-    {
-        std::cout << "File path:" << entry.path() << std::endl;
-        // 调用convertTDMS2TTree函数来转换数据
-        myConverter->convertTDMS2TTree( "data.tdms", rootFilePath_str + "./data.root" );
-    }
+    //for ( const auto & entry : std::filesystem::directory_iterator( tdmsFilePath ) )
+    //{
+    //    std::cout << "File path:" << entry.path() << std::endl;
+    //    // 调用convertTDMS2TTree函数来转换数据
+    //    myConverter->convertTDMS2TTree( "data.tdms", rootFilePath_str + "./data.root" );
+    //}
+    myConverter->convertTDMS2TTree( tdmsFilePath_str + "记录-2024-04-02 091354 803.tdms", rootFilePath_str + "./data.root" );
 
     std::cout << "Hello, my project." << std::endl;
 
