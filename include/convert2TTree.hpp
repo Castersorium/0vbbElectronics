@@ -11,7 +11,7 @@ public:
     convert2TTree() : isDebugModeActive( false ) {}  // 构造函数，初始化isDebugModeActive为false
     void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // 设置debug状态
     // 定义一个函数，用于将TDMS格式的数据转换为TTree格式
-    void convertTDMS2TTree( const char * tdmsFileName, const char * rootFileName );
+    void convertTDMS2TTree( const std::string tdmsFileName, const std::string rootFileName );
 
 protected:
     bool isDebugModeActive;  // debug状态

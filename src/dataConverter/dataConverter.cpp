@@ -1,22 +1,52 @@
 #include <iostream> // C++ header
 #include <memory>
+#include <filesystem>
+#include <string>
 
 #include <TFile.h> // ROOT header
 #include <TTree.h>
 
 #include "convert2TTree.hpp" // my header
 
-int main()
+int main( int argc, char * argv[] )
 {
-    // 在这里，你可以控制你需要使用的所有函数
-    // 例如，你可以调用convertTDMS2TTree函数来转换数据
+    // 检查是否提供了文件路径
+    if ( argc < 3 )
+    {
+        std::cout << "Usage: " << argv[0] << " <input TDMS file> <output ROOT file>" << std::endl;
+        return 1;
+    }
+
+    // 从命令行参数中获取文件路径
+    std::filesystem::path tdmsFilePath = argv[1];
+    std::filesystem::path rootFilePath = argv[2];
+
+    // 检查路径是否存在且是一个目录
+    if ( !std::filesystem::exists( tdmsFilePath ) || !std::filesystem::is_directory( tdmsFilePath ) )
+    {
+        std::cout << "Error: TDMS path " << tdmsFilePath << "does not exist or is not a directory." << std::endl;
+        return 1;
+    }
+    if ( !std::filesystem::exists( rootFilePath ) || !std::filesystem::is_directory( rootFilePath ) )
+    {
+        std::cout << "Error: ROOT path " << rootFilePath << "does not exist or is not a directory." << std::endl;
+        return 1;
+    }
+    std::string rootFilePath_str = rootFilePath.string();
+
+    // 创建convert2TTree的实例
     std::unique_ptr< TTREEIO::convert2TTree> myConverter = std::make_unique<TTREEIO::convert2TTree>();
 
     // 打开debug模式
     myConverter->setDebug( true );
 
-    // 调用convertTDMS2TTree函数来转换数据
-    myConverter->convertTDMS2TTree( "data.tdms", "data.root" );
+    // 遍历目录下的所有文件
+    for ( const auto & entry : std::filesystem::directory_iterator( tdmsFilePath ) )
+    {
+        std::cout << "File path:" << entry.path() << std::endl;
+        // 调用convertTDMS2TTree函数来转换数据
+        myConverter->convertTDMS2TTree( "data.tdms", rootFilePath_str + "./data.root" );
+    }
 
     std::cout << "Hello, my project." << std::endl;
 

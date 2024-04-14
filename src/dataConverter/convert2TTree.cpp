@@ -8,10 +8,10 @@
 namespace TTREEIO
 {
 // 定义一个函数，用于将TDMS格式的数据转换为TTree格式
-void convert2TTree::convertTDMS2TTree( const char * tdmsFileName, const char * rootFileName )
+void convert2TTree::convertTDMS2TTree( const std::string tdmsFileName, const std::string rootFileName )
 {
     // 创建一个新的ROOT文件
-    TFile * file = new TFile( rootFileName, "RECREATE" );
+    TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
     // 创建一个新的TTree
     TTree * tree = new TTree( "tree", "A tree with two branches" );
