@@ -1,4 +1,8 @@
 #include <iostream> // C++ header
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
 
 #include <TFile.h> // ROOT header
 #include <TTree.h>
@@ -20,24 +24,68 @@ void convert2TTree::convertCSV2TTree( const std::string csvFileName, const std::
     if ( isDebugModeActive )
     {
 
-        std::cout << " - Input root file read: " << csvFileName << std::endl;
+        std::cout << " - Input csv file read: " << csvFileName << std::endl;
         std::cout << " - Output root file created: " << rootFileName << std::endl;
     }
 
+    // 打开CSV文件
+    std::ifstream csvFile( csvFileName );
+    if ( !csvFile.is_open() )
+    {
+        std::cerr << "Can not open csv file: " << csvFileName << std::endl;
+        return;
+    }
+
+    
+    // 读取第一行来确定通道数
+    std::string line;
+    std::getline( csvFile, line );
+    int commaCount = std::count( line.begin(), line.end(), ',' );
+    if ( commaCount == 0 )
+    {
+        std::cerr << "Error: CSV file format is incorrect" << std::endl;
+        return;
+    }
+    int channelCount = commaCount / 2 + 1;
+
     // 创建变量来存储branch的值
-    double timestamp = 0;
-    double amplitude = 0;
+    std::vector<double> amplitudes( channelCount, 0.0 );
 
-    // 创建两个branch
-    tree->Branch( "timestamp", &timestamp, "timestamp/D" );
-    tree->Branch( "amplitude", &amplitude, "amplitude/D" );
+    // 创建branch
+    for ( int i = 0; i < channelCount; ++i )
+    {
+        tree->Branch( ( "Amp" + std::to_string( i ) ).c_str(), &amplitudes[i], ( "Amp" + std::to_string( i ) + "/D" ).c_str() );
+    }
 
-    // 在这里，你需要添加代码来读取CSV文件的数据
-    // 然后，对于每一条数据，你需要更新timestamp和amplitude的值，然后填充TTree
-    // 例如：
-    // timestamp = ...;  // 更新timestamp的值
-    // amplitude = ...;  // 更新amplitude的值
-    // tree->Fill();     // 填充TTree
+    // 跳过剩余的前四行
+    for ( int i = 0; i < 3; ++i )
+    {
+        csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+    }
+
+    // 读取CSV文件的数据
+    while ( std::getline( csvFile, line ) )
+    {
+        std::istringstream ss( line );
+        std::string field;
+
+        // 获取时间戳
+        std::getline( ss, field, ',' );
+        double timestamp = std::stod( field );
+
+        // 获取每个通道的幅度
+        for ( int i = 0; i < channelCount; ++i )
+        {
+            std::getline( ss, field, ',' );
+            amplitudes[i] = std::stod( field );
+
+            // 跳过下一个时间戳
+            std::getline( ss, field, ',' );
+        }
+
+        // 填充TTree
+        tree->Fill();
+    }
 
     // 将TTree写入到ROOT文件中
     tree->Write();

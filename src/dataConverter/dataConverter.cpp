@@ -48,7 +48,7 @@ int main( int argc, char * argv[] )
     //    // 调用convertCSV2TTree函数来转换数据
     //    myConverter->convertCSV2TTree( "data.csv", rootFilePath_str + "./data.root" );
     //}
-    myConverter->convertCSV2TTree( csvFilePath_str + "记录-2024-04-02 091354 803.csv", rootFilePath_str + "./data.root" );
+    myConverter->convertCSV2TTree( csvFilePath_str + "19T20_29x3_10GOhm_7Vbias_2kHz.csv", rootFilePath_str + "./data.root" );
 
     std::cout << "Hello, my project." << std::endl;
 
