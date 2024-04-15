@@ -7,6 +7,7 @@
 #include <TTree.h>
 
 #include "convert2TTree.hpp" // my header
+#include "TTreePlotter.hpp"
 
 int main( int argc, char * argv[] )
 {
@@ -48,7 +49,14 @@ int main( int argc, char * argv[] )
     // 转换CSV文件到ROOT文件
     myConverter->convertCSV2TTree( csvDirPath.string(), rootDirPath.string() + "/data.root" );
 
-    // 在这里添加你的绘图代码，使用plotDirPath作为输出目录
+    // 创建TTreePlotter的实例
+    std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
+
+    // 打开debug模式
+    myPlotter->setDebug(true);
+
+    // 从ROOT文件创建TGraphErrors并保存到ROOT文件
+    myPlotter->createGraphFromTree( rootDirPath.string() + "/data.root", plotDirPath.string() + "/plot.root" );
 
     std::cout << "Hello, my project." << std::endl;
 
