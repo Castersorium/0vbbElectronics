@@ -11,44 +11,44 @@
 int main( int argc, char * argv[] )
 {
     // 检查是否提供了文件路径
-    if ( argc < 3 )
+    if ( argc < 4 )
     {
-        std::cout << "Usage: " << argv[0] << " <input CSV file> <output ROOT file>" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <input CSV directory> <output ROOT directory> <output plot directory>" << std::endl;
         return 1;
     }
 
     // 从命令行参数中获取文件路径
-    std::filesystem::path csvFilePath = argv[1];
-    std::filesystem::path rootFilePath = argv[2];
+    std::filesystem::path csvDirPath = argv[1];
+    std::filesystem::path rootDirPath = argv[2];
+    std::filesystem::path plotDirPath = argv[3];
 
     // 检查路径是否存在且是一个目录
-    if ( !std::filesystem::exists( csvFilePath ) || !std::filesystem::is_directory( csvFilePath ) )
+    if ( !std::filesystem::exists( csvDirPath ) || !std::filesystem::is_directory( csvDirPath ) )
     {
-        std::cout << "Error: CSV path " << csvFilePath << "does not exist or is not a directory." << std::endl;
+        std::cout << "Error: CSV directory " << csvDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    if ( !std::filesystem::exists( rootFilePath ) || !std::filesystem::is_directory( rootFilePath ) )
+    if ( !std::filesystem::exists( rootDirPath ) || !std::filesystem::is_directory( rootDirPath ) )
     {
-        std::cout << "Error: ROOT path " << rootFilePath << "does not exist or is not a directory." << std::endl;
+        std::cout << "Error: ROOT directory " << rootDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    std::string csvFilePath_str = csvFilePath.string();
-    std::string rootFilePath_str = rootFilePath.string();
+    if ( !std::filesystem::exists( plotDirPath ) || !std::filesystem::is_directory( plotDirPath ) )
+    {
+        std::cout << "Error: Plot directory " << plotDirPath << " does not exist or is not a directory." << std::endl;
+        return 1;
+    }
 
     // 创建convert2TTree的实例
-    std::unique_ptr< TTREEIO::convert2TTree> myConverter = std::make_unique<TTREEIO::convert2TTree>();
+    std::unique_ptr<TTREEIO::convert2TTree> myConverter = std::make_unique<TTREEIO::convert2TTree>();
 
     // 打开debug模式
-    myConverter->setDebug( true );
+    //myConverter->setDebug(true);
 
-    // 遍历目录下的所有文件
-    //for ( const auto & entry : std::filesystem::directory_iterator( csvFilePath ) )
-    //{
-    //    std::cout << "File path:" << entry.path() << std::endl;
-    //    // 调用convertCSV2TTree函数来转换数据
-    //    myConverter->convertCSV2TTree( "data.csv", rootFilePath_str + "./data.root" );
-    //}
-    myConverter->convertCSV2TTree( csvFilePath_str + "19T20_29x3_10GOhm_7Vbias_2kHz.csv", rootFilePath_str + "./data.root" );
+    // 转换CSV文件到ROOT文件
+    myConverter->convertCSV2TTree( csvDirPath.string(), rootDirPath.string() + "/data.root" );
+
+    // 在这里添加你的绘图代码，使用plotDirPath作为输出目录
 
     std::cout << "Hello, my project." << std::endl;
 
