@@ -1,8 +1,11 @@
 #include <iostream> // C++ header
+#include <cmath>
 
 #include <TFile.h> // ROOT header
 #include <TTree.h>
 #include <TGraphErrors.h>
+#include <TH1D.h>
+#include <TKey.h>
 
 #include "TTreePlotter.hpp" // my header
 
@@ -40,6 +43,52 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
     tree->SetBranchAddress( "timestamp", &timestamp );
     tree->SetBranchAddress( "2cmLMO", &Amp_2cmLMO );
 
+    // 将TGraphErrors保存到新的ROOT文件
+    TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
+    if ( !outputFile || outputFile->IsZombie() )
+    {
+        std::cerr << "Error: Cannot create ROOT file:" << outputFilePath << std::endl;
+        return;
+    }
+
+    TH1D * hist = nullptr;  // 当前的直方图
+    double timestamp_ini = -1.0;  // 初始的时间戳
+
+    // 遍历TTree中的每个entry
+    for ( int i = 0; i < n; ++i )
+    {
+        tree->GetEntry( i );
+
+        // 如果当前的时间戳超出了[timestamp_ini, timestamp_ini+1)的范围
+        if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + 1 )
+        {
+            // 保存当前的直方图
+            if ( hist )
+            {
+                hist->Write();
+                delete hist;
+            }
+
+            // 创建一个新的直方图
+            timestamp_ini = floor( timestamp );
+            std::string histName = "hist_" + std::to_string( static_cast<int>( timestamp_ini ) );
+            hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), 1000, -10, 10 );
+        }
+
+        // 将Amp_2cmLMO的值填充到直方图的相应时间窗口中
+        hist->Fill( Amp_2cmLMO );
+    }
+
+    // 保存最后一个直方图
+    if ( hist )
+    {
+        hist->Write();
+        delete hist;
+    }
+
+    timestamp = 0;
+    Amp_2cmLMO = 0;
+
     for ( int i = 0; i < n; ++i )
     {
         tree->GetEntry( i );
@@ -59,14 +108,6 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
     delete[] y;
     delete[] ex;
     delete[] ey;
-
-    // 将TGraphErrors保存到新的ROOT文件
-    TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
-    if ( !outputFile || outputFile->IsZombie() )
-    {
-        std::cerr << "Error: Cannot create ROOT file:" << outputFilePath << std::endl;
-        return;
-    }
 
     graph->Write( "graph" );
     outputFile->Close();
