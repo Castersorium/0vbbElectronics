@@ -1,5 +1,7 @@
 #include <iostream> // C++ header
 #include <cmath>
+#include <vector>
+#include <numeric>
 
 #include <TFile.h> // ROOT header
 #include <TTree.h>
@@ -32,10 +34,11 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
 
     // 从TTree中获取数据
     int n = tree->GetEntries();
-    double * x = new double[n];
-    double * y = new double[n];
-    double * ex = new double[n];  // x轴误差
-    double * ey = new double[n];  // y轴误差
+
+    std::vector <double> x_vec = {};
+    std::vector <double> y_2cmLMO_vec = {};
+    std::vector <double> ex_vec = {};  // x轴误差
+    std::vector <double> ey_2cmLMO_vec = {};  // y轴误差
 
     double timestamp = 0;
     double Amp_2cmLMO = 0;
@@ -51,6 +54,8 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
         return;
     }
 
+    // 创建一个向量来存储每个时间窗口内的所有时间戳
+    std::vector<double> timestamps_vec;
     TH1D * hist = nullptr;  // 当前的直方图
     double timestamp_ini = -1.0;  // 初始的时间戳
 
@@ -65,49 +70,84 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
             // 保存当前的直方图
             if ( hist )
             {
-                hist->Write();
+                // 计算时间戳的平均值并打印出来
+                double average = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
+
+                // 计算标准差
+                double sum_deviation = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average]( double sum, double val ) { return sum + ( val - average ) * ( val - average ); } );
+                double stddev = std::sqrt( sum_deviation / timestamps_vec.size() );
+
+                // 找到直方图中最高bin的x轴值并打印出来
+                int maxBin = hist->GetMaximumBin();
+                double maxX = hist->GetBinCenter( maxBin );
+
+                x_vec.emplace_back( average );
+                y_2cmLMO_vec.emplace_back( maxX );
+                ex_vec.emplace_back( stddev );
+                ey_2cmLMO_vec.emplace_back( hist->GetBinWidth( 0 ) );
+
+                if ( isDebugModeActive )
+                {
+                    std::cout << "Average timestamp for " << hist->GetName() << ": " << average << std::endl;
+                    std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev << std::endl;
+                    // 使用TDatime将平均时间戳转换为日期和时间
+                    TDatime date( static_cast<UInt_t>( average ) );
+                    std::cout << "Average date and time for " << hist->GetName() << ": " << date.AsString() << std::endl;
+                    std::cout << "Mode amplitude for " << hist->GetName() << ": " << maxX << std::endl;
+                    hist->Write();
+                }
                 delete hist;
             }
 
             // 创建一个新的直方图
             timestamp_ini = floor( timestamp );
             std::string histName = "hist_" + std::to_string( static_cast<int>( timestamp_ini ) );
-            hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), 1000, -10, 10 );
+            hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), 4000, -10, 10 );
+            // 清空时间戳向量
+            timestamps_vec.clear();
         }
 
         // 将Amp_2cmLMO的值填充到直方图的相应时间窗口中
         hist->Fill( Amp_2cmLMO );
+
+        // 将当前的时间戳添加到向量中
+        timestamps_vec.emplace_back( timestamp );
     }
 
     // 保存最后一个直方图
     if ( hist )
     {
-        hist->Write();
+        // 计算时间戳的平均值并打印出来
+        double average = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
+
+        // 计算标准差
+        double sum_deviation = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average]( double sum, double val ) { return sum + ( val - average ) * ( val - average ); } );
+        double stddev = std::sqrt( sum_deviation / timestamps_vec.size() );
+
+        // 找到直方图中最高bin的x轴值并打印出来
+        int maxBin = hist->GetMaximumBin();
+        double maxX = hist->GetBinCenter( maxBin );
+
+        x_vec.emplace_back( average );
+        y_2cmLMO_vec.emplace_back( maxX );
+        ex_vec.emplace_back( stddev );
+        ey_2cmLMO_vec.emplace_back( hist->GetBinWidth( 0 ) );
+
+        if ( isDebugModeActive )
+        {
+            std::cout << "Average timestamp for " << hist->GetName() << ": " << average << std::endl;
+            std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev << std::endl;
+            // 使用TDatime将平均时间戳转换为日期和时间
+            TDatime date( static_cast<UInt_t>( average ) );
+            std::cout << "Average date and time for " << hist->GetName() << ": " << date.AsString() << std::endl;
+            std::cout << "Mode amplitude for " << hist->GetName() << ": " << maxX << std::endl;
+            hist->Write();
+        }
         delete hist;
     }
 
-    timestamp = 0;
-    Amp_2cmLMO = 0;
-
-    for ( int i = 0; i < n; ++i )
-    {
-        tree->GetEntry( i );
-        x[i] = timestamp;
-        y[i] = Amp_2cmLMO;
-        // 假设x轴没有误差
-        ex[i] = 0;
-        // 假设y轴的误差是y的10%
-        ey[i] = y[i] * 0.1;
-    }
-
     // 创建TGraphErrors
-    TGraphErrors * graph = new TGraphErrors( n, x, y, ex, ey );
-
-    // 注意：在使用完x和y后，记得删除它们
-    delete[] x;
-    delete[] y;
-    delete[] ex;
-    delete[] ey;
+    TGraphErrors * graph = new TGraphErrors( x_vec.size(), x_vec.data(), y_2cmLMO_vec.data(), ex_vec.data(), ey_2cmLMO_vec.data() );
 
     graph->Write( "graph" );
     outputFile->Close();

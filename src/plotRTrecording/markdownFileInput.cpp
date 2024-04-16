@@ -15,7 +15,7 @@ void markdownFileInput::readMarkdownTable( const std::string & filename )
         // 检查该行是否包含 Markdown 表格分隔符
         if ( line.find( '|' ) != std::string::npos )
         {
-            tableContent_string_vec.push_back( line );
+            tableContent_string_vec.emplace_back( line );
         }
     }
     file.close();

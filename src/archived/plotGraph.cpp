@@ -42,8 +42,8 @@ void plotGraph() {
         double tempX, tempY;
 
         while (dataFile >> tempX >> tempY) {
-            x.push_back(tempX);
-            y.push_back(tempY);
+            x.emplace_back(tempX);
+            y.emplace_back(tempY);
         }
 
         dataFile.close();

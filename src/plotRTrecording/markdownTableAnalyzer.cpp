@@ -68,7 +68,7 @@ void markdownTableAnalyzer::readGeneralInformation()
             token = trim( token ); // 使用新的trim函数去除头尾空格
             if ( !token.empty() )
             {
-                channelNames_string_vec.push_back( token );
+                channelNames_string_vec.emplace_back( token );
             }
         }
         // 忽略分隔符行，不进行处理
@@ -77,7 +77,7 @@ void markdownTableAnalyzer::readGeneralInformation()
             token = trim( token ); // 使用新的trim函数去除头尾空格
             if ( !token.empty() && token.find_first_not_of( " \t\r" ) != std::string::npos )
             {
-                pinNumbers_string_vec.push_back( token );
+                pinNumbers_string_vec.emplace_back( token );
             }
         }
         while ( std::getline( detectorStream, token, '|' ) )
@@ -86,7 +86,7 @@ void markdownTableAnalyzer::readGeneralInformation()
             // 确保字符串不为空且包含非空白字符
             if ( !token.empty() && token.find_first_not_of( " \t\r" ) != std::string::npos )
             {
-                detectorNames_string_vec.push_back( token );
+                detectorNames_string_vec.emplace_back( token );
 #ifdef DEBUGGINGVERBOSE
                 std::cout << "detectorNames_string_vec pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
@@ -110,7 +110,7 @@ void markdownTableAnalyzer::readGeneralInformation()
                     // 确保字符串不为空且包含非空白字符
                     if ( token.find_first_not_of( " \t\r" ) != std::string::npos )
                     {
-                        detectorComments_string_vec.push_back( token );
+                        detectorComments_string_vec.emplace_back( token );
 #ifdef DEBUGGINGVERBOSE
                         std::cout << "detectorComments_string_vec pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
@@ -177,7 +177,7 @@ void markdownTableAnalyzer::readMeasurementEntries()
             // 确保字符串不为空且包含非空白字符
             if ( token.find_first_not_of( " \t\r" ) != std::string::npos )
             {
-                entryTokens.push_back( token );
+                entryTokens.emplace_back( token );
 #ifdef DEBUGGINGVERBOSE
                 std::cout << "entryTokens pushed back: \"" << token << "\"" << std::endl;
 #endif // DEBUGGINGVERBOSE
@@ -193,13 +193,13 @@ void markdownTableAnalyzer::readMeasurementEntries()
         // 检查entryTokens的大小是否正确
         if ( entryTokens.size() == static_cast<unsigned long>( 7 ) + channelNames_string_vec.size() )
         {
-            date_string_vec.push_back( entryTokens[0] );
-            time_string_vec.push_back( entryTokens[1] );
-            location_string_vec.push_back( entryTokens[2] );
-            interface_string_vec.push_back( entryTokens[3] );
-            measuringPosition_string_vec.push_back( entryTokens[4] );
-            temperature_string_vec.push_back( entryTokens[5] );
-            comment_string_vec.push_back( entryTokens[6] );
+            date_string_vec.emplace_back( entryTokens[0] );
+            time_string_vec.emplace_back( entryTokens[1] );
+            location_string_vec.emplace_back( entryTokens[2] );
+            interface_string_vec.emplace_back( entryTokens[3] );
+            measuringPosition_string_vec.emplace_back( entryTokens[4] );
+            temperature_string_vec.emplace_back( entryTokens[5] );
+            comment_string_vec.emplace_back( entryTokens[6] );
 
             // 检查"R [Ohm]"字段是否存在
             if ( entryTokens[7] == "R [Ohm]" )
@@ -211,27 +211,27 @@ void markdownTableAnalyzer::readMeasurementEntries()
                     // 根据通道名称将电阻值存储到相应的向量中
                     if ( channelNames_string_vec[j + 1] == "CH7" )
                     {
-                        resistance_ch7_string_vec.push_back( resistanceValue );
+                        resistance_ch7_string_vec.emplace_back( resistanceValue );
                     }
                     else if ( channelNames_string_vec[j + 1] == "CH8" )
                     {
-                        resistance_ch8_string_vec.push_back( resistanceValue );
+                        resistance_ch8_string_vec.emplace_back( resistanceValue );
                     }
                     else if ( channelNames_string_vec[j + 1] == "CH9" )
                     {
-                        resistance_ch9_string_vec.push_back( resistanceValue );
+                        resistance_ch9_string_vec.emplace_back( resistanceValue );
                     }
                     else if ( channelNames_string_vec[j + 1] == "CH10" )
                     {
-                        resistance_ch10_string_vec.push_back( resistanceValue );
+                        resistance_ch10_string_vec.emplace_back( resistanceValue );
                     }
                     else if ( channelNames_string_vec[j + 1] == "CH11" )
                     {
-                        resistance_ch11_string_vec.push_back( resistanceValue );
+                        resistance_ch11_string_vec.emplace_back( resistanceValue );
                     }
                     else if ( channelNames_string_vec[j + 1] == "CH12" )
                     {
-                        resistance_ch12_string_vec.push_back( resistanceValue );
+                        resistance_ch12_string_vec.emplace_back( resistanceValue );
                     }
                 }
             }

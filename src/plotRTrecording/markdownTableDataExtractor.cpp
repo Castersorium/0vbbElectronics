@@ -98,8 +98,8 @@ void markdownTableDataExtractor::convertTemperature()
             temperature_err = std::numeric_limits<double>::quiet_NaN();
         }
 
-        temperature_d_vec.push_back( temperature );
-        temperature_err_d_vec.push_back( temperature_err );
+        temperature_d_vec.emplace_back( temperature );
+        temperature_err_d_vec.emplace_back( temperature_err );
     }
 }
 
@@ -144,27 +144,27 @@ void markdownTableDataExtractor::convertStringToDouble()
     // 使用lambda函数转换每个通道的字符串向量为double向量
     for ( const auto & str : resistance_ch7_string_vec )
     {
-        resistance_ch7_d_vec.push_back( stringToDouble( str ) );
+        resistance_ch7_d_vec.emplace_back( stringToDouble( str ) );
     }
     for ( const auto & str : resistance_ch8_string_vec )
     {
-        resistance_ch8_d_vec.push_back( stringToDouble( str ) );
+        resistance_ch8_d_vec.emplace_back( stringToDouble( str ) );
     }
     for ( const auto & str : resistance_ch9_string_vec )
     {
-        resistance_ch9_d_vec.push_back( stringToDouble( str ) );
+        resistance_ch9_d_vec.emplace_back( stringToDouble( str ) );
     }
     for ( const auto & str : resistance_ch10_string_vec )
     {
-        resistance_ch10_d_vec.push_back( stringToDouble( str ) );
+        resistance_ch10_d_vec.emplace_back( stringToDouble( str ) );
     }
     for ( const auto & str : resistance_ch11_string_vec )
     {
-        resistance_ch11_d_vec.push_back( stringToDouble( str ) );
+        resistance_ch11_d_vec.emplace_back( stringToDouble( str ) );
     }
     for ( const auto & str : resistance_ch12_string_vec )
     {
-        resistance_ch12_d_vec.push_back( stringToDouble( str ) );
+        resistance_ch12_d_vec.emplace_back( stringToDouble( str ) );
     }
 }
 

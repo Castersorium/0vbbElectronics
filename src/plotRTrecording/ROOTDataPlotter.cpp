@@ -87,10 +87,10 @@ void ROOTDataPlotter::createGraph( const char * branchName )
 #endif // DEBUGGING
 
     // 将图例条目添加到向量中
-    detectorComments.push_back( detectorComment );
+    detectorComments.emplace_back( detectorComment );
 
     // 将图形添加到向量中
-    graphs.push_back( std::move( graph ) );
+    graphs.emplace_back( std::move( graph ) );
 }
 
 void ROOTDataPlotter::plotAllGraphs( const std::string & filename )
