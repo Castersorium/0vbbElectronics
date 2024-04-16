@@ -16,7 +16,7 @@ public:
     void setAmpHistoBinWidth( double newBinWidth ) { xBinWidth = newBinWidth; }  // 设置幅度直方图的bin宽度
     void setTimeWindow( double newTimeWindow ) { timeWindow = newTimeWindow; }  // 设置事件采样窗口的范围
     // 从TTree创建TGraphErrors并保存到ROOT文件的方法
-    void createGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath );
+    void createGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
 
 protected:
     bool isDebugModeActive;  // debug状态
