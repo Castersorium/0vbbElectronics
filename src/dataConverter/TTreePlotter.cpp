@@ -64,8 +64,8 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
     {
         tree->GetEntry( i );
 
-        // 如果当前的时间戳超出了[timestamp_ini, timestamp_ini+1)的范围
-        if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + 1 )
+        // 如果当前的时间戳超出了[timestamp_ini, timestamp_ini + timeWindow)的范围
+        if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + timeWindow )
         {
             // 保存当前的直方图
             if ( hist )
@@ -102,7 +102,7 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
             // 创建一个新的直方图
             timestamp_ini = floor( timestamp );
             std::string histName = "hist_" + std::to_string( static_cast<int>( timestamp_ini ) );
-            hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), 4000, -10, 10 );
+            hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), ( xMax - xMin ) / xBinWidth, xMin, xMax );
             // 清空时间戳向量
             timestamps_vec.clear();
         }
@@ -148,6 +148,13 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
 
     // 创建TGraphErrors
     TGraphErrors * graph = new TGraphErrors( x_vec.size(), x_vec.data(), y_2cmLMO_vec.data(), ex_vec.data(), ey_2cmLMO_vec.data() );
+
+    // 设置点的样式和颜色
+    graph->SetMarkerStyle( 21 );  // 设置点的样式为正方形
+    graph->SetMarkerColor( kBlue );  // 设置点的颜色为蓝色
+
+    // 不绘制点之间的连线
+    graph->SetLineStyle( 0 );
 
     graph->Write( "graph" );
     outputFile->Close();

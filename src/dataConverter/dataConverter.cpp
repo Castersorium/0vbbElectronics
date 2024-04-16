@@ -54,6 +54,8 @@ int main( int argc, char * argv[] )
 
     // 打开debug模式
     myPlotter->setDebug(true);
+    myPlotter->setAmpHistoBinWidth(0.01);
+    myPlotter->setTimeWindow(2.0);
 
     // 从ROOT文件创建TGraphErrors并保存到ROOT文件
     myPlotter->createGraphFromTree( rootDirPath.string() + "/data.root", plotDirPath.string() + "/plot.root" );
