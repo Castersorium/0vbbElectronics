@@ -9,6 +9,8 @@
 #include <TH1D.h>
 #include <TKey.h>
 #include <TMultiGraph.h>
+#include <TLegend.h>
+#include <TCanvas.h>
 
 #include "TTreePlotter.hpp" // my header
 
@@ -45,8 +47,14 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
         return;
     }
 
+    // 创建一个颜色的数组
+    Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
+
     // 为每个branch创建一个TGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
+
+    double xTimeStampMin = 0.0;
+    double xTimeStampMax = 0.0;
 
     for ( int i = 0; i < nBranches; ++i )
     {
@@ -60,6 +68,7 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
         // 从TTree中获取数据
         int n = tree->GetEntries();
 
+        // 创建向量来存储每个时间窗口内的平均时间戳和模式幅度
         std::vector <double> x_vec = {};
         std::vector <double> y_vec = {};
         std::vector <double> ex_vec = {};  // x轴误差
@@ -80,6 +89,12 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
         for ( int i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
+
+            // 更新x轴的最小值和最大值
+            if ( timestamp < xTimeStampMin )
+                xTimeStampMin = timestamp;
+            if ( timestamp > xTimeStampMax )
+                xTimeStampMax = timestamp;
 
             // 如果当前的时间戳超出了[timestamp_ini, timestamp_ini + timeWindow)的范围
             if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + timeWindow )
@@ -166,17 +181,20 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
         // 创建TGraphErrors并命名
         TGraphErrors * graph = new TGraphErrors( x_vec.size(), x_vec.data(), y_vec.data(), ex_vec.data(), ey_vec.data() );
         graph->SetName( branchName.c_str() );
+        graph->SetTitle( branchName.c_str() );
 
         // 设置点的样式和颜色
         graph->SetMarkerStyle( 21 );  // 设置点的样式为正方形
-        graph->SetMarkerColor( kBlue );  // 设置点的颜色为蓝色
-
-        // 不绘制点之间的连线
-        // graph->SetLineStyle( 0 );
-        graph->SetDrawOption( "EP" );
+        // 设置TGraphErrors的颜色
+        graph->SetMarkerColor( colors[i % 8] );
+        graph->SetLineWidth( 2 );
+        graph->SetFillStyle( 0 );
 
         graphs_vec[i] = graph;
     }
+
+    // 创建一个TCanvas
+    TCanvas * canvas = new TCanvas( "canvas", "canvas", 1600, 900 );
 
     // 创建一个MultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg", "mg" );
@@ -192,16 +210,22 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
             std::cout << "Adding graph " << graphInstance->GetName() << " to MultiGraph" << std::endl;
         }
 
-        // 设置TGraph的绘图选项为"P"
-        graphInstance->SetDrawOption( "EP" );
-
+        // 将TGraphErrors添加到MultiGraph中
         multiGraph->Add( graphInstance );
     }
 
-    multiGraph->SetDrawOption( "AEP" );
+    // 在TCanvas上绘制MultiGraph
+    multiGraph->Draw( "AEP" );
 
-    // 将MultiGraph写入文件
-    multiGraph->Write( "multiGraph" );
+    multiGraph->GetXaxis()->SetTitle( "Timestamp [s]" );
+    multiGraph->GetYaxis()->SetTitle( "Output [V]" );
+    multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
+
+    // 创建一个图例
+    canvas->BuildLegend();
+
+    // 将TCanvas写入文件
+    canvas->Write( "canvas" );
 
     outputFile->Close();
 

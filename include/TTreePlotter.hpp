@@ -26,6 +26,9 @@ private:
     double xBinWidth;  // 幅度直方图的bin宽度
     double xMin;  // 幅度直方图的最小值
     double xMax;  // 幅度直方图的最大值
+
+    // 创建一个颜色的枚举类
+    enum Color { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 };
 }
 
