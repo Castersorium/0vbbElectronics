@@ -203,7 +203,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     TCanvas * canvas = new TCanvas( "canvas_Output", "canvas_Output", 1600, 900 );
 
     // 创建一个MultiGraph
-    TMultiGraph * multiGraph = new TMultiGraph( "mg", "mg" );
+    TMultiGraph * multiGraph = new TMultiGraph( "mg_Output", "mg_Output" );
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( TGraphErrors * graphInstance : graphs_vec )
@@ -223,7 +223,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     // 在TCanvas上绘制MultiGraph
     multiGraph->Draw( "AEP" );
 
-    multiGraph->GetXaxis()->SetTitle( "Timestamp [s]" );
+    multiGraph->GetXaxis()->SetTitle( "Time" );
     multiGraph->GetYaxis()->SetTitle( "Output [V]" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
     multiGraph->GetXaxis()->SetTimeDisplay( 1 );
@@ -421,7 +421,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     TCanvas * canvas = new TCanvas( "canvas_Temperature", "canvas_Temperature", 1600, 900 );
 
     // 创建一个MultiGraph
-    TMultiGraph * multiGraph = new TMultiGraph( "mg", "mg" );
+    TMultiGraph * multiGraph = new TMultiGraph( "mg_Temperature", "mg_Temperature" );
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( TGraphErrors * graphInstance : graphs_vec )
@@ -441,7 +441,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     // 在TCanvas上绘制MultiGraph
     multiGraph->Draw( "AEP" );
 
-    multiGraph->GetXaxis()->SetTitle( "Timestamp [s]" );
+    multiGraph->GetXaxis()->SetTitle( "Time" );
     multiGraph->GetYaxis()->SetTitle( "Temperature [K]" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
     multiGraph->GetXaxis()->SetTimeDisplay( 1 );
