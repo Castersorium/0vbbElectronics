@@ -17,6 +17,7 @@ public:
     void setTimeWindow( double newTimeWindow ) { timeWindow = newTimeWindow; }  // 设置事件采样窗口的范围
     // 从TTree创建TGraphErrors并保存到ROOT文件的方法
     void createNIDAQGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
+    void createBlueforsTemperatureGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
 
 protected:
     bool isDebugModeActive;  // debug状态
