@@ -16,6 +16,7 @@ build/
 
 # For stream data
 *.csv
+*.mat
 
 # For testing root files
 test*.root
