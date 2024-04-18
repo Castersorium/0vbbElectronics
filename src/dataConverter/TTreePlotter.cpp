@@ -11,13 +11,14 @@
 #include <TMultiGraph.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <TStyle.h>
 
 #include "TTreePlotter.hpp" // my header
 
 namespace TTREEIO
 {
 // 从TTree创建TGraphErrors并保存到ROOT文件的方法
-void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const
+void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const
 {
     // 打开ROOT文件
     TFile * file = TFile::Open( rootFilePath.c_str(), "READ" );
@@ -183,8 +184,9 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
         graph->SetName( branchName.c_str() );
         graph->SetTitle( branchName.c_str() );
 
-        // 设置点的样式和颜色
+        // 设置点的样式
         graph->SetMarkerStyle( 21 );  // 设置点的样式为正方形
+        graph->SetMarkerSize( 0.5 );  // 设置点的大小
         // 设置TGraphErrors的颜色
         graph->SetMarkerColor( colors[i % 8] );
         graph->SetLineWidth( 2 );
@@ -192,6 +194,10 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
 
         graphs_vec[i] = graph;
     }
+
+    // The time offset is the one that will be used by all graphs.
+    // If one changes it, it will be changed even on the graphs already defined
+    gStyle->SetTimeOffset( 0 );
 
     // 创建一个TCanvas
     TCanvas * canvas = new TCanvas( "canvas", "canvas", 1600, 900 );
@@ -220,6 +226,10 @@ void TTreePlotter::createGraphFromTree( const std::string & rootFilePath, const 
     multiGraph->GetXaxis()->SetTitle( "Timestamp [s]" );
     multiGraph->GetYaxis()->SetTitle( "Output [V]" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
+    multiGraph->GetXaxis()->SetTimeDisplay( 1 );
+    // 设置X轴上的时间格式
+    //multiGraph->GetXaxis()->SetTimeFormat( "%a %d/%m/%y %H:%M:%S" );
+    multiGraph->GetXaxis()->SetTimeFormat( "%m/%d %H:%M:%S" );
 
     // 创建一个图例
     canvas->BuildLegend();

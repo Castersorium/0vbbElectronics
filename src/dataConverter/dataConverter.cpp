@@ -46,19 +46,19 @@ int main( int argc, char * argv[] )
     // 打开debug模式
     //myConverter->setDebug(true);
 
-    // 转换CSV文件到ROOT文件
-    myConverter->convertCSV2TTree( csvDirPath.string(), rootDirPath.string() + "/data.root" );
+    // 转换NIDAQCSV文件到ROOT文件
+    myConverter->convertNIDAQCSV2TTree( csvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
 
     // 创建TTreePlotter的实例
     std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
 
     // 打开debug模式
-    myPlotter->setDebug(true);
+    //myPlotter->setDebug(true);
     myPlotter->setAmpHistoBinWidth(0.01);
     myPlotter->setTimeWindow(2.0);
 
     // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    myPlotter->createGraphFromTree( rootDirPath.string() + "/data.root", plotDirPath.string() + "/plot.root" );
+    myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
 
     std::cout << "Hello, my project." << std::endl;
 

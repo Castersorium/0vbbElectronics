@@ -13,8 +13,8 @@
 
 namespace TTREEIO
 {
-// 定义一个函数，用于将CSV格式的数据转换为TTree格式
-void convert2TTree::convertCSV2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
+// 定义一个函数，用于将NIDAQCSV格式的数据转换为TTree格式
+void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
 {
     // 创建一个新的ROOT文件
     TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
@@ -25,7 +25,7 @@ void convert2TTree::convertCSV2TTree( const std::string & csvDirPath, const std:
     // 如果isDebugModeActive状态为true，打印出一条消息
     if ( isDebugModeActive )
     {
-        std::cout << " - Input CSV directory read: " << csvDirPath << std::endl;
+        std::cout << " - Input NI DAQ CSV directory read: " << csvDirPath << std::endl;
         std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
     }
 
