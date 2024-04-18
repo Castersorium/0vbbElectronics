@@ -12,7 +12,7 @@ function plot_psd(fres, psds, mode,wint,fs,legends)
     elseif strcmp(mode,'d')
         ylabel_str = "$PSD of displacement\left[m/\sqrt{Hz}\right]$";
     elseif strcmp(mode,'v')
-        ylabel_str = "$PSD of displacement\left[V/\sqrt{Hz}\right]$";
+        ylabel_str = "$PSD\left[V/\sqrt{Hz}\right]$";
     end
  
     legend(legends,'FontSize',24,'Location','northeast','Interpreter','none'); % Plot the legend with all file names
