@@ -51,10 +51,11 @@ int main( int argc, char * argv[] )
 
     // 打开debug模式
     //myConverter->setDebug( true );
-    myConverter->setDateInterval( "24-04-01", "24-04-01" );
 
     // 转换NIDAQCSV文件到ROOT文件
     myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
+
+    myConverter->setDateInterval( "24-04-01", "24-04-15" );
 
     // 转换BlueforsTemperatureLog文件到ROOT文件
     myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
@@ -64,6 +65,7 @@ int main( int argc, char * argv[] )
 
     // 打开debug模式
     //myPlotter->setDebug( true );
+
     myPlotter->setAmpHistoBinWidth( 0.01 );
     myPlotter->setTimeWindow( 2.0 );
 

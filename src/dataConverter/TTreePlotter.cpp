@@ -29,7 +29,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     }
 
     // 从文件中获取TTree
-    TTree * tree = dynamic_cast<TTree *>( file->Get( "tree" ) );
+    TTree * tree = dynamic_cast<TTree *>( file->Get( "NIDAQReadings" ) );
     if ( !tree )
     {
         std::cerr << "Error: Cannot find TTree in ROOT file: " << rootFilePath << std::endl;
@@ -202,6 +202,10 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     // 创建一个TCanvas
     TCanvas * canvas = new TCanvas( "canvas_Output", "canvas_Output", 1600, 900 );
 
+    // 开启X轴和Y轴的网格线
+    canvas->SetGridx();
+    canvas->SetGridy();
+
     // 创建一个MultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_Output", "mg_Output" );
 
@@ -255,7 +259,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     }
 
     // 从文件中获取TTree
-    TTree * tree = dynamic_cast<TTree *>( file->Get( "tree" ) );
+    TTree * tree = dynamic_cast<TTree *>( file->Get( "TemperatureReadings" ) );
     if ( !tree )
     {
         std::cerr << "Error: Cannot find TTree in ROOT file: " << rootFilePath << std::endl;
@@ -338,11 +342,6 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
                     double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
                     double stddev_Y = std::sqrt( sum_deviation_Y / temperatures_vec.size() );
 
-                    x_vec.emplace_back( average_X );
-                    y_vec.emplace_back( average_Y );
-                    ex_vec.emplace_back( stddev_X );
-                    ey_vec.emplace_back( stddev_Y );
-
                     if ( isDebugModeActive )
                     {
                         std::cout << "Average timestamp for " << static_cast<int>( timestamp_ini ) << ": " << average_X << std::endl;
@@ -352,6 +351,14 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
                         std::cout << "Average date and time for " << static_cast<int>( timestamp_ini ) << ": " << date.AsString() << std::endl;
                         std::cout << "Average temperature for " << static_cast<int>( timestamp_ini ) << ": " << average_Y << std::endl;
                         std::cout << "Standard deviation of temperature for " << static_cast<int>( timestamp_ini ) << ": " << stddev_Y << std::endl;
+                    }
+
+                    if ( average_Y != 0 )
+                    {
+                        x_vec.emplace_back( average_X );
+                        y_vec.emplace_back( average_Y );
+                        ex_vec.emplace_back( stddev_X );
+                        ey_vec.emplace_back( stddev_Y );
                     }
                 }
 
@@ -380,11 +387,6 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
             double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
             double stddev_Y = std::sqrt( sum_deviation_Y / temperatures_vec.size() );
 
-            x_vec.emplace_back( average_X );
-            y_vec.emplace_back( average_Y );
-            ex_vec.emplace_back( stddev_X );
-            ey_vec.emplace_back( stddev_Y );
-
             if ( isDebugModeActive )
             {
                 std::cout << "Average timestamp for " << static_cast<int>( timestamp_ini ) << ": " << average_X << std::endl;
@@ -394,6 +396,14 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
                 std::cout << "Average date and time for " << static_cast<int>( timestamp_ini ) << ": " << date.AsString() << std::endl;
                 std::cout << "Average temperature for " << static_cast<int>( timestamp_ini ) << ": " << average_Y << std::endl;
                 std::cout << "Standard deviation of temperature for " << static_cast<int>( timestamp_ini ) << ": " << stddev_Y << std::endl;
+            }
+
+            if ( average_Y != 0 )
+            {
+                x_vec.emplace_back( average_X );
+                y_vec.emplace_back( average_Y );
+                ex_vec.emplace_back( stddev_X );
+                ey_vec.emplace_back( stddev_Y );
             }
         }
 
@@ -419,6 +429,10 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
 
     // 创建一个TCanvas
     TCanvas * canvas = new TCanvas( "canvas_Temperature", "canvas_Temperature", 1600, 900 );
+
+    // 开启X轴和Y轴的网格线
+    canvas->SetGridx();
+    canvas->SetGridy();
 
     // 创建一个MultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_Temperature", "mg_Temperature" );
