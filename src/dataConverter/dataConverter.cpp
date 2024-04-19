@@ -12,9 +12,9 @@
 int main( int argc, char * argv[] )
 {
     // 检查是否提供了文件路径
-    if ( argc < 5 )
+    if ( argc < 6 )
     {
-        std::cout << "Usage: " << argv[0] << " <input NIDAQCSV directory> <output ROOT directory> <output plot directory> <input BLUEFORS_LOG directory>" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <input NIDAQCSV directory> <output ROOT directory> <output plot directory> <input BLUEFORS_LOG directory> <input MultimeterData directory>" << std::endl;
         return 1;
     }
 
@@ -23,6 +23,7 @@ int main( int argc, char * argv[] )
     std::filesystem::path rootDirPath = argv[2];
     std::filesystem::path plotDirPath = argv[3];
     std::filesystem::path BlueforsLogDirPath = argv[4];
+    std::filesystem::path MultimeterDataDirPath = argv[5];
 
     // 检查路径是否存在且是一个目录
     if ( !std::filesystem::exists( NIDAQcsvDirPath ) || !std::filesystem::is_directory( NIDAQcsvDirPath ) )
@@ -45,6 +46,11 @@ int main( int argc, char * argv[] )
         std::cout << "Error: BLUEFORS_LOG directory " << BlueforsLogDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
+    if ( !std::filesystem::exists( MultimeterDataDirPath ) || !std::filesystem::is_directory( MultimeterDataDirPath ) )
+    {
+        std::cout << "Error: MultimeterDataDirPath directory " << MultimeterDataDirPath << " does not exist or is not a directory." << std::endl;
+        return 1;
+    }
 
     // 创建convert2TTree的实例
     std::unique_ptr<TTREEIO::convert2TTree> myConverter = std::make_unique<TTREEIO::convert2TTree>();
@@ -53,12 +59,15 @@ int main( int argc, char * argv[] )
     //myConverter->setDebug( true );
 
     // 转换NIDAQCSV文件到ROOT文件
-    myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
+    //myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
 
     myConverter->setDateInterval( "24-04-01", "24-04-15" );
 
     // 转换BlueforsTemperatureLog文件到ROOT文件
-    myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
+    //myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
+
+    // 转换MultimeterData文件到ROOT文件
+    //myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
 
     // 创建TTreePlotter的实例
     std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
@@ -70,12 +79,12 @@ int main( int argc, char * argv[] )
     myPlotter->setTimeWindow( 2.0 );
 
     // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
+    //myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
 
     myPlotter->setTimeWindow( 300.0 );
 
     // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
+    //myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
 
     std::cout << "Hello, my project." << std::endl;
 
