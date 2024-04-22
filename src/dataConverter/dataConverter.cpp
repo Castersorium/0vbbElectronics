@@ -61,7 +61,7 @@ int main( int argc, char * argv[] )
     // 转换NIDAQCSV文件到ROOT文件
     myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
 
-    myConverter->setDateInterval( "24-04-01", "24-04-15" );
+    myConverter->setDateInterval( "24-04-14", "24-04-21" );
 
     // 转换BlueforsTemperatureLog文件到ROOT文件
     myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
@@ -86,6 +86,7 @@ int main( int argc, char * argv[] )
     // 从ROOT文件创建TGraphErrors并保存到ROOT文件
     myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
     
+    myPlotter->setTimeWindow( 3000.0 );
     myPlotter->createMultimeterGraphFromTree( rootDirPath.string() + "/Multimeter_data.root", plotDirPath.string() + "/Multimeter_plot.root" );
 
     std::cout << "Hello, my project." << std::endl;

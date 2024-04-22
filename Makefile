@@ -4,26 +4,53 @@ DEBUG_FLAGS := -g
 
 # Default
 CXXFLAGS := -std=c++17 -Wall $(RELEASE_FLAGS)
-
 ROOT_CONFIG = `root-config --cflags --glibs`
-
 INCLUDE_PATH := ./include
-SOURCE_PATH := ./src/plotRTrecording
-TARGET_PATH := ./build/plotRTrecording
 
-SOURCE := $(wildcard $(SOURCE_PATH)/*.cpp)
-TARGET := $(TARGET_PATH)/plotRTrecording.exe
+# Define path
 
-$(TARGET): $(SOURCE) | $(TARGET_PATH) # "|" makes sure target path is valid
-	$(CXX) $(CXXFLAGS) -I$(INCLUDE_PATH)/ $(SOURCE) $(ROOT_CONFIG) -o $(TARGET) 
+## dataConverter
+SOURCE_PATH_DATACVT := ./src/dataConverter
+TARGET_PATH_DATACVT := ./build/dataConverter
+SOURCE_DATACVT := $(wildcard $(SOURCE_PATH_DATACVT)/*.cpp)
+TARGET_DATACVT := $(TARGET_PATH_DATACVT)/dataConverter.exe
 
-$(TARGET_PATH):
-	mkdir -p $(TARGET_PATH)
+## plotRTrecording
+SOURCE_PATH_PLOTRT := ./src/plotRTrecording
+TARGET_PATH_PLOTRT := ./build/plotRTrecording
+SOURCE_PLOTRT := $(wildcard $(SOURCE_PATH_PLOTRT)/*.cpp)
+TARGET_PLOTRT := $(TARGET_PATH_PLOTRT)/plotRTrecording.exe
+
+# Define all: new Program add here
+all: dataConverter plotRTrecording
+
+# Compile
+
+## dataConverter
+dataConverter: $(SOURCE_DATACVT) | $(TARGET_PATH_DATACVT) # "|" makes sure target path is valid
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_PATH)/ $(SOURCE_DATACVT) $(ROOT_CONFIG) -o $(TARGET_DATACVT) 
+
+$(TARGET_PATH_DATACVT):
+	mkdir -p $(TARGET_PATH_DATACVT)
+	
+## plotRTrecording
+plotRTrecording: $(SOURCE_PLOTRT) | $(TARGET_PATH_PLOTRT) # "|" makes sure target path is valid
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_PATH)/ $(SOURCE_PLOTRT) $(ROOT_CONFIG) -o $(TARGET_PLOTRT) 
+
+$(TARGET_PATH_PLOTRT):
+	mkdir -p $(TARGET_PATH_PLOTRT)
 
 # For debug
 debug: CXXFLAGS += $(DEBUG_FLAGS)
-debug: $(TARGET)
+debug: $(TARGET_DATACVT)
+debug: $(TARGET_PLOTRT)
 
+# For clean
 .PHONY: clean
 clean:
-	rm -rf $(TARGET)
+	rm -rf $(TARGET_DATACVT)
+	rm -rf $(TARGET_PLOTRT)
+clean_DATACVT:
+	rm -rf $(TARGET_DATACVT)
+clean_PLOTRT:
+	rm -rf $(TARGET_PLOTRT)

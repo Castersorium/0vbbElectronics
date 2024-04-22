@@ -14,7 +14,8 @@ public:
     TTreePlotter() : isDebugModeActive( false ), timeWindow( 1.0 ), xBinWidth( 0.02 ), xMin( -10.0 ), xMax( 10.0 ) {}
     void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // 设置debug状态
     void setAmpHistoBinWidth( double newBinWidth ) { xBinWidth = newBinWidth; }  // 设置幅度直方图的bin宽度
-    void setTimeWindow( double newTimeWindow ) { timeWindow = newTimeWindow; }  // 设置事件采样窗口的范围
+     // 设置事件采样窗口的范围（单位是秒）
+    void setTimeWindow( double newTimeWindow ) { timeWindow = newTimeWindow; } 
     // 从TTree创建TGraphErrors并保存到ROOT文件的方法
     void createNIDAQGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createBlueforsTemperatureGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
