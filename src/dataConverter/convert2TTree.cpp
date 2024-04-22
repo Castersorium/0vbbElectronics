@@ -14,35 +14,35 @@
 
 namespace TTREEIO
 {
-// ¶¨ÒåÒ»¸öº¯Êı£¬ÓÃÓÚ½«NIDAQCSV¸ñÊ½µÄÊı¾İ×ª»»ÎªTTree¸ñÊ½
+// å®šä¹‰ä¸€ä¸ªå‡½æ•°ï¼Œç”¨äºå°†NIDAQCSVæ ¼å¼çš„æ•°æ®è½¬æ¢ä¸ºTTreeæ ¼å¼
 void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
 {
-    // ´´½¨Ò»¸öĞÂµÄROOTÎÄ¼ş
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„ROOTæ–‡ä»¶
     TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
-    // ´´½¨Ò»¸öĞÂµÄTTree
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„TTree
     TTree * tree = new TTree( "NIDAQReadings", "Output voltage readings from NI DAQ" );
 
-    // Èç¹ûisDebugModeActive×´Ì¬Îªtrue£¬´òÓ¡³öÒ»ÌõÏûÏ¢
+    // å¦‚æœisDebugModeActiveçŠ¶æ€ä¸ºtrueï¼Œæ‰“å°å‡ºä¸€æ¡æ¶ˆæ¯
     if ( isDebugModeActive )
     {
         std::cout << " - Input NI DAQ CSV directory read: " << csvDirPath << std::endl;
         std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
     }
 
-    // ´´½¨Ò»¸ö±äÁ¿À´´æ´¢Ê±¼ä´Á
+    // åˆ›å»ºä¸€ä¸ªå˜é‡æ¥å­˜å‚¨æ—¶é—´æˆ³
     double timestamp = 0.0;
     double timestampOffset = 0.0;
 
-    // ´´½¨Ê±¼ä´Ábranch
+    // åˆ›å»ºæ—¶é—´æˆ³branch
     tree->Branch( "timestamp", &timestamp, "timestamp/D" );
 
-    // ±éÀúÄ¿Â¼ÏÂµÄËùÓĞÎÄ¼ş
+    // éå†ç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶
     for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
     {
         std::string csvFilePath = entry.path().string();
 
-        // ´ò¿ªCSVÎÄ¼ş
+        // æ‰“å¼€CSVæ–‡ä»¶
         std::ifstream csvFile( csvFilePath );
         if ( !csvFile.is_open() )
         {
@@ -55,7 +55,7 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
             std::cout << " - Input CSV file read: " << csvFilePath << std::endl;
         }
 
-        // ¶ÁÈ¡µÚÒ»ĞĞÀ´È·¶¨Í¨µÀÊı
+        // è¯»å–ç¬¬ä¸€è¡Œæ¥ç¡®å®šé€šé“æ•°
         std::string line;
         std::getline( csvFile, line );
         int commaCount = std::count( line.begin(), line.end(), ',' );
@@ -66,10 +66,10 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
         }
         std::istringstream ssDate( line );
         std::string date_string;
-        std::getline( ssDate, date_string, ',' ); // Ìø¹ı"Ê±¼ä±êÊ¶"
-        std::getline( ssDate, date_string, ',' ); // »ñÈ¡ÈÕÆÚºÍÊ±¼ä
+        std::getline( ssDate, date_string, ',' ); // è·³è¿‡"æ—¶é—´æ ‡è¯†"
+        std::getline( ssDate, date_string, ',' ); // è·å–æ—¥æœŸå’Œæ—¶é—´
 
-        // ½«ÈÕÆÚºÍÊ±¼ä×Ö·û´®µÄ¸ñÊ½×ª»»Îª"yyyy-mm-dd hh:mm:ss"
+        // å°†æ—¥æœŸå’Œæ—¶é—´å­—ç¬¦ä¸²çš„æ ¼å¼è½¬æ¢ä¸º"yyyy-mm-dd hh:mm:ss"
         std::replace( date_string.begin(), date_string.end(), '/', '-' );
 
         TDatime datime( date_string.c_str() );
@@ -82,13 +82,13 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
             std::cout << " - Initial timestampOffset: " << timestampOffset << std::endl;
         }
 
-        // È·¶¨Í¨µÀÊı
+        // ç¡®å®šé€šé“æ•°
         int channelCount = commaCount / 2 + 1;
 
-        // Ìø¹ıµÚ¶şĞĞ
+        // è·³è¿‡ç¬¬äºŒè¡Œ
         csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
 
-        // ¶ÁÈ¡µÚÈıĞĞÀ´»ñÈ¡Í¨µÀÃû³Æ
+        // è¯»å–ç¬¬ä¸‰è¡Œæ¥è·å–é€šé“åç§°
         std::getline( csvFile, line );
         std::istringstream ssCh( line );
         std::vector<std::string> channelNames( channelCount );
@@ -97,9 +97,9 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
             std::getline( ssCh, channelNames[i], ',' );
             if ( i == channelCount - 1 )
             {
-                // Èç¹ûµ½´ïÁËĞĞµÄÄ©Î²£¬Ö±½Ó¶ÁÈ¡Ê£ÓàµÄËùÓĞ×Ö·û
+                // å¦‚æœåˆ°è¾¾äº†è¡Œçš„æœ«å°¾ï¼Œç›´æ¥è¯»å–å‰©ä½™çš„æ‰€æœ‰å­—ç¬¦
                 std::getline( ssCh, channelNames[i] );
-                // ¼ì²é²¢È¥µô»»ĞĞ·û
+                // æ£€æŸ¥å¹¶å»æ‰æ¢è¡Œç¬¦
                 if ( !channelNames[i].empty() && ( channelNames[i].back() == '\n' || channelNames[i].back() == '\r' ) )
                 {
                     channelNames[i].pop_back();
@@ -109,86 +109,86 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
             {
                 std::getline( ssCh, channelNames[i], ',' );
             }
-            // È¥µôË«ÒıºÅ
+            // å»æ‰åŒå¼•å·
             channelNames[i] = channelNames[i].substr( 1, channelNames[i].size() - 2 );
         }
 
-        // ´´½¨±äÁ¿À´´æ´¢branchµÄÖµ
+        // åˆ›å»ºå˜é‡æ¥å­˜å‚¨branchçš„å€¼
         std::vector<double> amplitudes( channelCount, 0.0 );
 
-        // ´´½¨branch
+        // åˆ›å»ºbranch
         for ( int i = 0; i < channelCount; ++i )
         {
-            // ¼ì²ébranchÊÇ·ñÒÑ¾­´æÔÚ
+            // æ£€æŸ¥branchæ˜¯å¦å·²ç»å­˜åœ¨
             TBranch * branch = tree->GetBranch( channelNames[i].c_str() );
             if ( branch == nullptr )
             {
-                // Èç¹ûbranch²»´æÔÚ£¬´´½¨ĞÂµÄbranch
+                // å¦‚æœbranchä¸å­˜åœ¨ï¼Œåˆ›å»ºæ–°çš„branch
                 tree->Branch( channelNames[i].c_str(), &amplitudes[i], ( channelNames[i] + "/D" ).c_str() );
             }
         }
 
-        // Ìø¹ıÊ£ÓàµÄÇ°ËÄĞĞ
+        // è·³è¿‡å‰©ä½™çš„å‰å››è¡Œ
         for ( int i = 0; i < 1; ++i )
         {
             csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
         }
 
-        // ¶ÁÈ¡CSVÎÄ¼şµÄÊı¾İ
+        // è¯»å–CSVæ–‡ä»¶çš„æ•°æ®
         while ( std::getline( csvFile, line ) )
         {
             std::istringstream ssAmp( line );
             std::string field;
 
-            // »ñÈ¡Ê±¼ä´Á
+            // è·å–æ—¶é—´æˆ³
             std::getline( ssAmp, field, ',' );
             timestamp = std::stod( field ) + timestampOffset;
 
-            // »ñÈ¡Ã¿¸öÍ¨µÀµÄ·ù¶È
+            // è·å–æ¯ä¸ªé€šé“çš„å¹…åº¦
             for ( int i = 0; i < channelCount; ++i )
             {
                 std::getline( ssAmp, field, ',' );
                 amplitudes[i] = std::stod( field );
 
-                // Ìø¹ıÏÂÒ»¸öÊ±¼ä´Á
+                // è·³è¿‡ä¸‹ä¸€ä¸ªæ—¶é—´æˆ³
                 std::getline( ssAmp, field, ',' );
             }
 
-            // Ìî³äTTree
+            // å¡«å……TTree
             tree->Fill();
         }
     }
 
-    // ¼ì²éTTreeÊÇ·ñ°üº¬ÈÎºÎÌõÄ¿
+    // æ£€æŸ¥TTreeæ˜¯å¦åŒ…å«ä»»ä½•æ¡ç›®
     if ( tree->GetEntries() == 0 )
     {
         std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
     }
 
-    // ½«TTreeĞ´Èëµ½ROOTÎÄ¼şÖĞ
+    // å°†TTreeå†™å…¥åˆ°ROOTæ–‡ä»¶ä¸­
     tree->Write();
 
-    // ¹Ø±ÕROOTÎÄ¼ş
+    // å…³é—­ROOTæ–‡ä»¶
     delete file;
 }
 
-// ¶¨ÒåÒ»¸öº¯Êı£¬ÓÃÓÚ½«BlueforsLog¸ñÊ½µÄÊı¾İ×ª»»ÎªTTree¸ñÊ½
+// å®šä¹‰ä¸€ä¸ªå‡½æ•°ï¼Œç”¨äºå°†BlueforsLogæ ¼å¼çš„æ•°æ®è½¬æ¢ä¸ºTTreeæ ¼å¼
 void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & BlueforsLogDirPath, const std::string & rootFileName ) const
 {
-    // ´´½¨Ò»¸öĞÂµÄROOTÎÄ¼ş
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„ROOTæ–‡ä»¶
     TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
-    // ´´½¨Ò»¸öĞÂµÄTTree
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„TTree
     TTree * tree = new TTree( "TemperatureReadings", "Temperature readings from BLUEFORS" );
 
-    // Èç¹ûisDebugModeActive×´Ì¬Îªtrue£¬´òÓ¡³öÒ»ÌõÏûÏ¢
+    // å¦‚æœisDebugModeActiveçŠ¶æ€ä¸ºtrueï¼Œæ‰“å°å‡ºä¸€æ¡æ¶ˆæ¯
     if ( isDebugModeActive )
     {
         std::cout << " - Input BLUEFORS_LOG directory read: " << BlueforsLogDirPath << std::endl;
         std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
     }
 
-    // ´´½¨Ò»¸ö±äÁ¿À´´æ´¢Ê±¼ä´Á
+    // åˆ›å»ºä¸€ä¸ªå˜é‡æ¥å­˜å‚¨æ—¶é—´æˆ³
     double timestamp = 0.0;
     double temperature_1 = 0.0;
     double temperature_2 = 0.0;
@@ -196,7 +196,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
     double temperature_6 = 0.0;
     double temperature_7 = 0.0;
 
-    // ´´½¨Ê±¼ä´Ábranch
+    // åˆ›å»ºæ—¶é—´æˆ³branch
     tree->Branch( "timestamp", &timestamp, "timestamp/D" );
     tree->Branch( "T1", &temperature_1, "T1_50K/D" );
     tree->Branch( "T2", &temperature_2, "T2_4K/D" );
@@ -209,7 +209,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
     std::vector<std::ifstream> logFile_vec = {};
     std::vector<std::string> line_vec = {};
 
-    // ±éÀúÄ¿Â¼ÏÂµÄËùÓĞÈÕÆÚÎÄ¼ş¼Ğ
+    // éå†ç›®å½•ä¸‹çš„æ‰€æœ‰æ—¥æœŸæ–‡ä»¶å¤¹
     for ( const auto & entry : std::filesystem::directory_iterator( BlueforsLogDirPath ) )
     {
         std::string dateDir = entry.path().filename().string();
@@ -219,7 +219,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             {
                 std::cout << " - Skip date directory: " << dateDir << std::endl;
             }
-            continue;  // Ìø¹ı·¶Î§Ö®ÍâµÄÈÕÆÚ
+            continue;  // è·³è¿‡èŒƒå›´ä¹‹å¤–çš„æ—¥æœŸ
         }
 
         if ( isDebugModeActive )
@@ -236,7 +236,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             }
         }
 
-        // ´ò¿ªCSVÎÄ¼ş
+        // æ‰“å¼€CSVæ–‡ä»¶
         for ( const auto & logFileName : logFileName_vec )
         {
             logFile_vec.emplace_back( logFileName );
@@ -255,7 +255,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             line_vec.emplace_back( "" );
         }
 
-        // ¶ÁÈ¡CSVÎÄ¼şµÄÊı¾İ
+        // è¯»å–CSVæ–‡ä»¶çš„æ•°æ®
         while ( std::getline( logFile_vec[0], line_vec[0] )
                 && std::getline( logFile_vec[1], line_vec[1] )
                 && std::getline( logFile_vec[2], line_vec[2] )
@@ -270,16 +270,16 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             for ( int i = 0; i < logFile_vec.size(); ++i )
             {
                 ss_vec[i] = std::istringstream( line_vec[i] );
-                std::getline( ss_vec[i], date_vec[i], ',' );  // »ñÈ¡ÈÕÆÚ
+                std::getline( ss_vec[i], date_vec[i], ',' );  // è·å–æ—¥æœŸ
 
-                // È¥³ı×Ö·û´®×ó¶ËµÄ¿Õ¸ñ
+                // å»é™¤å­—ç¬¦ä¸²å·¦ç«¯çš„ç©ºæ ¼
                 date_vec[i].erase( date_vec[i].begin(), std::find_if( date_vec[i].begin(), date_vec[i].end(), []( auto ch ) { return !std::isspace( ch ); } ) );
 
-                std::getline( ss_vec[i], time_vec[i], ',' );  // »ñÈ¡Ê±¼ä
-                // »ñÈ¡ÎÂ¶È
-                // Èç¹ûµ½´ïÁËĞĞµÄÄ©Î²£¬Ö±½Ó¶ÁÈ¡Ê£ÓàµÄËùÓĞ×Ö·û
+                std::getline( ss_vec[i], time_vec[i], ',' );  // è·å–æ—¶é—´
+                // è·å–æ¸©åº¦
+                // å¦‚æœåˆ°è¾¾äº†è¡Œçš„æœ«å°¾ï¼Œç›´æ¥è¯»å–å‰©ä½™çš„æ‰€æœ‰å­—ç¬¦
                 std::getline( ss_vec[i], field_vec[i] );
-                // ¼ì²é²¢È¥µô»»ĞĞ·û
+                // æ£€æŸ¥å¹¶å»æ‰æ¢è¡Œç¬¦
                 if ( !field_vec[i].empty() && ( field_vec[i].back() == '\n' || field_vec[i].back() == '\r' ) )
                 {
                     field_vec[i].pop_back();
@@ -292,13 +292,13 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
                 std::cout << " - time_string: " << time_vec[0] << std::endl;
             }
 
-            // ½«ÈÕÆÚ×Ö·û´®×ª»»Îª"YYYY-MM-DD"µÄ¸ñÊ½
+            // å°†æ—¥æœŸå­—ç¬¦ä¸²è½¬æ¢ä¸º"YYYY-MM-DD"çš„æ ¼å¼
             for ( int i = 0; i < logFile_vec.size(); ++i )
             {
                 date_vec[i] = "20" + date_vec[i].substr( 6, 2 ) + "-" + date_vec[i].substr( 3, 2 ) + "-" + date_vec[i].substr( 0, 2 );
             }
 
-            // ´´½¨TDatime¶ÔÏóvector
+            // åˆ›å»ºTDatimeå¯¹è±¡vector
             std::vector<TDatime> datetime_vec( logFile_vec.size() );
             for ( int i = 0; i < logFile_vec.size(); ++i )
             {
@@ -337,7 +337,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
                 std::cout << " - temperature_7: " << temperature_7 << std::endl;
             }
 
-            // Ìî³äTTree
+            // å¡«å……TTree
             tree->Fill();
         }
 
@@ -346,36 +346,36 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
         logFileName_vec.clear();
     }
 
-    // ¼ì²éTTreeÊÇ·ñ°üº¬ÈÎºÎÌõÄ¿
+    // æ£€æŸ¥TTreeæ˜¯å¦åŒ…å«ä»»ä½•æ¡ç›®
     if ( tree->GetEntries() == 0 )
     {
         std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
     }
 
-    // ½«TTreeĞ´Èëµ½ROOTÎÄ¼şÖĞ
+    // å°†TTreeå†™å…¥åˆ°ROOTæ–‡ä»¶ä¸­
     tree->Write();
 
-    // ¹Ø±ÕROOTÎÄ¼ş
+    // å…³é—­ROOTæ–‡ä»¶
     delete file;
 }
 
-// ¶¨ÒåÒ»¸öº¯Êı£¬ÓÃÓÚ½«MultimeterData¸ñÊ½µÄÊı¾İ×ª»»ÎªTTree¸ñÊ½
+// å®šä¹‰ä¸€ä¸ªå‡½æ•°ï¼Œç”¨äºå°†MultimeterDataæ ¼å¼çš„æ•°æ®è½¬æ¢ä¸ºTTreeæ ¼å¼
 void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
 {
-    // ´´½¨Ò»¸öĞÂµÄROOTÎÄ¼ş
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„ROOTæ–‡ä»¶
     TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
-    // ´´½¨Ò»¸öĞÂµÄTTree
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„TTree
     TTree * tree = new TTree( "MultimeterReadings", "Multimeter readings" );
 
-    // Èç¹ûisDebugModeActive×´Ì¬Îªtrue£¬´òÓ¡³öÒ»ÌõÏûÏ¢
+    // å¦‚æœisDebugModeActiveçŠ¶æ€ä¸ºtrueï¼Œæ‰“å°å‡ºä¸€æ¡æ¶ˆæ¯
     if ( isDebugModeActive )
     {
         std::cout << " - Input Multimeter Data directory read: " << csvDirPath << std::endl;
         std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
     }
 
-    // ´´½¨Ò»¸ö±äÁ¿À´´æ´¢Ê±¼ä´Á
+    // åˆ›å»ºä¸€ä¸ªå˜é‡æ¥å­˜å‚¨æ—¶é—´æˆ³
     double timestamp = 0.0;
     double readings = 0.0;
     int columnCount = 0;
@@ -383,15 +383,15 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
 
     std::vector<std::string> columnName_vec = { "DCV_V","ACV_V","DCI_A","ACI_A","Freq_Hz","Period_s","Res_ohm","Cap_F","Temp_K" };
 
-    // ´´½¨Ê±¼ä´Ábranch
+    // åˆ›å»ºæ—¶é—´æˆ³branch
     tree->Branch( "timestamp", &timestamp, "timestamp/D" );
 
-    // ±éÀúÄ¿Â¼ÏÂµÄËùÓĞÎÄ¼ş
+    // éå†ç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶
     for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
     {
         std::string csvFilePath = entry.path().string();
 
-        // ´ò¿ªCSVÎÄ¼ş
+        // æ‰“å¼€CSVæ–‡ä»¶
         std::ifstream csvFile( csvFilePath );
         if ( !csvFile.is_open() )
         {
@@ -404,7 +404,7 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
             std::cout << " - Input CSV file read: " << csvFilePath << std::endl;
         }
 
-        // Ìø¹ıµÚÒ»ĞĞ
+        // è·³è¿‡ç¬¬ä¸€è¡Œ
         for ( int i = 0; i < 1; ++i )
         {
             csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
@@ -412,7 +412,7 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
 
         std::string line;
 
-        // ¶ÁÈ¡CSVÎÄ¼şµÄÊı¾İ
+        // è¯»å–CSVæ–‡ä»¶çš„æ•°æ®
         while ( std::getline( csvFile, line ) )
         {
             if ( isDebugModeActive )
@@ -429,21 +429,21 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
             std::string millisecond_string;
             std::string field;
 
-            std::getline( ssIn, date_string, '>' );  // »ñÈ¡ÈÕÆÚ
+            std::getline( ssIn, date_string, '>' );  // è·å–æ—¥æœŸ
 
-            // ¼ì²é²¢È¥µô¶ÌºáÏß
+            // æ£€æŸ¥å¹¶å»æ‰çŸ­æ¨ªçº¿
             if ( !date_string.empty() && date_string.back() == '-' )
             {
                 date_string.pop_back();
             }
 
-            // ½«ÈÕÆÚ×Ö·û´®µÄ¸ñÊ½×ª»»Îª"yyyy-mm-dd"
+            // å°†æ—¥æœŸå­—ç¬¦ä¸²çš„æ ¼å¼è½¬æ¢ä¸º"yyyy-mm-dd"
             std::replace( date_string.begin(), date_string.end(), '/', '-' );
 
-            std::getline( ssIn, time_string, '.' );  // »ñÈ¡Ê±¼ä
-            std::getline( ssIn, millisecond_string, '\t' );  // »ñÈ¡ºÁÃë
+            std::getline( ssIn, time_string, '.' );  // è·å–æ—¶é—´
+            std::getline( ssIn, millisecond_string, '\t' );  // è·å–æ¯«ç§’
 
-            // È¥³ı×Ö·û´®×ó¶ËµÄ¿Õ¸ñ
+            // å»é™¤å­—ç¬¦ä¸²å·¦ç«¯çš„ç©ºæ ¼
             millisecond_string.erase( millisecond_string.begin(), std::find_if( millisecond_string.begin(), millisecond_string.end(), []( auto ch ) { return !std::isspace( ch ); } ) );
 
             TDatime datime( ( date_string + " " + time_string ).c_str() );
@@ -459,11 +459,11 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
 
             do
             {
-                std::getline( ssIn, field, '\t' );  // »ñÈ¡²âÁ¿Öµ
+                std::getline( ssIn, field, '\t' );  // è·å–æµ‹é‡å€¼
 
                 columnCount++;
 
-                // ¼ì²é²¢È¥µô»»ĞĞ·û
+                // æ£€æŸ¥å¹¶å»æ‰æ¢è¡Œç¬¦
                 if ( !field.empty() && ( field.back() == '\n' || field.back() == '\r' ) )
                 {
                     field.pop_back();
@@ -484,11 +484,11 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
                 std::cout << " - readings_value: " << readings << std::endl;
             }
 
-            // ¼ì²ébranchÊÇ·ñÒÑ¾­´æÔÚ
+            // æ£€æŸ¥branchæ˜¯å¦å·²ç»å­˜åœ¨
             TBranch * branch = tree->GetBranch( columnName_vec[columnCount - 1].c_str() );
             if ( branch == nullptr )
             {
-                // Èç¹ûbranch²»´æÔÚ£¬´´½¨ĞÂµÄbranch
+                // å¦‚æœbranchä¸å­˜åœ¨ï¼Œåˆ›å»ºæ–°çš„branch
                 tree->Branch( columnName_vec[columnCount - 1].c_str(), &readings, ( columnName_vec[columnCount - 1] + "/D" ).c_str() );
             }
 
@@ -500,21 +500,22 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
 
             columnCount = 0;
 
-            // Ìî³äTTree
+            // å¡«å……TTree
             tree->Fill();
         }
     }
 
-    // ¼ì²éTTreeÊÇ·ñ°üº¬ÈÎºÎÌõÄ¿
+    // æ£€æŸ¥TTreeæ˜¯å¦åŒ…å«ä»»ä½•æ¡ç›®
     if ( tree->GetEntries() == 0 )
     {
         std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
     }
 
-    // ½«TTreeĞ´Èëµ½ROOTÎÄ¼şÖĞ
+    // å°†TTreeå†™å…¥åˆ°ROOTæ–‡ä»¶ä¸­
     tree->Write();
 
-    // ¹Ø±ÕROOTÎÄ¼ş
+    // å…³é—­ROOTæ–‡ä»¶
     delete file;
 }
 }
+

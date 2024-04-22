@@ -10,29 +10,30 @@ namespace TTREEIO
 class TTreePlotter
 {
 public:
-    // ¹¹Ôìº¯Êı£¬³õÊ¼»¯isDebugModeActiveÎªfalse£¬timeWindowÎª1.0£¬xBinWidthÎª0.02£¬xMinÎª-10£¬xMaxÎª10
+    // æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–isDebugModeActiveä¸ºfalseï¼ŒtimeWindowä¸º1.0ï¼ŒxBinWidthä¸º0.02ï¼ŒxMinä¸º-10ï¼ŒxMaxä¸º10
     TTreePlotter() : isDebugModeActive( false ), timeWindow( 1.0 ), xBinWidth( 0.02 ), xMin( -10.0 ), xMax( 10.0 ) {}
-    void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // ÉèÖÃdebug×´Ì¬
-    void setAmpHistoBinWidth( double newBinWidth ) { xBinWidth = newBinWidth; }  // ÉèÖÃ·ù¶ÈÖ±·½Í¼µÄbin¿í¶È
-     // ÉèÖÃÊÂ¼ş²ÉÑù´°¿ÚµÄ·¶Î§£¨µ¥Î»ÊÇÃë£©
+    void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // è®¾ç½®debugçŠ¶æ€
+    void setAmpHistoBinWidth( double newBinWidth ) { xBinWidth = newBinWidth; }  // è®¾ç½®å¹…åº¦ç›´æ–¹å›¾çš„binå®½åº¦
+     // è®¾ç½®äº‹ä»¶é‡‡æ ·çª—å£çš„èŒƒå›´ï¼ˆå•ä½æ˜¯ç§’ï¼‰
     void setTimeWindow( double newTimeWindow ) { timeWindow = newTimeWindow; } 
-    // ´ÓTTree´´½¨TGraphErrors²¢±£´æµ½ROOTÎÄ¼şµÄ·½·¨
+    // ä»TTreeåˆ›å»ºTGraphErrorså¹¶ä¿å­˜åˆ°ROOTæ–‡ä»¶çš„æ–¹æ³•
     void createNIDAQGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createBlueforsTemperatureGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createMultimeterGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
 
 protected:
-    bool isDebugModeActive;  // debug×´Ì¬
+    bool isDebugModeActive;  // debugçŠ¶æ€
 
 private:
-    double timeWindow;  // ÊÂ¼ş²ÉÑù´°¿ÚµÄ·¶Î§
-    double xBinWidth;  // ·ù¶ÈÖ±·½Í¼µÄbin¿í¶È
-    double xMin;  // ·ù¶ÈÖ±·½Í¼µÄ×îĞ¡Öµ
-    double xMax;  // ·ù¶ÈÖ±·½Í¼µÄ×î´óÖµ
+    double timeWindow;  // äº‹ä»¶é‡‡æ ·çª—å£çš„èŒƒå›´
+    double xBinWidth;  // å¹…åº¦ç›´æ–¹å›¾çš„binå®½åº¦
+    double xMin;  // å¹…åº¦ç›´æ–¹å›¾çš„æœ€å°å€¼
+    double xMax;  // å¹…åº¦ç›´æ–¹å›¾çš„æœ€å¤§å€¼
 
-    // ´´½¨Ò»¸öÑÕÉ«µÄÃ¶¾ÙÀà
+    // åˆ›å»ºä¸€ä¸ªé¢œè‰²çš„æšä¸¾ç±»
     enum Color { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 };
 }
 
 #endif // TTREEPLOTTER_HPP
+

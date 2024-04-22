@@ -17,10 +17,10 @@
 
 namespace TTREEIO
 {
-// ´ÓTTree´´½¨TGraphErrors²¢±£´æµ½ROOTÎÄ¼şµÄ·½·¨
+// ä»TTreeåˆ›å»ºTGraphErrorså¹¶ä¿å­˜åˆ°ROOTæ–‡ä»¶çš„æ–¹æ³•
 void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const
 {
-    // ´ò¿ªROOTÎÄ¼ş
+    // æ‰“å¼€ROOTæ–‡ä»¶
     TFile * file = TFile::Open( rootFilePath.c_str(), "READ" );
     if ( !file || file->IsZombie() )
     {
@@ -28,7 +28,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         return;
     }
 
-    // ´ÓÎÄ¼şÖĞ»ñÈ¡TTree
+    // ä»æ–‡ä»¶ä¸­è·å–TTree
     TTree * tree = dynamic_cast<TTree *>( file->Get( "NIDAQReadings" ) );
     if ( !tree )
     {
@@ -36,11 +36,11 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         return;
     }
 
-    // »ñÈ¡TTreeÖĞµÄËùÓĞbranchµÄÃû³Æ
+    // è·å–TTreeä¸­çš„æ‰€æœ‰branchçš„åç§°
     TObjArray * branches = tree->GetListOfBranches();
     int nBranches = branches->GetEntries();
 
-    // ½«TGraphErrors±£´æµ½ĞÂµÄROOTÎÄ¼ş
+    // å°†TGraphErrorsä¿å­˜åˆ°æ–°çš„ROOTæ–‡ä»¶
     TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
     if ( !outputFile || outputFile->IsZombie() )
     {
@@ -48,10 +48,10 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         return;
     }
 
-    // ´´½¨Ò»¸öÑÕÉ«µÄÊı×é
+    // åˆ›å»ºä¸€ä¸ªé¢œè‰²çš„æ•°ç»„
     Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 
-    // ÎªÃ¿¸öbranch´´½¨Ò»¸öTGraphErrors
+    // ä¸ºæ¯ä¸ªbranchåˆ›å»ºä¸€ä¸ªTGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
 
     double xTimeStampMin = 0.0;
@@ -62,18 +62,18 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         TBranch * branch = static_cast<TBranch *>( branches->At( i ) );
         std::string branchName = branch->GetName();
 
-        // Ìø¹ıtimestampÕâ¸öbranch
+        // è·³è¿‡timestampè¿™ä¸ªbranch
         if ( branchName == "timestamp" )
             continue;
 
-        // ´ÓTTreeÖĞ»ñÈ¡Êı¾İ
+        // ä»TTreeä¸­è·å–æ•°æ®
         int n = tree->GetEntries();
 
-        // ´´½¨ÏòÁ¿À´´æ´¢Ã¿¸öÊ±¼ä´°¿ÚÄÚµÄÆ½¾ùÊ±¼ä´ÁºÍÄ£Ê½·ù¶È
+        // åˆ›å»ºå‘é‡æ¥å­˜å‚¨æ¯ä¸ªæ—¶é—´çª—å£å†…çš„å¹³å‡æ—¶é—´æˆ³å’Œæ¨¡å¼å¹…åº¦
         std::vector <double> x_vec = {};
         std::vector <double> y_vec = {};
-        std::vector <double> ex_vec = {};  // xÖáÎó²î
-        std::vector <double> ey_vec = {};  // yÖáÎó²î
+        std::vector <double> ex_vec = {};  // xè½´è¯¯å·®
+        std::vector <double> ey_vec = {};  // yè½´è¯¯å·®
 
         double timestamp = 0;
         double Amp = 0;
@@ -81,36 +81,36 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         tree->SetBranchAddress( "timestamp", &timestamp );
         tree->SetBranchAddress( branchName.c_str(), &Amp );
 
-        // ´´½¨Ò»¸öÏòÁ¿À´´æ´¢Ã¿¸öÊ±¼ä´°¿ÚÄÚµÄËùÓĞÊ±¼ä´Á
+        // åˆ›å»ºä¸€ä¸ªå‘é‡æ¥å­˜å‚¨æ¯ä¸ªæ—¶é—´çª—å£å†…çš„æ‰€æœ‰æ—¶é—´æˆ³
         std::vector<double> timestamps_vec;
-        TH1D * hist = nullptr;  // µ±Ç°µÄÖ±·½Í¼
-        double timestamp_ini = -1.0;  // ³õÊ¼µÄÊ±¼ä´Á
+        TH1D * hist = nullptr;  // å½“å‰çš„ç›´æ–¹å›¾
+        double timestamp_ini = -1.0;  // åˆå§‹çš„æ—¶é—´æˆ³
 
-        // ±éÀúTTreeÖĞµÄÃ¿¸öentry
+        // éå†TTreeä¸­çš„æ¯ä¸ªentry
         for ( int i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
 
-            // ¸üĞÂxÖáµÄ×îĞ¡ÖµºÍ×î´óÖµ
+            // æ›´æ–°xè½´çš„æœ€å°å€¼å’Œæœ€å¤§å€¼
             if ( timestamp < xTimeStampMin )
                 xTimeStampMin = timestamp;
             if ( timestamp > xTimeStampMax )
                 xTimeStampMax = timestamp;
 
-            // Èç¹ûµ±Ç°µÄÊ±¼ä´Á³¬³öÁË[timestamp_ini, timestamp_ini + timeWindow)µÄ·¶Î§
+            // å¦‚æœå½“å‰çš„æ—¶é—´æˆ³è¶…å‡ºäº†[timestamp_ini, timestamp_ini + timeWindow)çš„èŒƒå›´
             if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + timeWindow )
             {
-                // ±£´æµ±Ç°µÄÖ±·½Í¼
+                // ä¿å­˜å½“å‰çš„ç›´æ–¹å›¾
                 if ( hist )
                 {
-                    // ¼ÆËãÊ±¼ä´ÁµÄÆ½¾ùÖµ²¢´òÓ¡³öÀ´
+                    // è®¡ç®—æ—¶é—´æˆ³çš„å¹³å‡å€¼å¹¶æ‰“å°å‡ºæ¥
                     double average = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
 
-                    // ¼ÆËã±ê×¼²î
+                    // è®¡ç®—æ ‡å‡†å·®
                     double sum_deviation = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average]( auto sum, auto val ) { return sum + ( val - average ) * ( val - average ); } );
                     double stddev = std::sqrt( sum_deviation / timestamps_vec.size() );
 
-                    // ÕÒµ½Ö±·½Í¼ÖĞ×î¸ßbinµÄxÖáÖµ²¢´òÓ¡³öÀ´
+                    // æ‰¾åˆ°ç›´æ–¹å›¾ä¸­æœ€é«˜binçš„xè½´å€¼å¹¶æ‰“å°å‡ºæ¥
                     int maxBin = hist->GetMaximumBin();
                     double maxX = hist->GetBinCenter( maxBin );
 
@@ -123,7 +123,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
                     {
                         std::cout << "Average timestamp for " << hist->GetName() << ": " << average << std::endl;
                         std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev << std::endl;
-                        // Ê¹ÓÃTDatime½«Æ½¾ùÊ±¼ä´Á×ª»»ÎªÈÕÆÚºÍÊ±¼ä
+                        // ä½¿ç”¨TDatimeå°†å¹³å‡æ—¶é—´æˆ³è½¬æ¢ä¸ºæ—¥æœŸå’Œæ—¶é—´
                         TDatime date( static_cast<UInt_t>( average ) );
                         std::cout << "Average date and time for " << hist->GetName() << ": " << date.AsString() << std::endl;
                         std::cout << "Mode amplitude for " << hist->GetName() << ": " << maxX << std::endl;
@@ -132,32 +132,32 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
                     delete hist;
                 }
 
-                // ´´½¨Ò»¸öĞÂµÄÖ±·½Í¼
+                // åˆ›å»ºä¸€ä¸ªæ–°çš„ç›´æ–¹å›¾
                 timestamp_ini = floor( timestamp );
                 std::string histName = "hist_" + std::to_string( static_cast<int>( timestamp_ini ) );
                 hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), ( xMax - xMin ) / xBinWidth, xMin, xMax );
-                // Çå¿ÕÊ±¼ä´ÁÏòÁ¿
+                // æ¸…ç©ºæ—¶é—´æˆ³å‘é‡
                 timestamps_vec.clear();
             }
 
-            // ½«Amp_2cmLMOµÄÖµÌî³äµ½Ö±·½Í¼µÄÏàÓ¦Ê±¼ä´°¿ÚÖĞ
+            // å°†Amp_2cmLMOçš„å€¼å¡«å……åˆ°ç›´æ–¹å›¾çš„ç›¸åº”æ—¶é—´çª—å£ä¸­
             hist->Fill( Amp );
 
-            // ½«µ±Ç°µÄÊ±¼ä´ÁÌí¼Óµ½ÏòÁ¿ÖĞ
+            // å°†å½“å‰çš„æ—¶é—´æˆ³æ·»åŠ åˆ°å‘é‡ä¸­
             timestamps_vec.emplace_back( timestamp );
         }
 
-        // ±£´æ×îºóÒ»¸öÖ±·½Í¼
+        // ä¿å­˜æœ€åä¸€ä¸ªç›´æ–¹å›¾
         if ( hist )
         {
-            // ¼ÆËãÊ±¼ä´ÁµÄÆ½¾ùÖµ²¢´òÓ¡³öÀ´
+            // è®¡ç®—æ—¶é—´æˆ³çš„å¹³å‡å€¼å¹¶æ‰“å°å‡ºæ¥
             double average = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
 
-            // ¼ÆËã±ê×¼²î
+            // è®¡ç®—æ ‡å‡†å·®
             double sum_deviation = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average]( auto sum, auto val ) { return sum + ( val - average ) * ( val - average ); } );
             double stddev = std::sqrt( sum_deviation / timestamps_vec.size() );
 
-            // ÕÒµ½Ö±·½Í¼ÖĞ×î¸ßbinµÄxÖáÖµ²¢´òÓ¡³öÀ´
+            // æ‰¾åˆ°ç›´æ–¹å›¾ä¸­æœ€é«˜binçš„xè½´å€¼å¹¶æ‰“å°å‡ºæ¥
             int maxBin = hist->GetMaximumBin();
             double maxX = hist->GetBinCenter( maxBin );
 
@@ -170,7 +170,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
             {
                 std::cout << "Average timestamp for " << hist->GetName() << ": " << average << std::endl;
                 std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev << std::endl;
-                // Ê¹ÓÃTDatime½«Æ½¾ùÊ±¼ä´Á×ª»»ÎªÈÕÆÚºÍÊ±¼ä
+                // ä½¿ç”¨TDatimeå°†å¹³å‡æ—¶é—´æˆ³è½¬æ¢ä¸ºæ—¥æœŸå’Œæ—¶é—´
                 TDatime date( static_cast<UInt_t>( average ) );
                 std::cout << "Average date and time for " << hist->GetName() << ": " << date.AsString() << std::endl;
                 std::cout << "Mode amplitude for " << hist->GetName() << ": " << maxX << std::endl;
@@ -179,15 +179,15 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
             delete hist;
         }
 
-        // ´´½¨TGraphErrors²¢ÃüÃû
+        // åˆ›å»ºTGraphErrorså¹¶å‘½å
         TGraphErrors * graph = new TGraphErrors( x_vec.size(), x_vec.data(), y_vec.data(), ex_vec.data(), ey_vec.data() );
         graph->SetName( branchName.c_str() );
         graph->SetTitle( branchName.c_str() );
 
-        // ÉèÖÃµãµÄÑùÊ½
-        graph->SetMarkerStyle( 21 );  // ÉèÖÃµãµÄÑùÊ½ÎªÕı·½ĞÎ
-        graph->SetMarkerSize( 0.5 );  // ÉèÖÃµãµÄ´óĞ¡
-        // ÉèÖÃTGraphErrorsµÄÑÕÉ«
+        // è®¾ç½®ç‚¹çš„æ ·å¼
+        graph->SetMarkerStyle( 21 );  // è®¾ç½®ç‚¹çš„æ ·å¼ä¸ºæ­£æ–¹å½¢
+        graph->SetMarkerSize( 0.5 );  // è®¾ç½®ç‚¹çš„å¤§å°
+        // è®¾ç½®TGraphErrorsçš„é¢œè‰²
         graph->SetMarkerColor( colors[i % 8] );
         graph->SetLineWidth( 1 );
         graph->SetFillStyle( 0 );
@@ -199,17 +199,17 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     // If one changes it, it will be changed even on the graphs already defined
     gStyle->SetTimeOffset( 0 );
 
-    // ´´½¨Ò»¸öTCanvas
+    // åˆ›å»ºä¸€ä¸ªTCanvas
     TCanvas * canvas = new TCanvas( "canvas_Output", "canvas_Output", 1600, 900 );
 
-    // ¿ªÆôXÖáºÍYÖáµÄÍø¸ñÏß
+    // å¼€å¯Xè½´å’ŒYè½´çš„ç½‘æ ¼çº¿
     canvas->SetGridx();
     canvas->SetGridy();
 
-    // ´´½¨Ò»¸öMultiGraph
+    // åˆ›å»ºä¸€ä¸ªMultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_Output", "mg_Output" );
 
-    // ½«ËùÓĞµÄTGraphErrorsÌí¼Óµ½MultiGraphÖĞ
+    // å°†æ‰€æœ‰çš„TGraphErrorsæ·»åŠ åˆ°MultiGraphä¸­
     for ( TGraphErrors * graphInstance : graphs_vec )
     {
         if ( !graphInstance )
@@ -220,25 +220,25 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
             std::cout << "Adding graph " << graphInstance->GetName() << " to MultiGraph" << std::endl;
         }
 
-        // ½«TGraphErrorsÌí¼Óµ½MultiGraphÖĞ
+        // å°†TGraphErrorsæ·»åŠ åˆ°MultiGraphä¸­
         multiGraph->Add( graphInstance );
     }
 
-    // ÔÚTCanvasÉÏ»æÖÆMultiGraph
+    // åœ¨TCanvasä¸Šç»˜åˆ¶MultiGraph
     multiGraph->Draw( "AEP" );
 
     multiGraph->GetXaxis()->SetTitle( "Time" );
     multiGraph->GetYaxis()->SetTitle( "Output [V]" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
     multiGraph->GetXaxis()->SetTimeDisplay( 1 );
-    // ÉèÖÃXÖáÉÏµÄÊ±¼ä¸ñÊ½
+    // è®¾ç½®Xè½´ä¸Šçš„æ—¶é—´æ ¼å¼
     //multiGraph->GetXaxis()->SetTimeFormat( "%a %d/%m/%y %H:%M:%S" );
     multiGraph->GetXaxis()->SetTimeFormat( "%m/%d %H:%M:%S" );
 
-    // ´´½¨Ò»¸öÍ¼Àı
+    // åˆ›å»ºä¸€ä¸ªå›¾ä¾‹
     canvas->BuildLegend();
 
-    // ½«TCanvasĞ´ÈëÎÄ¼ş
+    // å°†TCanvaså†™å…¥æ–‡ä»¶
     canvas->Write( "canvas_Output" );
 
     outputFile->Close();
@@ -247,10 +247,10 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     delete file;
 }
 
-// ´ÓTTree´´½¨TGraphErrors²¢±£´æµ½ROOTÎÄ¼şµÄ·½·¨
+// ä»TTreeåˆ›å»ºTGraphErrorså¹¶ä¿å­˜åˆ°ROOTæ–‡ä»¶çš„æ–¹æ³•
 void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const
 {
-    // ´ò¿ªROOTÎÄ¼ş
+    // æ‰“å¼€ROOTæ–‡ä»¶
     TFile * file = TFile::Open( rootFilePath.c_str(), "READ" );
     if ( !file || file->IsZombie() )
     {
@@ -258,7 +258,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         return;
     }
 
-    // ´ÓÎÄ¼şÖĞ»ñÈ¡TTree
+    // ä»æ–‡ä»¶ä¸­è·å–TTree
     TTree * tree = dynamic_cast<TTree *>( file->Get( "TemperatureReadings" ) );
     if ( !tree )
     {
@@ -266,11 +266,11 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         return;
     }
 
-    // »ñÈ¡TTreeÖĞµÄËùÓĞbranchµÄÃû³Æ
+    // è·å–TTreeä¸­çš„æ‰€æœ‰branchçš„åç§°
     TObjArray * branches = tree->GetListOfBranches();
     int nBranches = branches->GetEntries();
 
-    // ½«TGraphErrors±£´æµ½ĞÂµÄROOTÎÄ¼ş
+    // å°†TGraphErrorsä¿å­˜åˆ°æ–°çš„ROOTæ–‡ä»¶
     TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
     if ( !outputFile || outputFile->IsZombie() )
     {
@@ -278,10 +278,10 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         return;
     }
 
-    // ´´½¨Ò»¸öÑÕÉ«µÄÊı×é
+    // åˆ›å»ºä¸€ä¸ªé¢œè‰²çš„æ•°ç»„
     Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 
-    // ÎªÃ¿¸öbranch´´½¨Ò»¸öTGraphErrors
+    // ä¸ºæ¯ä¸ªbranchåˆ›å»ºä¸€ä¸ªTGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
 
     double xTimeStampMin = 0.0;
@@ -292,18 +292,18 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         TBranch * branch = static_cast<TBranch *>( branches->At( i ) );
         std::string branchName = branch->GetName();
 
-        // Ìø¹ıtimestampÕâ¸öbranch
+        // è·³è¿‡timestampè¿™ä¸ªbranch
         if ( branchName == "timestamp" )
             continue;
 
-        // ´ÓTTreeÖĞ»ñÈ¡Êı¾İ
+        // ä»TTreeä¸­è·å–æ•°æ®
         int n = tree->GetEntries();
 
-        // ´´½¨ÏòÁ¿À´´æ´¢Ã¿¸öÊ±¼ä´°¿ÚÄÚµÄÆ½¾ùÊ±¼ä´ÁºÍÄ£Ê½·ù¶È
+        // åˆ›å»ºå‘é‡æ¥å­˜å‚¨æ¯ä¸ªæ—¶é—´çª—å£å†…çš„å¹³å‡æ—¶é—´æˆ³å’Œæ¨¡å¼å¹…åº¦
         std::vector <double> x_vec = {};
         std::vector <double> y_vec = {};
-        std::vector <double> ex_vec = {};  // xÖáÎó²î
-        std::vector <double> ey_vec = {};  // yÖáÎó²î
+        std::vector <double> ex_vec = {};  // xè½´è¯¯å·®
+        std::vector <double> ey_vec = {};  // yè½´è¯¯å·®
 
         double timestamp = 0;
         double temperature = 0;
@@ -311,32 +311,32 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         tree->SetBranchAddress( "timestamp", &timestamp );
         tree->SetBranchAddress( branchName.c_str(), &temperature );
 
-        // ´´½¨Ò»¸öÏòÁ¿À´´æ´¢Ã¿¸öÊ±¼ä´°¿ÚÄÚµÄËùÓĞÊ±¼ä´Á
+        // åˆ›å»ºä¸€ä¸ªå‘é‡æ¥å­˜å‚¨æ¯ä¸ªæ—¶é—´çª—å£å†…çš„æ‰€æœ‰æ—¶é—´æˆ³
         std::vector<double> timestamps_vec;
         std::vector<double> temperatures_vec;
-        double timestamp_ini = -1.0;  // ³õÊ¼µÄÊ±¼ä´Á
+        double timestamp_ini = -1.0;  // åˆå§‹çš„æ—¶é—´æˆ³
 
-        // ±éÀúTTreeÖĞµÄÃ¿¸öentry
+        // éå†TTreeä¸­çš„æ¯ä¸ªentry
         for ( int i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
 
-            // ¸üĞÂxÖáµÄ×îĞ¡ÖµºÍ×î´óÖµ
+            // æ›´æ–°xè½´çš„æœ€å°å€¼å’Œæœ€å¤§å€¼
             if ( timestamp < xTimeStampMin )
                 xTimeStampMin = timestamp;
             if ( timestamp > xTimeStampMax )
                 xTimeStampMax = timestamp;
 
-            // Èç¹ûµ±Ç°µÄÊ±¼ä´Á³¬³öÁË[timestamp_ini, timestamp_ini + timeWindow)µÄ·¶Î§
+            // å¦‚æœå½“å‰çš„æ—¶é—´æˆ³è¶…å‡ºäº†[timestamp_ini, timestamp_ini + timeWindow)çš„èŒƒå›´
             if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + timeWindow )
             {
                 if ( !timestamps_vec.empty() )
                 {
-                    // ¼ÆËãÊ±¼ä´ÁµÄÆ½¾ùÖµ²¢´òÓ¡³öÀ´
+                    // è®¡ç®—æ—¶é—´æˆ³çš„å¹³å‡å€¼å¹¶æ‰“å°å‡ºæ¥
                     double average_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
                     double average_Y = std::accumulate( temperatures_vec.begin(), temperatures_vec.end(), 0.0 ) / temperatures_vec.size();
 
-                    // ¼ÆËã±ê×¼²î
+                    // è®¡ç®—æ ‡å‡†å·®
                     double sum_deviation_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average_X]( auto sum, auto val ) { return sum + ( val - average_X ) * ( val - average_X ); } );
                     double sum_deviation_Y = std::accumulate( temperatures_vec.begin(), temperatures_vec.end(), 0.0, [average_Y]( auto sum, auto val ) { return sum + ( val - average_Y ) * ( val - average_Y ); } );
                     double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
@@ -346,7 +346,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
                     {
                         std::cout << "Average timestamp for " << static_cast<int>( timestamp_ini ) << ": " << average_X << std::endl;
                         std::cout << "Standard deviation of timestamp for " << static_cast<int>( timestamp_ini ) << ": " << stddev_X << std::endl;
-                        // Ê¹ÓÃTDatime½«Æ½¾ùÊ±¼ä´Á×ª»»ÎªÈÕÆÚºÍÊ±¼ä
+                        // ä½¿ç”¨TDatimeå°†å¹³å‡æ—¶é—´æˆ³è½¬æ¢ä¸ºæ—¥æœŸå’Œæ—¶é—´
                         TDatime date( static_cast<UInt_t>( average_X ) );
                         std::cout << "Average date and time for " << static_cast<int>( timestamp_ini ) << ": " << date.AsString() << std::endl;
                         std::cout << "Average temperature for " << static_cast<int>( timestamp_ini ) << ": " << average_Y << std::endl;
@@ -364,24 +364,24 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
 
                 timestamp_ini = floor( timestamp );
 
-                // Çå¿ÕÊ±¼ä´ÁÏòÁ¿
+                // æ¸…ç©ºæ—¶é—´æˆ³å‘é‡
                 timestamps_vec.clear();
                 temperatures_vec.clear();
             }
 
-            // ½«µ±Ç°µÄÊ±¼ä´ÁÌí¼Óµ½ÏòÁ¿ÖĞ
+            // å°†å½“å‰çš„æ—¶é—´æˆ³æ·»åŠ åˆ°å‘é‡ä¸­
             timestamps_vec.emplace_back( timestamp );
             temperatures_vec.emplace_back( temperature );
         }
 
-        // ±£´æ×îºóÒ»¸öµã
+        // ä¿å­˜æœ€åä¸€ä¸ªç‚¹
         if ( !timestamps_vec.empty() )
         {
-            // ¼ÆËãÊ±¼ä´ÁµÄÆ½¾ùÖµ²¢´òÓ¡³öÀ´
+            // è®¡ç®—æ—¶é—´æˆ³çš„å¹³å‡å€¼å¹¶æ‰“å°å‡ºæ¥
             double average_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
             double average_Y = std::accumulate( temperatures_vec.begin(), temperatures_vec.end(), 0.0 ) / temperatures_vec.size();
 
-            // ¼ÆËã±ê×¼²î
+            // è®¡ç®—æ ‡å‡†å·®
             double sum_deviation_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average_X]( auto sum, auto val ) { return sum + ( val - average_X ) * ( val - average_X ); } );
             double sum_deviation_Y = std::accumulate( temperatures_vec.begin(), temperatures_vec.end(), 0.0, [average_Y]( auto sum, auto val ) { return sum + ( val - average_Y ) * ( val - average_Y ); } );
             double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
@@ -391,7 +391,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
             {
                 std::cout << "Average timestamp for " << static_cast<int>( timestamp_ini ) << ": " << average_X << std::endl;
                 std::cout << "Standard deviation of timestamp for " << static_cast<int>( timestamp_ini ) << ": " << stddev_X << std::endl;
-                // Ê¹ÓÃTDatime½«Æ½¾ùÊ±¼ä´Á×ª»»ÎªÈÕÆÚºÍÊ±¼ä
+                // ä½¿ç”¨TDatimeå°†å¹³å‡æ—¶é—´æˆ³è½¬æ¢ä¸ºæ—¥æœŸå’Œæ—¶é—´
                 TDatime date( static_cast<UInt_t>( average_X ) );
                 std::cout << "Average date and time for " << static_cast<int>( timestamp_ini ) << ": " << date.AsString() << std::endl;
                 std::cout << "Average temperature for " << static_cast<int>( timestamp_ini ) << ": " << average_Y << std::endl;
@@ -407,15 +407,15 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
             }
         }
 
-        // ´´½¨TGraphErrors²¢ÃüÃû
+        // åˆ›å»ºTGraphErrorså¹¶å‘½å
         TGraphErrors * graph = new TGraphErrors( x_vec.size(), x_vec.data(), y_vec.data(), ex_vec.data(), ey_vec.data() );
         graph->SetName( branchName.c_str() );
         graph->SetTitle( branchName.c_str() );
 
-        // ÉèÖÃµãµÄÑùÊ½
-        graph->SetMarkerStyle( 21 );  // ÉèÖÃµãµÄÑùÊ½ÎªÕı·½ĞÎ
-        graph->SetMarkerSize( 0.5 );  // ÉèÖÃµãµÄ´óĞ¡
-        // ÉèÖÃTGraphErrorsµÄÑÕÉ«
+        // è®¾ç½®ç‚¹çš„æ ·å¼
+        graph->SetMarkerStyle( 21 );  // è®¾ç½®ç‚¹çš„æ ·å¼ä¸ºæ­£æ–¹å½¢
+        graph->SetMarkerSize( 0.5 );  // è®¾ç½®ç‚¹çš„å¤§å°
+        // è®¾ç½®TGraphErrorsçš„é¢œè‰²
         graph->SetMarkerColor( colors[i % 8] );
         graph->SetLineWidth( 1 );
         graph->SetFillStyle( 0 );
@@ -427,17 +427,17 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     // If one changes it, it will be changed even on the graphs already defined
     gStyle->SetTimeOffset( 0 );
 
-    // ´´½¨Ò»¸öTCanvas
+    // åˆ›å»ºä¸€ä¸ªTCanvas
     TCanvas * canvas = new TCanvas( "canvas_Temperature", "canvas_Temperature", 1600, 900 );
 
-    // ¿ªÆôXÖáºÍYÖáµÄÍø¸ñÏß
+    // å¼€å¯Xè½´å’ŒYè½´çš„ç½‘æ ¼çº¿
     canvas->SetGridx();
     canvas->SetGridy();
 
-    // ´´½¨Ò»¸öMultiGraph
+    // åˆ›å»ºä¸€ä¸ªMultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_Temperature", "mg_Temperature" );
 
-    // ½«ËùÓĞµÄTGraphErrorsÌí¼Óµ½MultiGraphÖĞ
+    // å°†æ‰€æœ‰çš„TGraphErrorsæ·»åŠ åˆ°MultiGraphä¸­
     for ( TGraphErrors * graphInstance : graphs_vec )
     {
         if ( !graphInstance )
@@ -448,25 +448,25 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
             std::cout << "Adding graph " << graphInstance->GetName() << " to MultiGraph" << std::endl;
         }
 
-        // ½«TGraphErrorsÌí¼Óµ½MultiGraphÖĞ
+        // å°†TGraphErrorsæ·»åŠ åˆ°MultiGraphä¸­
         multiGraph->Add( graphInstance );
     }
 
-    // ÔÚTCanvasÉÏ»æÖÆMultiGraph
+    // åœ¨TCanvasä¸Šç»˜åˆ¶MultiGraph
     multiGraph->Draw( "AEP" );
 
     multiGraph->GetXaxis()->SetTitle( "Time" );
     multiGraph->GetYaxis()->SetTitle( "Temperature [K]" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
     multiGraph->GetXaxis()->SetTimeDisplay( 1 );
-    // ÉèÖÃXÖáÉÏµÄÊ±¼ä¸ñÊ½
+    // è®¾ç½®Xè½´ä¸Šçš„æ—¶é—´æ ¼å¼
     //multiGraph->GetXaxis()->SetTimeFormat( "%a %d/%m/%y %H:%M:%S" );
     multiGraph->GetXaxis()->SetTimeFormat( "%m/%d %H:%M:%S" );
 
-    // ´´½¨Ò»¸öÍ¼Àı
+    // åˆ›å»ºä¸€ä¸ªå›¾ä¾‹
     canvas->BuildLegend();
 
-    // ½«TCanvasĞ´ÈëÎÄ¼ş
+    // å°†TCanvaså†™å…¥æ–‡ä»¶
     canvas->Write( "canvas_Temperature" );
 
     outputFile->Close();
@@ -475,10 +475,10 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     delete file;
 }
 
-// ´ÓTTree´´½¨TGraphErrors²¢±£´æµ½ROOTÎÄ¼şµÄ·½·¨
+// ä»TTreeåˆ›å»ºTGraphErrorså¹¶ä¿å­˜åˆ°ROOTæ–‡ä»¶çš„æ–¹æ³•
 void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const
 {
-    // ´ò¿ªROOTÎÄ¼ş
+    // æ‰“å¼€ROOTæ–‡ä»¶
     TFile * file = TFile::Open( rootFilePath.c_str(), "READ" );
     if ( !file || file->IsZombie() )
     {
@@ -486,7 +486,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         return;
     }
 
-    // ´ÓÎÄ¼şÖĞ»ñÈ¡TTree
+    // ä»æ–‡ä»¶ä¸­è·å–TTree
     TTree * tree = dynamic_cast<TTree *>( file->Get( "MultimeterReadings" ) );
     if ( !tree )
     {
@@ -494,11 +494,11 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         return;
     }
 
-    // »ñÈ¡TTreeÖĞµÄËùÓĞbranchµÄÃû³Æ
+    // è·å–TTreeä¸­çš„æ‰€æœ‰branchçš„åç§°
     TObjArray * branches = tree->GetListOfBranches();
     int nBranches = branches->GetEntries();
 
-    // ½«TGraphErrors±£´æµ½ĞÂµÄROOTÎÄ¼ş
+    // å°†TGraphErrorsä¿å­˜åˆ°æ–°çš„ROOTæ–‡ä»¶
     TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
     if ( !outputFile || outputFile->IsZombie() )
     {
@@ -506,10 +506,10 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         return;
     }
 
-    // ´´½¨Ò»¸öÑÕÉ«µÄÊı×é
+    // åˆ›å»ºä¸€ä¸ªé¢œè‰²çš„æ•°ç»„
     Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 
-    // ÎªÃ¿¸öbranch´´½¨Ò»¸öTGraphErrors
+    // ä¸ºæ¯ä¸ªbranchåˆ›å»ºä¸€ä¸ªTGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
 
     double xTimeStampMin = 0.0;
@@ -520,18 +520,18 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         TBranch * branch = static_cast<TBranch *>( branches->At( i ) );
         std::string branchName = branch->GetName();
 
-        // Ìø¹ıtimestampÕâ¸öbranch
+        // è·³è¿‡timestampè¿™ä¸ªbranch
         if ( branchName == "timestamp" )
             continue;
 
-        // ´ÓTTreeÖĞ»ñÈ¡Êı¾İ
+        // ä»TTreeä¸­è·å–æ•°æ®
         int n = tree->GetEntries();
 
-        // ´´½¨ÏòÁ¿À´´æ´¢Ã¿¸öÊ±¼ä´°¿ÚÄÚµÄÆ½¾ùÊ±¼ä´ÁºÍÄ£Ê½·ù¶È
+        // åˆ›å»ºå‘é‡æ¥å­˜å‚¨æ¯ä¸ªæ—¶é—´çª—å£å†…çš„å¹³å‡æ—¶é—´æˆ³å’Œæ¨¡å¼å¹…åº¦
         std::vector <double> x_vec = {};
         std::vector <double> y_vec = {};
-        std::vector <double> ex_vec = {};  // xÖáÎó²î
-        std::vector <double> ey_vec = {};  // yÖáÎó²î
+        std::vector <double> ex_vec = {};  // xè½´è¯¯å·®
+        std::vector <double> ey_vec = {};  // yè½´è¯¯å·®
 
         double timestamp = 0;
         double reading = 0;
@@ -539,32 +539,32 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         tree->SetBranchAddress( "timestamp", &timestamp );
         tree->SetBranchAddress( branchName.c_str(), &reading );
 
-        // ´´½¨Ò»¸öÏòÁ¿À´´æ´¢Ã¿¸öÊ±¼ä´°¿ÚÄÚµÄËùÓĞÊ±¼ä´Á
+        // åˆ›å»ºä¸€ä¸ªå‘é‡æ¥å­˜å‚¨æ¯ä¸ªæ—¶é—´çª—å£å†…çš„æ‰€æœ‰æ—¶é—´æˆ³
         std::vector<double> timestamps_vec;
         std::vector<double> readings_vec;
-        double timestamp_ini = -1.0;  // ³õÊ¼µÄÊ±¼ä´Á
+        double timestamp_ini = -1.0;  // åˆå§‹çš„æ—¶é—´æˆ³
 
-        // ±éÀúTTreeÖĞµÄÃ¿¸öentry
+        // éå†TTreeä¸­çš„æ¯ä¸ªentry
         for ( int i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
 
-            // ¸üĞÂxÖáµÄ×îĞ¡ÖµºÍ×î´óÖµ
+            // æ›´æ–°xè½´çš„æœ€å°å€¼å’Œæœ€å¤§å€¼
             if ( timestamp < xTimeStampMin )
                 xTimeStampMin = timestamp;
             if ( timestamp > xTimeStampMax )
                 xTimeStampMax = timestamp;
 
-            // Èç¹ûµ±Ç°µÄÊ±¼ä´Á³¬³öÁË[timestamp_ini, timestamp_ini + timeWindow)µÄ·¶Î§
+            // å¦‚æœå½“å‰çš„æ—¶é—´æˆ³è¶…å‡ºäº†[timestamp_ini, timestamp_ini + timeWindow)çš„èŒƒå›´
             if ( timestamp < timestamp_ini || timestamp >= timestamp_ini + timeWindow )
             {
                 if ( !timestamps_vec.empty() )
                 {
-                    // ¼ÆËãÊ±¼ä´ÁµÄÆ½¾ùÖµ²¢´òÓ¡³öÀ´
+                    // è®¡ç®—æ—¶é—´æˆ³çš„å¹³å‡å€¼å¹¶æ‰“å°å‡ºæ¥
                     double average_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
                     double average_Y = std::accumulate( readings_vec.begin(), readings_vec.end(), 0.0 ) / readings_vec.size();
 
-                    // ¼ÆËã±ê×¼²î
+                    // è®¡ç®—æ ‡å‡†å·®
                     double sum_deviation_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average_X]( auto sum, auto val ) { return sum + ( val - average_X ) * ( val - average_X ); } );
                     double sum_deviation_Y = std::accumulate( readings_vec.begin(), readings_vec.end(), 0.0, [average_Y]( auto sum, auto val ) { return sum + ( val - average_Y ) * ( val - average_Y ); } );
                     double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
@@ -574,7 +574,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
                     {
                         std::cout << "Average timestamp for " << static_cast<int>( timestamp_ini ) << ": " << average_X << std::endl;
                         std::cout << "Standard deviation of timestamp for " << static_cast<int>( timestamp_ini ) << ": " << stddev_X << std::endl;
-                        // Ê¹ÓÃTDatime½«Æ½¾ùÊ±¼ä´Á×ª»»ÎªÈÕÆÚºÍÊ±¼ä
+                        // ä½¿ç”¨TDatimeå°†å¹³å‡æ—¶é—´æˆ³è½¬æ¢ä¸ºæ—¥æœŸå’Œæ—¶é—´
                         TDatime date( static_cast<UInt_t>( average_X ) );
                         std::cout << "Average date and time for " << static_cast<int>( timestamp_ini ) << ": " << date.AsString() << std::endl;
                         std::cout << "Average reading for " << static_cast<int>( timestamp_ini ) << ": " << average_Y << std::endl;
@@ -590,24 +590,24 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
 
                 timestamp_ini = floor( timestamp );
 
-                // Çå¿ÕÊ±¼ä´ÁÏòÁ¿
+                // æ¸…ç©ºæ—¶é—´æˆ³å‘é‡
                 timestamps_vec.clear();
                 readings_vec.clear();
             }
 
-            // ½«µ±Ç°µÄÊ±¼ä´ÁÌí¼Óµ½ÏòÁ¿ÖĞ
+            // å°†å½“å‰çš„æ—¶é—´æˆ³æ·»åŠ åˆ°å‘é‡ä¸­
             timestamps_vec.emplace_back( timestamp );
             readings_vec.emplace_back( reading );
         }
 
-        // ±£´æ×îºóÒ»¸öµã
+        // ä¿å­˜æœ€åä¸€ä¸ªç‚¹
         if ( !timestamps_vec.empty() )
         {
-            // ¼ÆËãÊ±¼ä´ÁµÄÆ½¾ùÖµ²¢´òÓ¡³öÀ´
+            // è®¡ç®—æ—¶é—´æˆ³çš„å¹³å‡å€¼å¹¶æ‰“å°å‡ºæ¥
             double average_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
             double average_Y = std::accumulate( readings_vec.begin(), readings_vec.end(), 0.0 ) / readings_vec.size();
 
-            // ¼ÆËã±ê×¼²î
+            // è®¡ç®—æ ‡å‡†å·®
             double sum_deviation_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average_X]( auto sum, auto val ) { return sum + ( val - average_X ) * ( val - average_X ); } );
             double sum_deviation_Y = std::accumulate( readings_vec.begin(), readings_vec.end(), 0.0, [average_Y]( auto sum, auto val ) { return sum + ( val - average_Y ) * ( val - average_Y ); } );
             double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
@@ -617,7 +617,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
             {
                 std::cout << "Average timestamp for " << static_cast<int>( timestamp_ini ) << ": " << average_X << std::endl;
                 std::cout << "Standard deviation of timestamp for " << static_cast<int>( timestamp_ini ) << ": " << stddev_X << std::endl;
-                // Ê¹ÓÃTDatime½«Æ½¾ùÊ±¼ä´Á×ª»»ÎªÈÕÆÚºÍÊ±¼ä
+                // ä½¿ç”¨TDatimeå°†å¹³å‡æ—¶é—´æˆ³è½¬æ¢ä¸ºæ—¥æœŸå’Œæ—¶é—´
                 TDatime date( static_cast<UInt_t>( average_X ) );
                 std::cout << "Average date and time for " << static_cast<int>( timestamp_ini ) << ": " << date.AsString() << std::endl;
                 std::cout << "Average reading for " << static_cast<int>( timestamp_ini ) << ": " << average_Y << std::endl;
@@ -630,15 +630,15 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
             ey_vec.emplace_back( stddev_Y );
         }
 
-        // ´´½¨TGraphErrors²¢ÃüÃû
+        // åˆ›å»ºTGraphErrorså¹¶å‘½å
         TGraphErrors * graph = new TGraphErrors( x_vec.size(), x_vec.data(), y_vec.data(), ex_vec.data(), ey_vec.data() );
         graph->SetName( branchName.c_str() );
         graph->SetTitle( branchName.c_str() );
 
-        // ÉèÖÃµãµÄÑùÊ½
-        graph->SetMarkerStyle( 21 );  // ÉèÖÃµãµÄÑùÊ½ÎªÕı·½ĞÎ
-        graph->SetMarkerSize( 0.5 );  // ÉèÖÃµãµÄ´óĞ¡
-        // ÉèÖÃTGraphErrorsµÄÑÕÉ«
+        // è®¾ç½®ç‚¹çš„æ ·å¼
+        graph->SetMarkerStyle( 21 );  // è®¾ç½®ç‚¹çš„æ ·å¼ä¸ºæ­£æ–¹å½¢
+        graph->SetMarkerSize( 0.5 );  // è®¾ç½®ç‚¹çš„å¤§å°
+        // è®¾ç½®TGraphErrorsçš„é¢œè‰²
         graph->SetMarkerColor( colors[i % 8] );
         graph->SetLineWidth( 1 );
         graph->SetFillStyle( 0 );
@@ -650,17 +650,17 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
     // If one changes it, it will be changed even on the graphs already defined
     gStyle->SetTimeOffset( 0 );
 
-    // ´´½¨Ò»¸öTCanvas
+    // åˆ›å»ºä¸€ä¸ªTCanvas
     TCanvas * canvas = new TCanvas( "canvas_MultimeterReading", "canvas_MultimeterReading", 1600, 900 );
 
-    // ¿ªÆôXÖáºÍYÖáµÄÍø¸ñÏß
+    // å¼€å¯Xè½´å’ŒYè½´çš„ç½‘æ ¼çº¿
     canvas->SetGridx();
     canvas->SetGridy();
 
-    // ´´½¨Ò»¸öMultiGraph
+    // åˆ›å»ºä¸€ä¸ªMultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_MultimeterReading", "mg_MultimeterReading" );
 
-    // ½«ËùÓĞµÄTGraphErrorsÌí¼Óµ½MultiGraphÖĞ
+    // å°†æ‰€æœ‰çš„TGraphErrorsæ·»åŠ åˆ°MultiGraphä¸­
     for ( TGraphErrors * graphInstance : graphs_vec )
     {
         if ( !graphInstance )
@@ -671,25 +671,25 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
             std::cout << "Adding graph " << graphInstance->GetName() << " to MultiGraph" << std::endl;
         }
 
-        // ½«TGraphErrorsÌí¼Óµ½MultiGraphÖĞ
+        // å°†TGraphErrorsæ·»åŠ åˆ°MultiGraphä¸­
         multiGraph->Add( graphInstance );
     }
 
-    // ÔÚTCanvasÉÏ»æÖÆMultiGraph
+    // åœ¨TCanvasä¸Šç»˜åˆ¶MultiGraph
     multiGraph->Draw( "AEP" );
 
     multiGraph->GetXaxis()->SetTitle( "Time" );
     multiGraph->GetYaxis()->SetTitle( "Multimeter Reading" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
     multiGraph->GetXaxis()->SetTimeDisplay( 1 );
-    // ÉèÖÃXÖáÉÏµÄÊ±¼ä¸ñÊ½
+    // è®¾ç½®Xè½´ä¸Šçš„æ—¶é—´æ ¼å¼
     //multiGraph->GetXaxis()->SetTimeFormat( "%a %d/%m/%y %H:%M:%S" );
     multiGraph->GetXaxis()->SetTimeFormat( "%m/%d %H:%M:%S" );
 
-    // ´´½¨Ò»¸öÍ¼Àı
+    // åˆ›å»ºä¸€ä¸ªå›¾ä¾‹
     canvas->BuildLegend();
 
-    // ½«TCanvasĞ´ÈëÎÄ¼ş
+    // å°†TCanvaså†™å…¥æ–‡ä»¶
     canvas->Write( "canvas_MultimeterReading" );
 
     outputFile->Close();
@@ -698,3 +698,4 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
     delete file;
 }
 }
+

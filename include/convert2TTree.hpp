@@ -8,18 +8,18 @@ namespace TTREEIO
 class convert2TTree
 {
 public:
-    convert2TTree() : isDebugModeActive( false ), startDate( "24-04-01" ), endDate( "24-04-01" ) {}  // ¹¹Ôìº¯Êı£¬³õÊ¼»¯isDebugModeActiveÎªfalse
-    void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // ÉèÖÃdebug×´Ì¬
-    void setDateInterval( const std::string & start, const std::string & end ) { startDate = start; endDate = end; }  // ÉèÖÃÈÕÆÚ·¶Î§
-    // ¶¨ÒåÒ»¸öº¯Êı£¬ÓÃÓÚ½«NIDAQCSV¸ñÊ½µÄÊı¾İ×ª»»ÎªTTree¸ñÊ½
+    convert2TTree() : isDebugModeActive( false ), startDate( "24-04-01" ), endDate( "24-04-01" ) {}  // æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–isDebugModeActiveä¸ºfalse
+    void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // è®¾ç½®debugçŠ¶æ€
+    void setDateInterval( const std::string & start, const std::string & end ) { startDate = start; endDate = end; }  // è®¾ç½®æ—¥æœŸèŒƒå›´
+    // å®šä¹‰ä¸€ä¸ªå‡½æ•°ï¼Œç”¨äºå°†NIDAQCSVæ ¼å¼çš„æ•°æ®è½¬æ¢ä¸ºTTreeæ ¼å¼
     void convertNIDAQCSV2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const; 
-    // ¶¨ÒåÒ»¸öº¯Êı£¬ÓÃÓÚ½«BlueforsLog¸ñÊ½µÄÊı¾İ×ª»»ÎªTTree¸ñÊ½
+    // å®šä¹‰ä¸€ä¸ªå‡½æ•°ï¼Œç”¨äºå°†BlueforsLogæ ¼å¼çš„æ•°æ®è½¬æ¢ä¸ºTTreeæ ¼å¼
     void convertBlueforsTemperatureLog2TTree( const std::string & BlueforsLogDirPath, const std::string & rootFileName ) const;
-    // ¶¨ÒåÒ»¸öº¯Êı£¬ÓÃÓÚ½«MultimeterData¸ñÊ½µÄÊı¾İ×ª»»ÎªTTree¸ñÊ½
+    // å®šä¹‰ä¸€ä¸ªå‡½æ•°ï¼Œç”¨äºå°†MultimeterDataæ ¼å¼çš„æ•°æ®è½¬æ¢ä¸ºTTreeæ ¼å¼
     void convertMultimeterData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const;
 
 protected:
-    bool isDebugModeActive;  // debug×´Ì¬
+    bool isDebugModeActive;  // debugçŠ¶æ€
 
 private:
     std::string startDate;
@@ -28,3 +28,4 @@ private:
 }
 
 #endif // CONVERT2TTREE_HPP
+

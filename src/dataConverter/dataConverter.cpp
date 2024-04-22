@@ -11,21 +11,21 @@
 
 int main( int argc, char * argv[] )
 {
-    // ¼ì²éÊÇ·ñÌá¹©ÁËÎÄ¼şÂ·¾¶
+    // æ£€æŸ¥æ˜¯å¦æä¾›äº†æ–‡ä»¶è·¯å¾„
     if ( argc < 6 )
     {
         std::cout << "Usage: " << argv[0] << " <input NIDAQCSV directory> <output ROOT directory> <output plot directory> <input BLUEFORS_LOG directory> <input MultimeterData directory>" << std::endl;
         return 1;
     }
 
-    // ´ÓÃüÁîĞĞ²ÎÊıÖĞ»ñÈ¡ÎÄ¼şÂ·¾¶
+    // ä»å‘½ä»¤è¡Œå‚æ•°ä¸­è·å–æ–‡ä»¶è·¯å¾„
     std::filesystem::path NIDAQcsvDirPath = argv[1];
     std::filesystem::path rootDirPath = argv[2];
     std::filesystem::path plotDirPath = argv[3];
     std::filesystem::path BlueforsLogDirPath = argv[4];
     std::filesystem::path MultimeterDataDirPath = argv[5];
 
-    // ¼ì²éÂ·¾¶ÊÇ·ñ´æÔÚÇÒÊÇÒ»¸öÄ¿Â¼
+    // æ£€æŸ¥è·¯å¾„æ˜¯å¦å­˜åœ¨ä¸”æ˜¯ä¸€ä¸ªç›®å½•
     if ( !std::filesystem::exists( NIDAQcsvDirPath ) || !std::filesystem::is_directory( NIDAQcsvDirPath ) )
     {
         std::cout << "Error: NI DAQ CSV directory " << NIDAQcsvDirPath << " does not exist or is not a directory." << std::endl;
@@ -52,41 +52,42 @@ int main( int argc, char * argv[] )
         return 1;
     }
 
-    // ´´½¨convert2TTreeµÄÊµÀı
+    // åˆ›å»ºconvert2TTreeçš„å®ä¾‹
     std::unique_ptr<TTREEIO::convert2TTree> myConverter = std::make_unique<TTREEIO::convert2TTree>();
 
-    // ´ò¿ªdebugÄ£Ê½
+    // æ‰“å¼€debugæ¨¡å¼
     //myConverter->setDebug( true );
 
-    // ×ª»»NIDAQCSVÎÄ¼şµ½ROOTÎÄ¼ş
+    // è½¬æ¢NIDAQCSVæ–‡ä»¶åˆ°ROOTæ–‡ä»¶
     myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
 
     myConverter->setDateInterval( "24-04-14", "24-04-21" );
 
-    // ×ª»»BlueforsTemperatureLogÎÄ¼şµ½ROOTÎÄ¼ş
+    // è½¬æ¢BlueforsTemperatureLogæ–‡ä»¶åˆ°ROOTæ–‡ä»¶
     myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
 
-    // ×ª»»MultimeterDataÎÄ¼şµ½ROOTÎÄ¼ş
+    // è½¬æ¢MultimeterDataæ–‡ä»¶åˆ°ROOTæ–‡ä»¶
     myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
 
-    // ´´½¨TTreePlotterµÄÊµÀı
+    // åˆ›å»ºTTreePlotterçš„å®ä¾‹
     std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
 
-    // ´ò¿ªdebugÄ£Ê½
+    // æ‰“å¼€debugæ¨¡å¼
     //myPlotter->setDebug( true );
 
     myPlotter->setAmpHistoBinWidth( 0.01 );
     myPlotter->setTimeWindow( 2.0 );
 
-    // ´ÓROOTÎÄ¼ş´´½¨TGraphErrors²¢±£´æµ½ROOTÎÄ¼ş
+    // ä»ROOTæ–‡ä»¶åˆ›å»ºTGraphErrorså¹¶ä¿å­˜åˆ°ROOTæ–‡ä»¶
     myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
 
     myPlotter->setTimeWindow( 300.0 );
 
-    // ´ÓROOTÎÄ¼ş´´½¨TGraphErrors²¢±£´æµ½ROOTÎÄ¼ş
+    // ä»ROOTæ–‡ä»¶åˆ›å»ºTGraphErrorså¹¶ä¿å­˜åˆ°ROOTæ–‡ä»¶
     myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
-    
+
     myPlotter->setTimeWindow( 3000.0 );
+
     myPlotter->createMultimeterGraphFromTree( rootDirPath.string() + "/Multimeter_data.root", plotDirPath.string() + "/Multimeter_plot.root" );
 
     std::cout << "Hello, my project." << std::endl;
