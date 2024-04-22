@@ -18,6 +18,7 @@ build/
 *.csv
 *.mat
 *.log
+*.xls
 
 # For testing root files
 test*.root
