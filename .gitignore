@@ -21,3 +21,5 @@ build/
 
 # For testing root files
 test*.root
+plots
+ROOTdata
