@@ -21,7 +21,7 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
     TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
     // 创建一个新的TTree
-    TTree * tree = new TTree( "tree", "A tree with two branches" );
+    TTree * tree = new TTree( "NIDAQReadings", "Output voltage readings from NI DAQ" );
 
     // 如果isDebugModeActive状态为true，打印出一条消息
     if ( isDebugModeActive )
@@ -159,6 +159,12 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
         }
     }
 
+    // 检查TTree是否包含任何条目
+    if ( tree->GetEntries() == 0 )
+    {
+        std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
+    }
+
     // 将TTree写入到ROOT文件中
     tree->Write();
 
@@ -173,7 +179,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
     TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
     // 创建一个新的TTree
-    TTree * tree = new TTree( "tree", "A tree with two branches" );
+    TTree * tree = new TTree( "TemperatureReadings", "Temperature readings from BLUEFORS" );
 
     // 如果isDebugModeActive状态为true，打印出一条消息
     if ( isDebugModeActive )
@@ -214,6 +220,11 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
                 std::cout << " - Skip date directory: " << dateDir << std::endl;
             }
             continue;  // 跳过范围之外的日期
+        }
+
+        if ( isDebugModeActive )
+        {
+            std::cout << " - Reading date directory: " << dateDir << std::endl;
         }
 
         for ( const auto & logFileString : logFileString_vec )
@@ -330,99 +341,174 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             tree->Fill();
         }
 
-        //    std::istringstream ssDate( line );
-        //    std::string date_string;
-        //    std::getline( ssDate, date_string, ',' ); // 跳过"时间标识"
-        //    std::getline( ssDate, date_string, ',' ); // 获取日期和时间
+        line_vec.clear();
+        logFile_vec.clear();
+        logFileName_vec.clear();
+    }
 
-        //    // 将日期和时间字符串的格式转换为"yyyy-mm-dd hh:mm:ss"
-        //    std::replace( date_string.begin(), date_string.end(), '/', '-' );
+    // 检查TTree是否包含任何条目
+    if ( tree->GetEntries() == 0 )
+    {
+        std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
+    }
 
-        //    TDatime datime( date_string.c_str() );
-        //    timestampOffset = datime.Convert();
+    // 将TTree写入到ROOT文件中
+    tree->Write();
 
-        //    if ( isDebugModeActive )
-        //    {
-        //        std::cout << " - Initial date_string: " << date_string << std::endl;
-        //        std::cout << " - Initial TDatime: " << datime.AsString() << std::endl;
-        //        std::cout << " - Initial timestampOffset: " << timestampOffset << std::endl;
-        //    }
+    // 关闭ROOT文件
+    delete file;
+}
 
-        //    // 确定通道数
-        //    int channelCount = commaCount / 2 + 1;
+// 定义一个函数，用于将MultimeterData格式的数据转换为TTree格式
+void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
+{
+    // 创建一个新的ROOT文件
+    TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
 
-        //    // 跳过第二行
-        //    csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+    // 创建一个新的TTree
+    TTree * tree = new TTree( "MultimeterReadings", "Multimeter readings" );
 
-        //    // 读取第三行来获取通道名称
-        //    std::getline( csvFile, line );
-        //    std::istringstream ssCh( line );
-        //    std::vector<std::string> channelNames( channelCount );
-        //    for ( int i = 0; i < channelCount; ++i )
-        //    {
-        //        std::getline( ssCh, channelNames[i], ',' );
-        //        if ( i == channelCount - 1 )
-        //        {
-        //            // 如果到达了行的末尾，直接读取剩余的所有字符
-        //            std::getline( ssCh, channelNames[i] );
-        //            // 检查并去掉换行符
-        //            if ( !channelNames[i].empty() && ( channelNames[i].back() == '\n' || channelNames[i].back() == '\r' ) )
-        //            {
-        //                channelNames[i].pop_back();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            std::getline( ssCh, channelNames[i], ',' );
-        //        }
-        //        // 去掉双引号
-        //        channelNames[i] = channelNames[i].substr( 1, channelNames[i].size() - 2 );
-        //    }
+    // 如果isDebugModeActive状态为true，打印出一条消息
+    if ( isDebugModeActive )
+    {
+        std::cout << " - Input Multimeter Data directory read: " << csvDirPath << std::endl;
+        std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
+    }
 
-        //    // 创建变量来存储branch的值
-        //    std::vector<double> amplitudes( channelCount, 0.0 );
+    // 创建一个变量来存储时间戳
+    double timestamp = 0.0;
+    double readings = 0.0;
+    int columnCount = 0;
+    //bool isFirstEntryAssigned = false;
 
-        //    // 创建branch
-        //    for ( int i = 0; i < channelCount; ++i )
-        //    {
-        //        // 检查branch是否已经存在
-        //        TBranch * branch = tree->GetBranch( channelNames[i].c_str() );
-        //        if ( branch == nullptr )
-        //        {
-        //            // 如果branch不存在，创建新的branch
-        //            tree->Branch( channelNames[i].c_str(), &amplitudes[i], ( channelNames[i] + "/D" ).c_str() );
-        //        }
-        //    }
+    std::vector<std::string> columnName_vec = { "DCV_V","ACV_V","DCI_A","ACI_A","Freq_Hz","Period_s","Res_ohm","Cap_F","Temp_K" };
 
-        //    // 跳过剩余的前四行
-        //    for ( int i = 0; i < 1; ++i )
-        //    {
-        //        csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
-        //    }
+    // 创建时间戳branch
+    tree->Branch( "timestamp", &timestamp, "timestamp/D" );
 
-        //    // 读取CSV文件的数据
-        //    while ( std::getline( csvFile, line ) )
-        //    {
-        //        std::istringstream ssAmp( line );
-        //        std::string field;
+    // 遍历目录下的所有文件
+    for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
+    {
+        std::string csvFilePath = entry.path().string();
 
-        //        // 获取时间戳
-        //        std::getline( ssAmp, field, ',' );
-        //        timestamp = std::stod( field ) + timestampOffset;
+        // 打开CSV文件
+        std::ifstream csvFile( csvFilePath );
+        if ( !csvFile.is_open() )
+        {
+            std::cerr << "Can not open csv file: " << csvFilePath << std::endl;
+            continue;
+        }
 
-        //        // 获取每个通道的幅度
-        //        for ( int i = 0; i < channelCount; ++i )
-        //        {
-        //            std::getline( ssAmp, field, ',' );
-        //            amplitudes[i] = std::stod( field );
+        if ( isDebugModeActive )
+        {
+            std::cout << " - Input CSV file read: " << csvFilePath << std::endl;
+        }
 
-        //            // 跳过下一个时间戳
-        //            std::getline( ssAmp, field, ',' );
-        //        }
+        // 跳过第一行
+        for ( int i = 0; i < 1; ++i )
+        {
+            csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+        }
 
-        //        // 填充TTree
-        //        tree->Fill();
-        //    }
+        std::string line;
+
+        // 读取CSV文件的数据
+        while ( std::getline( csvFile, line ) )
+        {
+            if ( isDebugModeActive )
+            {
+                if ( tree->GetEntries() >= 1000 )
+                {
+                    break;
+                }
+            }
+
+            std::istringstream ssIn( line );
+            std::string date_string;
+            std::string time_string;
+            std::string millisecond_string;
+            std::string field;
+
+            std::getline( ssIn, date_string, '>' );  // 获取日期
+
+            // 检查并去掉短横线
+            if ( !date_string.empty() && date_string.back() == '-' )
+            {
+                date_string.pop_back();
+            }
+
+            // 将日期字符串的格式转换为"yyyy-mm-dd"
+            std::replace( date_string.begin(), date_string.end(), '/', '-' );
+
+            std::getline( ssIn, time_string, '.' );  // 获取时间
+            std::getline( ssIn, millisecond_string, '\t' );  // 获取毫秒
+
+            // 去除字符串左端的空格
+            millisecond_string.erase( millisecond_string.begin(), std::find_if( millisecond_string.begin(), millisecond_string.end(), []( auto ch ) { return !std::isspace( ch ); } ) );
+
+            TDatime datime( ( date_string + " " + time_string ).c_str() );
+            timestamp = datime.Convert() + std::stod( millisecond_string ) / 1000.0;
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
+                std::cout << " - TDatime: " << datime.AsString() << std::endl;
+                std::cout << " - millisecond: " << millisecond_string << std::endl;
+                std::cout << " - timestamp: " << timestamp << std::endl;
+            }
+
+            do
+            {
+                std::getline( ssIn, field, '\t' );  // 获取测量值
+
+                columnCount++;
+
+                // 检查并去掉换行符
+                if ( !field.empty() && ( field.back() == '\n' || field.back() == '\r' ) )
+                {
+                    field.pop_back();
+                }
+
+                if ( isDebugModeActive )
+                {
+                    std::cout << " - readings_string: " << field << std::endl;
+                    std::cout << " - NaN value?: " << ( field == "--" ) << std::endl;
+                    std::cout << " - column count: " << columnCount << std::endl;
+                }
+            } while ( field == "--" );
+
+            readings = std::stod( field );
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - readings_value: " << readings << std::endl;
+            }
+
+            // 检查branch是否已经存在
+            TBranch * branch = tree->GetBranch( columnName_vec[columnCount - 1].c_str() );
+            if ( branch == nullptr )
+            {
+                // 如果branch不存在，创建新的branch
+                tree->Branch( columnName_vec[columnCount - 1].c_str(), &readings, ( columnName_vec[columnCount - 1] + "/D" ).c_str() );
+            }
+
+            //if ( isFirstEntryAssigned == false )
+            //{
+            //    tree->Branch( "Readings", &readings, "MultimeterReadings/D" );
+            //    isFirstEntryAssigned = true;
+            //}
+
+            columnCount = 0;
+
+            // 填充TTree
+            tree->Fill();
+        }
+    }
+
+    // 检查TTree是否包含任何条目
+    if ( tree->GetEntries() == 0 )
+    {
+        std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
     }
 
     // 将TTree写入到ROOT文件中
