@@ -34,10 +34,16 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
     double timestamp = 0.0;
     double timestampOffset = 0.0;
 
+    // 创建一个容器来存储通道名称
+    std::vector<std::string> channelNames{};
+
+    // 创建一个容器来存储branch的值
+    std::vector<double> amplitudes{};
+
     // 创建时间戳branch
     tree->Branch( "timestamp", &timestamp, "timestamp/D" );
 
-    // 遍历目录下的所有文件
+    // 遍历目录下的所有文件，创建各个通道的branch所需的变量
     for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
     {
         std::string csvFilePath = entry.path().string();
@@ -58,10 +64,161 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
         // 读取第一行来确定通道数
         std::string line;
         std::getline( csvFile, line );
-        int commaCount = std::count( line.begin(), line.end(), ',' );
+        size_t commaCount = std::count( line.begin(), line.end(), ',' );
         if ( commaCount == 0 )
         {
-            std::cerr << "Error: CSV file format is incorrect" << std::endl;
+            std::cerr << "Error: CSV file format is incorrect in: " << csvFilePath << std::endl;
+            continue;
+        }
+
+        // 确定通道数
+        size_t channelCount = static_cast<size_t>( commaCount / 2 + 1 );
+
+        // 跳过剩余的第二行
+        for ( size_t i = 0; i < 1; ++i )
+        {
+            csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+        }
+
+        // 读取第三行来确定通道顺序
+        std::getline( csvFile, line );
+        std::istringstream ssCh( line );
+
+        for ( size_t i = 0; i < channelCount; ++i )
+        {
+            std::string channelName_temp = "";
+            std::getline( ssCh, channelName_temp, ',' );
+            if ( i == channelCount - 1 )
+            {
+                // 如果到达了行的末尾，直接读取剩余的所有字符
+                std::getline( ssCh, channelName_temp );
+                // 检查并去掉换行符
+                if ( !channelName_temp.empty() && ( channelName_temp.back() == '\n' || channelName_temp.back() == '\r' ) )
+                {
+                    channelName_temp.pop_back();
+                }
+            }
+            else
+            {
+                std::getline( ssCh, channelName_temp, ',' );
+            }
+            // 去掉双引号
+            channelName_temp = channelName_temp.substr( 1, channelName_temp.size() - 2 );
+
+            // 检查branch是否已经存在
+            auto channelItr = std::find( channelNames.begin(), channelNames.end(), channelName_temp );
+            if ( channelItr == channelNames.end() )
+            {
+                // 如果branch不存在，创建新branch所需的变量
+                channelNames.emplace_back( channelName_temp );
+                amplitudes.emplace_back( 0.0 );
+            }
+        }
+    }
+
+    if ( isDebugModeActive )
+    {
+        std::cout << " - Number of channels: " << channelNames.size() << std::endl;
+        for ( const auto & channelName : channelNames )
+        {
+            std::cout << " - Channel name: " << channelName << std::endl;
+        }
+    }
+
+    // 遍历目录下的所有文件，创建各个通道的branch
+    for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
+    {
+        std::string csvFilePath = entry.path().string();
+
+        // 打开CSV文件
+        std::ifstream csvFile( csvFilePath );
+        if ( !csvFile.is_open() )
+        {
+            std::cerr << "Can not open csv file: " << csvFilePath << std::endl;
+            continue;
+        }
+
+        // 读取第一行来确定通道数
+        std::string line;
+        std::getline( csvFile, line );
+        size_t commaCount = std::count( line.begin(), line.end(), ',' );
+        if ( commaCount == 0 )
+        {
+            std::cerr << "Error: CSV file format is incorrect in: " << csvFilePath << std::endl;
+            continue;
+        }
+
+        // 确定通道数
+        size_t channelCount = static_cast<size_t>( commaCount / 2 + 1 );
+
+        // 跳过剩余的第二行
+        for ( size_t i = 0; i < 1; ++i )
+        {
+            csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+        }
+
+        // 读取第三行来确定通道顺序
+        std::getline( csvFile, line );
+        std::istringstream ssCh( line );
+
+        for ( size_t i = 0; i < channelCount; ++i )
+        {
+            std::string channelName_temp = "";
+            std::getline( ssCh, channelName_temp, ',' );
+            if ( i == channelCount - 1 )
+            {
+                // 如果到达了行的末尾，直接读取剩余的所有字符
+                std::getline( ssCh, channelName_temp );
+                // 检查并去掉换行符
+                if ( !channelName_temp.empty() && ( channelName_temp.back() == '\n' || channelName_temp.back() == '\r' ) )
+                {
+                    channelName_temp.pop_back();
+                }
+            }
+            else
+            {
+                std::getline( ssCh, channelName_temp, ',' );
+            }
+            // 去掉双引号
+            channelName_temp = channelName_temp.substr( 1, channelName_temp.size() - 2 );
+
+            // 检查branch是否已经存在
+            TBranch * branch = tree->GetBranch( channelName_temp.c_str() );
+            if ( branch == nullptr )
+            {
+                // 如果branch不存在，创建新的branch
+                // 如果branch的名称与通道名称匹配，则将通道名称容器channelNames中的index与amplitudes中的index对应
+                for ( size_t vec_Index = 0; vec_Index < channelNames.size(); vec_Index++ )
+                {
+                    if ( channelNames[vec_Index] == channelName_temp )
+                    {
+                        tree->Branch( channelNames[vec_Index].c_str(), &amplitudes[vec_Index], ( channelNames[vec_Index] + "/D" ).c_str() );
+                    }
+                }
+            }
+        }
+    }
+
+    // 遍历目录下的所有文件
+    for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
+    {
+        std::string csvFilePath = entry.path().string();
+
+        // 打开CSV文件
+        std::ifstream csvFile( csvFilePath );
+        if ( !csvFile.is_open() )
+        {
+            std::cerr << "Can not open csv file: " << csvFilePath << std::endl;
+            continue;
+        }
+
+        // 读取第一行来确定通道数
+        std::string line;
+        std::getline( csvFile, line );
+        size_t commaCount = std::count( line.begin(), line.end(), ',' );
+        if ( commaCount == 0 )
+        {
+            std::cerr << "Error: CSV file format is incorrect in: " << csvFilePath << std::endl;
             continue;
         }
         std::istringstream ssDate( line );
@@ -83,53 +240,80 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
         }
 
         // 确定通道数
-        int channelCount = commaCount / 2 + 1;
+        size_t channelCount = static_cast<size_t>( commaCount / 2 + 1 );
 
         // 跳过第二行
         csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
 
+        // 创建变量来存储branch的值
+        std::vector<size_t> Indices_order( channelCount, 0 );
+
         // 读取第三行来获取通道名称
         std::getline( csvFile, line );
         std::istringstream ssCh( line );
-        std::vector<std::string> channelNames( channelCount );
-        for ( int i = 0; i < channelCount; ++i )
+        for ( size_t i = 0; i < channelCount; ++i )
         {
-            std::getline( ssCh, channelNames[i], ',' );
+            std::string channelName_temp = "";
+            std::getline( ssCh, channelName_temp, ',' );
             if ( i == channelCount - 1 )
             {
                 // 如果到达了行的末尾，直接读取剩余的所有字符
-                std::getline( ssCh, channelNames[i] );
+                std::getline( ssCh, channelName_temp );
                 // 检查并去掉换行符
-                if ( !channelNames[i].empty() && ( channelNames[i].back() == '\n' || channelNames[i].back() == '\r' ) )
+                if ( !channelName_temp.empty() && ( channelName_temp.back() == '\n' || channelName_temp.back() == '\r' ) )
                 {
-                    channelNames[i].pop_back();
+                    channelName_temp.pop_back();
                 }
             }
             else
             {
-                std::getline( ssCh, channelNames[i], ',' );
+                std::getline( ssCh, channelName_temp, ',' );
             }
             // 去掉双引号
-            channelNames[i] = channelNames[i].substr( 1, channelNames[i].size() - 2 );
-        }
+            channelName_temp = channelName_temp.substr( 1, channelName_temp.size() - 2 );
 
-        // 创建变量来存储branch的值
-        std::vector<double> amplitudes( channelCount, 0.0 );
-
-        // 创建branch
-        for ( int i = 0; i < channelCount; ++i )
-        {
             // 检查branch是否已经存在
-            TBranch * branch = tree->GetBranch( channelNames[i].c_str() );
+            TBranch * branch = tree->GetBranch( channelName_temp.c_str() );
             if ( branch == nullptr )
             {
-                // 如果branch不存在，创建新的branch
-                tree->Branch( channelNames[i].c_str(), &amplitudes[i], ( channelNames[i] + "/D" ).c_str() );
+                // 如果branch不存在，抛出异常
+                std::cerr << "Error: Branch " << channelName_temp << " does not exist." << std::endl;
+            }
+            else
+            {
+                // 如果branch存在，检查branch的名称是否与通道名称匹配
+                if ( std::string( branch->GetName() ) != channelName_temp )
+                {
+                    std::cerr << "Error: Branch " << branch->GetName() << " does not match channel name " << channelName_temp << "." << std::endl;
+                }
+
+                // 如果branch的名称与通道名称匹配，继续
+                if ( isDebugModeActive )
+                {
+                    std::cout << " - Branch " << branch->GetName() << " matches channel name " << channelName_temp << "." << std::endl;
+                }
+
+                // 如果branch的名称与通道名称匹配，则将通道名称容器channelNames中的index与amplitudes中的index对应
+                for ( size_t vec_Index = 0; vec_Index < channelNames.size(); vec_Index++ )
+                {
+                    if ( channelNames[vec_Index] == channelName_temp )
+                    {
+                        Indices_order[i] = vec_Index;
+                    }
+                }
             }
         }
 
-        // 跳过剩余的前四行
-        for ( int i = 0; i < 1; ++i )
+        if ( isDebugModeActive )
+        {
+            for ( size_t i = 0; i < channelCount; ++i )
+            {
+                std::cout << " - Indices_order[" << i << "]: " << Indices_order[i] << std::endl;
+            }
+        }
+
+        // 跳过剩余的第四行
+        for ( size_t i = 0; i < 1; ++i )
         {
             csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
         }
@@ -144,11 +328,13 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
             std::getline( ssAmp, field, ',' );
             timestamp = std::stod( field ) + timestampOffset;
 
+            std::generate( amplitudes.begin(), amplitudes.end(), []() { return NAN; } );
+
             // 获取每个通道的幅度
-            for ( int i = 0; i < channelCount; ++i )
+            for ( size_t i = 0; i < channelCount; ++i )
             {
                 std::getline( ssAmp, field, ',' );
-                amplitudes[i] = std::stod( field );
+                amplitudes[Indices_order[i]] = std::stod( field );
 
                 // 跳过下一个时间戳
                 std::getline( ssAmp, field, ',' );
@@ -267,7 +453,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             std::vector<std::string> date_vec( logFile_vec.size() );
             std::vector<std::string> time_vec( logFile_vec.size() );
             std::vector<std::string> field_vec( logFile_vec.size() );
-            for ( int i = 0; i < logFile_vec.size(); ++i )
+            for ( size_t i = 0; i < logFile_vec.size(); ++i )
             {
                 ss_vec[i] = std::istringstream( line_vec[i] );
                 std::getline( ss_vec[i], date_vec[i], ',' );  // 获取日期
@@ -293,14 +479,14 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
             }
 
             // 将日期字符串转换为"YYYY-MM-DD"的格式
-            for ( int i = 0; i < logFile_vec.size(); ++i )
+            for ( size_t i = 0; i < logFile_vec.size(); ++i )
             {
                 date_vec[i] = "20" + date_vec[i].substr( 6, 2 ) + "-" + date_vec[i].substr( 3, 2 ) + "-" + date_vec[i].substr( 0, 2 );
             }
 
             // 创建TDatime对象vector
             std::vector<TDatime> datetime_vec( logFile_vec.size() );
-            for ( int i = 0; i < logFile_vec.size(); ++i )
+            for ( size_t i = 0; i < logFile_vec.size(); ++i )
             {
                 datetime_vec[i] = TDatime( ( date_vec[i] + " " + time_vec[i] ).c_str() );
             }
@@ -314,7 +500,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
                 std::cout << " - timestamp: " << timestamp << std::endl;
             }
 
-            for ( int i = 1; i < logFile_vec.size(); ++i )
+            for ( size_t i = 1; i < logFile_vec.size(); ++i )
             {
                 if ( datetime_vec[i].Convert() - timestamp > 60.0 || datetime_vec[i].Convert() - timestamp < -60.0 )
                 {
@@ -378,7 +564,7 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
     // 创建一个变量来存储时间戳
     double timestamp = 0.0;
     double readings = 0.0;
-    int columnCount = 0;
+    size_t columnCount = 0;
     //bool isFirstEntryAssigned = false;
 
     std::vector<std::string> columnName_vec = { "DCV_V","ACV_V","DCI_A","ACI_A","Freq_Hz","Period_s","Res_ohm","Cap_F","Temp_K" };
@@ -405,7 +591,7 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
         }
 
         // 跳过第一行
-        for ( int i = 0; i < 1; ++i )
+        for ( size_t i = 0; i < 1; ++i )
         {
             csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
         }
@@ -518,4 +704,3 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
     delete file;
 }
 }
-

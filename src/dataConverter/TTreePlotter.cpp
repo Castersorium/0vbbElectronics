@@ -38,7 +38,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
 
     // 获取TTree中的所有branch的名称
     TObjArray * branches = tree->GetListOfBranches();
-    int nBranches = branches->GetEntries();
+    size_t nBranches = branches->GetEntries();
 
     // 将TGraphErrors保存到新的ROOT文件
     TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
@@ -57,7 +57,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     double xTimeStampMin = 0.0;
     double xTimeStampMax = 0.0;
 
-    for ( int i = 0; i < nBranches; ++i )
+    for ( size_t i = 0; i < nBranches; ++i )
     {
         TBranch * branch = static_cast<TBranch *>( branches->At( i ) );
         std::string branchName = branch->GetName();
@@ -67,7 +67,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
             continue;
 
         // 从TTree中获取数据
-        int n = tree->GetEntries();
+        size_t n = tree->GetEntries();
 
         // 创建向量来存储每个时间窗口内的平均时间戳和模式幅度
         std::vector <double> x_vec = {};
@@ -87,7 +87,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
-        for ( int i = 0; i < n; ++i )
+        for ( size_t i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
 
@@ -268,7 +268,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
 
     // 获取TTree中的所有branch的名称
     TObjArray * branches = tree->GetListOfBranches();
-    int nBranches = branches->GetEntries();
+    size_t nBranches = branches->GetEntries();
 
     // 将TGraphErrors保存到新的ROOT文件
     TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
@@ -287,7 +287,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     double xTimeStampMin = 0.0;
     double xTimeStampMax = 0.0;
 
-    for ( int i = 0; i < nBranches; ++i )
+    for ( size_t i = 0; i < nBranches; ++i )
     {
         TBranch * branch = static_cast<TBranch *>( branches->At( i ) );
         std::string branchName = branch->GetName();
@@ -297,7 +297,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
             continue;
 
         // 从TTree中获取数据
-        int n = tree->GetEntries();
+        size_t n = tree->GetEntries();
 
         // 创建向量来存储每个时间窗口内的平均时间戳和模式幅度
         std::vector <double> x_vec = {};
@@ -317,7 +317,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
-        for ( int i = 0; i < n; ++i )
+        for ( size_t i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
 
@@ -496,7 +496,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
 
     // 获取TTree中的所有branch的名称
     TObjArray * branches = tree->GetListOfBranches();
-    int nBranches = branches->GetEntries();
+    size_t nBranches = branches->GetEntries();
 
     // 将TGraphErrors保存到新的ROOT文件
     TFile * outputFile = TFile::Open( outputFilePath.c_str(), "RECREATE" );
@@ -515,7 +515,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
     double xTimeStampMin = 0.0;
     double xTimeStampMax = 0.0;
 
-    for ( int i = 0; i < nBranches; ++i )
+    for ( size_t i = 0; i < nBranches; ++i )
     {
         TBranch * branch = static_cast<TBranch *>( branches->At( i ) );
         std::string branchName = branch->GetName();
@@ -525,7 +525,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
             continue;
 
         // 从TTree中获取数据
-        int n = tree->GetEntries();
+        size_t n = tree->GetEntries();
 
         // 创建向量来存储每个时间窗口内的平均时间戳和模式幅度
         std::vector <double> x_vec = {};
@@ -545,7 +545,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
-        for ( int i = 0; i < n; ++i )
+        for ( size_t i = 0; i < n; ++i )
         {
             tree->GetEntry( i );
 
