@@ -84,6 +84,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         // 创建一个向量来存储每个时间窗口内的所有时间戳
         std::vector<double> timestamps_vec;
         TH1D * hist = nullptr;  // 当前的直方图
+        std::vector<double> Amp_vec;
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
@@ -104,31 +105,42 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
                 if ( hist )
                 {
                     // 计算时间戳的平均值并打印出来
-                    double average = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
-
-                    // 计算标准差
-                    double sum_deviation = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average]( auto sum, auto val ) { return sum + ( val - average ) * ( val - average ); } );
-                    double stddev = std::sqrt( sum_deviation / timestamps_vec.size() );
+                    double average_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
 
                     // 找到直方图中最高bin的x轴值并打印出来
                     int maxBin = hist->GetMaximumBin();
                     double maxX = hist->GetBinCenter( maxBin );
 
-                    x_vec.emplace_back( average );
-                    y_vec.emplace_back( maxX );
-                    ex_vec.emplace_back( stddev );
-                    ey_vec.emplace_back( hist->GetBinWidth( 0 ) );
+                    // 计算标准差
+                    double sum_deviation_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average_X]( auto sum, auto val ) { return sum + ( val - average_X ) * ( val - average_X ); } );
+                    double sum_deviation_Y = std::accumulate( Amp_vec.begin(), Amp_vec.end(), 0.0, [maxX]( auto sum, auto val ) { return sum + ( val - maxX ) * ( val - maxX ); } );
+                    double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
+                    double stddev_Y = std::sqrt( sum_deviation_Y / Amp_vec.size() );
+
+                    if ( hist->GetStdDev() > 0 )
+                    {
+                        x_vec.emplace_back( average_X );
+                        y_vec.emplace_back( maxX );
+                        ex_vec.emplace_back( stddev_X );
+                        ey_vec.emplace_back( stddev_Y );
+                    }
 
                     if ( isDebugModeActive )
                     {
-                        std::cout << "Average timestamp for " << hist->GetName() << ": " << average << std::endl;
-                        std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev << std::endl;
+                        std::cout << "Average timestamp for " << hist->GetName() << ": " << average_X << std::endl;
+                        std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev_X << std::endl;
                         // 使用TDatime将平均时间戳转换为日期和时间
-                        TDatime date( static_cast<UInt_t>( average ) );
+                        TDatime date( static_cast<UInt_t>( average_X ) );
                         std::cout << "Average date and time for " << hist->GetName() << ": " << date.AsString() << std::endl;
                         std::cout << "Mode amplitude for " << hist->GetName() << ": " << maxX << std::endl;
+                        std::cout << "Standard deviation of amplitude for " << hist->GetName() << ": " << stddev_Y << std::endl;
                         hist->Write();
                     }
+
+                    // 清空时间戳向量
+                    timestamps_vec.clear();
+                    Amp_vec.clear();
+
                     delete hist;
                 }
 
@@ -140,42 +152,57 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
                 timestamps_vec.clear();
             }
 
-            // 将Amp_2cmLMO的值填充到直方图的相应时间窗口中
-            hist->Fill( Amp );
+            if ( Amp != NAN )
+            {
+                // 将Amp_2cmLMO的值填充到直方图的相应时间窗口中
+                hist->Fill( Amp );
 
-            // 将当前的时间戳添加到向量中
-            timestamps_vec.emplace_back( timestamp );
+                // 将当前的时间戳添加到向量中
+                timestamps_vec.emplace_back( timestamp );
+                Amp_vec.emplace_back( Amp );
+            }
         }
 
         // 保存最后一个直方图
         if ( hist )
         {
             // 计算时间戳的平均值并打印出来
-            double average = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
-
-            // 计算标准差
-            double sum_deviation = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average]( auto sum, auto val ) { return sum + ( val - average ) * ( val - average ); } );
-            double stddev = std::sqrt( sum_deviation / timestamps_vec.size() );
+            double average_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0 ) / timestamps_vec.size();
 
             // 找到直方图中最高bin的x轴值并打印出来
             int maxBin = hist->GetMaximumBin();
             double maxX = hist->GetBinCenter( maxBin );
 
-            x_vec.emplace_back( average );
-            y_vec.emplace_back( maxX );
-            ex_vec.emplace_back( stddev );
-            ey_vec.emplace_back( hist->GetBinWidth( 0 ) );
+            // 计算标准差
+            double sum_deviation_X = std::accumulate( timestamps_vec.begin(), timestamps_vec.end(), 0.0, [average_X]( auto sum, auto val ) { return sum + ( val - average_X ) * ( val - average_X ); } );
+            double sum_deviation_Y = std::accumulate( Amp_vec.begin(), Amp_vec.end(), 0.0, [maxX]( auto sum, auto val ) { return sum + ( val - maxX ) * ( val - maxX ); } );
+            double stddev_X = std::sqrt( sum_deviation_X / timestamps_vec.size() );
+            double stddev_Y = std::sqrt( sum_deviation_Y / Amp_vec.size() );
+
+            if ( hist->GetStdDev() > 0 )
+            {
+                x_vec.emplace_back( average_X );
+                y_vec.emplace_back( maxX );
+                ex_vec.emplace_back( stddev_X );
+                ey_vec.emplace_back( stddev_Y );
+            }
 
             if ( isDebugModeActive )
             {
-                std::cout << "Average timestamp for " << hist->GetName() << ": " << average << std::endl;
-                std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev << std::endl;
+                std::cout << "Average timestamp for " << hist->GetName() << ": " << average_X << std::endl;
+                std::cout << "Standard deviation of timestamp for " << hist->GetName() << ": " << stddev_X << std::endl;
                 // 使用TDatime将平均时间戳转换为日期和时间
-                TDatime date( static_cast<UInt_t>( average ) );
+                TDatime date( static_cast<UInt_t>( average_X ) );
                 std::cout << "Average date and time for " << hist->GetName() << ": " << date.AsString() << std::endl;
                 std::cout << "Mode amplitude for " << hist->GetName() << ": " << maxX << std::endl;
+                std::cout << "Standard deviation of amplitude for " << hist->GetName() << ": " << stddev_Y << std::endl;
                 hist->Write();
             }
+
+            // 清空时间戳向量
+            timestamps_vec.clear();
+            Amp_vec.clear();
+
             delete hist;
         }
 
@@ -369,9 +396,12 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
                 temperatures_vec.clear();
             }
 
-            // 将当前的时间戳添加到向量中
-            timestamps_vec.emplace_back( timestamp );
-            temperatures_vec.emplace_back( temperature );
+            if ( temperature != 0.0 )
+            {
+                // 将当前的时间戳添加到向量中
+                timestamps_vec.emplace_back( timestamp );
+                temperatures_vec.emplace_back( temperature );
+            }
         }
 
         // 保存最后一个点
@@ -405,6 +435,10 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
                 ex_vec.emplace_back( stddev_X );
                 ey_vec.emplace_back( stddev_Y );
             }
+
+            // 清空时间戳向量
+            timestamps_vec.clear();
+            temperatures_vec.clear();
         }
 
         // 创建TGraphErrors并命名
