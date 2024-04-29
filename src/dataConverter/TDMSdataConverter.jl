@@ -1,26 +1,26 @@
 # TDMSdataConverter.jl
 
-# ¶ÔÓÚµÚÒ»´ÎÊ¹ÓÃJuliaµÄÓÃ»§£¬ĞèÒª°²×°PyCallÄ£¿é£¬°²×°·½·¨ÈçÏÂ£º
-# 1. ÊäÈëPkg.add("PyCall")£¬°²×°PyCallÄ£¿é
-# 2. ÊäÈëENV["PYTHON"] = "/usr/bin/python3.10"£¬ÉèÖÃPythonµÄ°æ±¾ºÍÂ·¾¶
-# 3. ÊäÈëPkg.build("PyCall") £¬ÖØĞÂ°²×°PyCallÄ£¿é
-# 4. ÖØĞÂÆô¶¯Julia£¬ÊäÈëusing PyCall£¬¼ÓÔØPyCallÄ£¿é
+# å¯¹äºç¬¬ä¸€æ¬¡ä½¿ç”¨Juliaçš„ç”¨æˆ·ï¼Œéœ€è¦å®‰è£…PyCallæ¨¡å—ï¼Œå®‰è£…æ–¹æ³•å¦‚ä¸‹ï¼š
+# 1. è¾“å…¥Pkg.add("PyCall")ï¼Œå®‰è£…PyCallæ¨¡å—
+# 2. è¾“å…¥ENV["PYTHON"] = "/usr/bin/python3.10"ï¼Œè®¾ç½®Pythonçš„ç‰ˆæœ¬å’Œè·¯å¾„
+# 3. è¾“å…¥Pkg.build("PyCall") ï¼Œé‡æ–°å®‰è£…PyCallæ¨¡å—
+# 4. é‡æ–°å¯åŠ¨Juliaï¼Œè¾“å…¥using PyCallï¼ŒåŠ è½½PyCallæ¨¡å—
 
-## ¼ÓÔØPyCallÄ£¿é
+## åŠ è½½PyCallæ¨¡å—
 using PyCall
 np = pyimport("numpy")
 npTDMS = pyimport("nptdms")
 
-## ¼ÓÔØDatesÄ£¿é
+## åŠ è½½Datesæ¨¡å—
 using Dates
 
-## ¶¨Òå»ùÓÚ±±¾©Ê±¼äµÄ±¾µØÊ±¼ä´Á×ª»»º¯Êı
+## å®šä¹‰åŸºäºåŒ—äº¬æ—¶é—´çš„æœ¬åœ°æ—¶é—´æˆ³è½¬æ¢å‡½æ•°
 function fromTimestamp(timestamp::Float64)
     LocalTimeShift = Dates.Hour(8)
     return (Dates.unix2datetime(timestamp) + LocalTimeShift)
 end
 
-## ¶¨ÒåTDMSdataConverterÀà
+## å®šä¹‰TDMSdataConverterç±»
 struct TDMSdataConverter
     group_names::Vector{String}
     channel_names::Vector{String}
@@ -29,9 +29,13 @@ struct TDMSdataConverter
     data_channel::Dict{String,Any}
 end
 
-## ¶¨ÒåTDMSdataConverterÀàµÄ¹¹Ôìº¯Êı
+## å®šä¹‰TDMSdataConverterç±»çš„æ„é€ å‡½æ•°
 function TDMSdataConverter(filename::String, isDebug::Bool=false)
     tdms_file = npTDMS.TdmsFile.read(filename)
+    ## æ£€æŸ¥tdms_fileçš„groupçš„å…ƒç´ æ•°é‡ä¸å¾—å¤§äº2ï¼Œå¦‚æœå¤§äº2åˆ™æŠ¥å‡ºé”™è¯¯ï¼Œå¹¶ä¸”é€€å‡º
+    if length(tdms_file.groups()) > 2
+        error("The number of groups in the TDMS file is greater than 2.")
+    end
     group_names = String[]
     channel_names = String[]
     channel_start_times = Float64[]
@@ -39,21 +43,21 @@ function TDMSdataConverter(filename::String, isDebug::Bool=false)
     data_channel = Dict{String,Any}()
     for group in tdms_file.groups()
         group_name = group.name
-        ## ¼ì²égroup_nameËùÊôµÄchannelsÊÇ·ñÎª¿Õ£¬Èç¹ûÎª¿ÕÔòÌø¹ı
+        ## æ£€æŸ¥group_nameæ‰€å±çš„channelsæ˜¯å¦ä¸ºç©ºï¼Œå¦‚æœä¸ºç©ºåˆ™è·³è¿‡
         if isempty(group.channels())
             continue
         end
-        ## ÔÚgroup_namesÖĞÌí¼Ógroup_name
+        ## åœ¨group_namesä¸­æ·»åŠ group_name
         push!(group_names, group_name)
         for channel in group.channels()
             channel_name = channel.name
-            ## ÔÚchannel_namesÖĞÌí¼Óchannel_name
+            ## åœ¨channel_namesä¸­æ·»åŠ channel_name
             push!(channel_names, channel_name)
-            ## ÔÚchannel_start_timesÖĞÌí¼Óchannel.properties["wf_start_time"]
+            ## åœ¨channel_start_timesä¸­æ·»åŠ channel.properties["wf_start_time"]
             push!(channel_start_times, convert(Float64, (channel.properties["wf_start_time"] - np.datetime64("1970-01-01T00:00:00Z")) / np.timedelta64(1, "s")))
             time_track = channel.time_track()
             time_track_channel[channel_name] = time_track
-            ## ÔÚdata_channelÖĞÌí¼Óchannel_nameºÍchannel.data
+            ## åœ¨data_channelä¸­æ·»åŠ channel_nameå’Œchannel.data
             data = channel.data
             data_channel[channel_name] = data
         end
@@ -68,33 +72,33 @@ function TDMSdataConverter(filename::String, isDebug::Bool=false)
     return TDMSdataConverter(group_names, channel_names, channel_start_times, time_track_channel, data_channel)
 end
 
-## ¶¨ÒåÒ»¸öÄÜ¹»½«TDMSdataConverterÀà×ª»»ÎªCSVÎÄ¼şµÄº¯Êı
+## å®šä¹‰ä¸€ä¸ªèƒ½å¤Ÿå°†TDMSdataConverterç±»è½¬æ¢ä¸ºCSVæ–‡ä»¶çš„å‡½æ•°
 function toCSV(converter::TDMSdataConverter, filename::String)
-    # ¼ì²éconverter.channel_namesµÄ³¤¶ÈÊÇ·ñ´óÓÚÁã
+    # æ£€æŸ¥converter.channel_namesçš„é•¿åº¦æ˜¯å¦å¤§äºé›¶
     if length(converter.channel_names) == 0
         error("No channels in the converter.")
     end
 
     csv_file = open(filename, "w")
     try
-        # Ğ´ÈëÊ±¼ä±êÊ¶ĞĞ
-        write(csv_file, join(["Ê±¼ä±êÊ¶," * string(fromTimestamp(converter.channel_start_times[i])) for i in 1:length(converter.channel_names)], ","))
+        # å†™å…¥æ—¶é—´æ ‡è¯†è¡Œ
+        write(csv_file, join(["æ—¶é—´æ ‡è¯†," * string(fromTimestamp(converter.channel_start_times[i])) for i in 1:length(converter.channel_names)], ","))
         write(csv_file, "\n")
 
-        # Ğ´Èë¼ä¸ôĞĞ
+        # å†™å…¥é—´éš”è¡Œ
         intervals = [converter.time_track_channel[name][2] - converter.time_track_channel[name][1] for name in converter.channel_names]
-        write(csv_file, join(["¼ä¸ô," * string(intervals[i]) for i in 1:length(converter.channel_names)], ","))
+        write(csv_file, join(["é—´éš”," * string(intervals[i]) for i in 1:length(converter.channel_names)], ","))
         write(csv_file, "\n")
 
-        # Ğ´ÈëÍ¨µÀÃû³ÆĞĞ
-        write(csv_file, join(["Í¨µÀÃû³Æ,\"" * converter.channel_names[i] * "\"" for i in 1:length(converter.channel_names)], ","))
+        # å†™å…¥é€šé“åç§°è¡Œ
+        write(csv_file, join(["é€šé“åç§°,\"" * converter.channel_names[i] * "\"" for i in 1:length(converter.channel_names)], ","))
         write(csv_file, "\n")
 
-        # Ğ´Èëµ¥Î»ĞĞ
-        write(csv_file, join(["µ¥Î»,\"V\"" for _ in 1:length(converter.channel_names)], ","))
+        # å†™å…¥å•ä½è¡Œ
+        write(csv_file, join(["å•ä½,\"V\"" for _ in 1:length(converter.channel_names)], ","))
         write(csv_file, "\n")
 
-        # Êä³öÊı¾İ
+        # è¾“å‡ºæ•°æ®
         for i in 1:length(converter.time_track_channel[converter.channel_names[1]])
             write(csv_file, join([string(converter.time_track_channel[converter.channel_names[j]][i]) * "," * string(converter.data_channel[converter.channel_names[j]][i]) for j in 1:length(converter.channel_names)], ","))
             write(csv_file, "\n")
@@ -104,8 +108,35 @@ function toCSV(converter::TDMSdataConverter, filename::String)
     end
 end
 
-## ²âÊÔTDMSdataConverterÀà
-converter = TDMSdataConverter("/home/shihongfu/temp/FDUdata/tdmsData/¼ÇÂ¼ 1.tdms")
+## æµ‹è¯•TDMSdataConverterç±»
+#converter = TDMSdataConverter("/home/shihongfu/temp/FDUdata/tdmsData/è®°å½•-2024-04-25 023955 239.tdms")
 
-## ²âÊÔtoCSVº¯Êı
-toCSV(converter, "/home/shihongfu/temp/FDUdata/csvData/¼ÇÂ¼ 1.csv")
+## æµ‹è¯•toCSVå‡½æ•°
+#toCSV(converter, "/home/shihongfu/temp/FDUdata/csvData/è®°å½•-2024-04-25 023955 239.csv")
+
+## éå†æŒ‡å®šç›®å½•ä¸‹çš„æ‰€æœ‰TDMSæ–‡ä»¶ï¼Œå¹¶å°†å…¶è½¬æ¢ä¸ºCSVæ–‡ä»¶ï¼Œä¿å­˜åˆ°æŒ‡å®šç›®å½•ä¸‹
+function convertTDMS2CSV(tdms_dir::String, csv_dir::String, isDebug::Bool=false)
+    tdms_files = filter(x -> endswith(x, ".tdms"), readdir(tdms_dir))
+    for tdms_file in tdms_files
+        if isDebug
+            println("Converting ", tdms_file, " to CSV file.")
+        end
+        converter = TDMSdataConverter(joinpath(tdms_dir, tdms_file), isDebug)
+        toCSV(converter, joinpath(csv_dir, splitext(tdms_file)[1] * ".csv"))
+    end
+end
+
+## è¿è¡ŒconvertTDMS2CSVå‡½æ•°
+# ç¡®ä¿æœ‰è¶³å¤Ÿçš„å‚æ•°ä¼ å…¥
+if length(ARGS) < 2
+    println("Usage: julia TDMSdataConverter.jl <tdmsData path> <csvData path>")
+    exit(1)
+end
+
+tdmsData_path = ARGS[1]
+csvData_path = ARGS[2]
+
+convertTDMS2CSV(tdmsData_path, csvData_path)
+
+## é€€å‡ºJulia
+exit()
