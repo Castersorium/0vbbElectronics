@@ -88,9 +88,9 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
-        for ( size_t i = 0; i < n; ++i )
+        for ( size_t entryIndex = 0; entryIndex < n; ++entryIndex )
         {
-            tree->GetEntry( i );
+            tree->GetEntry( entryIndex );
 
             // 更新x轴的最小值和最大值
             if ( timestamp < xTimeStampMin )
@@ -146,8 +146,8 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
 
                 // 创建一个新的直方图
                 timestamp_ini = floor( timestamp );
-                std::string histName = "hist_" + std::to_string( static_cast<int>( timestamp_ini ) );
-                hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), ( xMax - xMin ) / xBinWidth, xMin, xMax );
+                std::string histName = branchName + "hist_" + std::to_string( static_cast<int>( timestamp_ini ) );
+                hist = new TH1D( histName.c_str(), ( "Amplitude for " + std::to_string( static_cast<int>( timestamp_ini ) ) + "s;Amplitude [V];counts" ).c_str(), ( xMax - xMin ) / xBinWidth + 1, xMin, xMax );
                 // 清空时间戳向量
                 timestamps_vec.clear();
             }
@@ -344,9 +344,9 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
-        for ( size_t i = 0; i < n; ++i )
+        for ( size_t entryIndex = 0; entryIndex < n; ++entryIndex )
         {
-            tree->GetEntry( i );
+            tree->GetEntry( entryIndex );
 
             // 更新x轴的最小值和最大值
             if ( timestamp < xTimeStampMin )
@@ -579,9 +579,9 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         double timestamp_ini = -1.0;  // 初始的时间戳
 
         // 遍历TTree中的每个entry
-        for ( size_t i = 0; i < n; ++i )
+        for ( size_t entryIndex = 0; entryIndex < n; ++entryIndex )
         {
-            tree->GetEntry( i );
+            tree->GetEntry( entryIndex );
 
             // 更新x轴的最小值和最大值
             if ( timestamp < xTimeStampMin )
