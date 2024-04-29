@@ -16,9 +16,14 @@ build/
 
 # For stream data
 *.csv
+*.mat
+*.log
+*.xls
 
 # For testing root files
 test*.root
+plots
+ROOTdata
 
 # For MatLab .mat files
 src/MatlabCode/matdata/**
