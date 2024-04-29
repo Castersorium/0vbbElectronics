@@ -59,7 +59,7 @@ int main( int argc, char * argv[] )
     //myConverter->setDebug( true );
 
     // 转换NIDAQCSV文件到ROOT文件
-    //myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
+    myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
 
     //myConverter->setDateInterval( "24-04-14", "24-04-21" );
 
