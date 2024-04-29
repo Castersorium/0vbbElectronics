@@ -228,14 +228,25 @@ void convert2TTree::convertNIDAQCSV2TTree( const std::string & csvDirPath, const
 
         // 将日期和时间字符串的格式转换为"yyyy-mm-dd hh:mm:ss"
         std::replace( date_string.begin(), date_string.end(), '/', '-' );
+        std::replace( date_string.begin(), date_string.end(), 'T', ' ' );
+
+        // 如果日期和时间字符串中包含小数点，则去掉小数点及其后的部分，并且单独提取小数部分为双精度浮点数
+        double millisecond = 0.0; // 但是因为这里进行解析的时候保留了小数点，所以这里得到的数值的单位仍然是秒
+        size_t dotPos = date_string.find( '.' );
+        if ( dotPos != std::string::npos )
+        {
+            millisecond = std::stod( date_string.substr( dotPos ) );
+            date_string = date_string.substr( 0, dotPos );
+        }
 
         TDatime datime( date_string.c_str() );
-        timestampOffset = datime.Convert();
+        timestampOffset = datime.Convert() + millisecond;
 
         if ( isDebugModeActive )
         {
             std::cout << " - Initial date_string: " << date_string << std::endl;
             std::cout << " - Initial TDatime: " << datime.AsString() << std::endl;
+            std::cout << " - Initial millisecond: " << millisecond << std::endl;
             std::cout << " - Initial timestampOffset: " << timestampOffset << std::endl;
         }
 
