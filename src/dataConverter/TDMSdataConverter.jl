@@ -80,6 +80,9 @@ function toCSV(converter::TDMSdataConverter, filename::String)
     end
 
     csv_file = open(filename, "w")
+
+    ## 为CSV文件增添BOM头
+    write(csv_file, "\xEF\xBB\xBF")
     try
         # 写入时间标识行
         write(csv_file, join(["时间标识," * string(fromTimestamp(converter.channel_start_times[i])) for i in 1:length(converter.channel_names)], ","))
