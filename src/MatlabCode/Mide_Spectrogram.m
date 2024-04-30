@@ -1,13 +1,13 @@
-function [x_3D, y_3D, z_3D] = Mide_Spectrogram(datalist,fActual,nSlicesPerSecond)
+function [x_3D, y_3D, z_3D] = Mide_Spectrogram(datalist,fActual,wint)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%[x_3D, y_3D, z_3D] = FFT_PSD_Spectrogram(datalist,fActual,nSlicesPerSecond)
+%[x_3D, y_3D, z_3D] = FFT_PSD_Spectrogram(datalist,fActual,wint)
 % Given a dataset this will calculate the spectrogram
 %
 % Inputs:
 %   datalist = two column array with time in first column, data to analyze
 %       in second
 %   fActual = sample rate of the data in Hertz
-%   nSlicesPerSecond = number of slices per second to break up spectrogram
+%   wint = window time for each slice
 %
 % Outputs:
 %   x_3D = time for spectrogram
@@ -25,7 +25,7 @@ function [x_3D, y_3D, z_3D] = Mide_Spectrogram(datalist,fActual,nSlicesPerSecond
 %Compute Spectrogram
     nPts=length(datalist(:,1));
     yfft=datalist(:,2);
-    nPointsPerSlice=floor(fActual / nSlicesPerSecond);
+    nPointsPerSlice=floor(fActual * wint);
 
     % for very short recordings or stupid values of nSlicesPerSecond,
     % nPointsPerSlice may end up being ouside a legal range for the actual
@@ -80,7 +80,7 @@ function [x_3D, y_3D, z_3D] = Mide_Spectrogram(datalist,fActual,nSlicesPerSecond
         end
 
     % finally, actually make the plot!
-        x_3D = [1:fftcols] / nSlicesPerSecond;
+        x_3D = [1:fftcols] * wint;
         y_3D = x([startPointOfInterest+1:endPointOfInterest+1]);
         z_3D = yabs([startPointOfInterest+1:endPointOfInterest+1],:);
     
