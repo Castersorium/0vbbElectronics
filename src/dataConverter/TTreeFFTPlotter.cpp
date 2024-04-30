@@ -51,9 +51,6 @@ void TTreePlotter::createNIDAQFFTFromTree( const std::string & rootFilePath, con
         return;
     }
 
-    // 创建一个颜色的数组
-    Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
-
     // 为每个branch创建两个个TGraphErrors分别用于表征6Hz噪声成分和50Hz噪声成分
     std::vector<TGraphErrors *> graphs_vec( nBranches * 2 );
 
@@ -193,7 +190,7 @@ void TTreePlotter::createNIDAQFFTFromTree( const std::string & rootFilePath, con
                 Power_50Hz_vec.clear();
             }
 
-            if ( Amp != NAN )
+            if ( !std::isnan( Amp ) )
             {
                 if ( hist->GetBinContent( hist->GetXaxis()->FindBin( timestamp - timestamp_ini_FFT ) ) == 0 )
                 {
@@ -284,10 +281,10 @@ void TTreePlotter::createNIDAQFFTFromTree( const std::string & rootFilePath, con
         graph_6Hz->SetTitle( ( branchName + "_6Hz" ).c_str() );
 
         // 设置点的样式
-        graph_6Hz->SetMarkerStyle( 21 );  // 设置点的样式为正方形
-        graph_6Hz->SetMarkerSize( 0.5 );  // 设置点的大小
+        graph_6Hz->SetMarkerStyle( MarkerStyle_vec[( i * 2 ) / 8] );  // 设置点的样式
+        graph_6Hz->SetMarkerSize( 0.7 );  // 设置点的大小
         // 设置TGraphErrors的颜色
-        graph_6Hz->SetMarkerColor( colors[( i * 2 ) % 8] );
+        graph_6Hz->SetMarkerColor( Color_vec[( i * 2 ) % 8] );
         graph_6Hz->SetLineWidth( 1 );
         graph_6Hz->SetFillStyle( 0 );
 
@@ -297,10 +294,10 @@ void TTreePlotter::createNIDAQFFTFromTree( const std::string & rootFilePath, con
         graph_50Hz->SetTitle( ( branchName + "_50Hz" ).c_str() );
 
         // 设置点的样式
-        graph_50Hz->SetMarkerStyle( 21 );  // 设置点的样式为正方形
-        graph_50Hz->SetMarkerSize( 0.5 );  // 设置点的大小
+        graph_50Hz->SetMarkerStyle( MarkerStyle_vec[( i * 2 + 1 ) / 8] );  // 设置点的样式
+        graph_50Hz->SetMarkerSize( 0.7 );  // 设置点的大小
         // 设置TGraphErrors的颜色
-        graph_50Hz->SetMarkerColor( colors[( i * 2 + 1 ) % 8] );
+        graph_50Hz->SetMarkerColor( Color_vec[( i * 2 + 1 ) % 8] );
         graph_50Hz->SetLineWidth( 1 );
         graph_50Hz->SetFillStyle( 0 );
 
@@ -313,14 +310,14 @@ void TTreePlotter::createNIDAQFFTFromTree( const std::string & rootFilePath, con
     gStyle->SetTimeOffset( 0 );
 
     // 创建一个TCanvas
-    TCanvas * canvas = new TCanvas( "canvas_Output", "canvas_Output", 1600, 900 );
+    TCanvas * canvas = new TCanvas( "canvas_FFT", "canvas_FFT", 1600, 900 );
 
     // 开启X轴和Y轴的网格线
     canvas->SetGridx();
     canvas->SetGridy();
 
     // 创建一个MultiGraph
-    TMultiGraph * multiGraph = new TMultiGraph( "mg_Output", "mg_Output" );
+    TMultiGraph * multiGraph = new TMultiGraph( "mg_FFT", "6 Hz and 50 Hz noise components of each channel" );
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( TGraphErrors * graphInstance : graphs_vec )
@@ -352,7 +349,7 @@ void TTreePlotter::createNIDAQFFTFromTree( const std::string & rootFilePath, con
     canvas->BuildLegend();
 
     // 将TCanvas写入文件
-    canvas->Write( "canvas_Output" );
+    canvas->Write( "canvas_FFT" );
 
     outputFile->Close();
 

@@ -48,9 +48,6 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         return;
     }
 
-    // 创建一个颜色的数组
-    Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
-
     // 为每个branch创建一个TGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
 
@@ -152,7 +149,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
                 timestamps_vec.clear();
             }
 
-            if ( Amp != NAN )
+            if ( !std::isnan( Amp ) )
             {
                 // 将Amp_2cmLMO的值填充到直方图的相应时间窗口中
                 hist->Fill( Amp );
@@ -212,10 +209,10 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
         graph->SetTitle( branchName.c_str() );
 
         // 设置点的样式
-        graph->SetMarkerStyle( 21 );  // 设置点的样式为正方形
-        graph->SetMarkerSize( 0.5 );  // 设置点的大小
+        graph->SetMarkerStyle( MarkerStyle_vec[i / 8] );  // 设置点的样式
+        graph->SetMarkerSize( 0.7 );  // 设置点的大小
         // 设置TGraphErrors的颜色
-        graph->SetMarkerColor( colors[i % 8] );
+        graph->SetMarkerColor( Color_vec[i % 8] );
         graph->SetLineWidth( 1 );
         graph->SetFillStyle( 0 );
 
@@ -227,14 +224,14 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     gStyle->SetTimeOffset( 0 );
 
     // 创建一个TCanvas
-    TCanvas * canvas = new TCanvas( "canvas_Output", "canvas_Output", 1600, 900 );
+    TCanvas * canvas = new TCanvas( "canvas_Amp", "canvas_Amp", 1600, 900 );
 
     // 开启X轴和Y轴的网格线
     canvas->SetGridx();
     canvas->SetGridy();
 
     // 创建一个MultiGraph
-    TMultiGraph * multiGraph = new TMultiGraph( "mg_Output", "mg_Output" );
+    TMultiGraph * multiGraph = new TMultiGraph( "mg_Amp", "Output voltage of each channel" );
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( TGraphErrors * graphInstance : graphs_vec )
@@ -266,7 +263,7 @@ void TTreePlotter::createNIDAQGraphFromTree( const std::string & rootFilePath, c
     canvas->BuildLegend();
 
     // 将TCanvas写入文件
-    canvas->Write( "canvas_Output" );
+    canvas->Write( "canvas_Amp" );
 
     outputFile->Close();
 
@@ -304,9 +301,6 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         std::cerr << "Error: Cannot create ROOT file:" << outputFilePath << std::endl;
         return;
     }
-
-    // 创建一个颜色的数组
-    Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 
     // 为每个branch创建一个TGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
@@ -447,10 +441,10 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
         graph->SetTitle( branchName.c_str() );
 
         // 设置点的样式
-        graph->SetMarkerStyle( 21 );  // 设置点的样式为正方形
-        graph->SetMarkerSize( 0.5 );  // 设置点的大小
+        graph->SetMarkerStyle( MarkerStyle_vec[i / 8] );  // 设置点的样式
+        graph->SetMarkerSize( 0.7 );  // 设置点的大小
         // 设置TGraphErrors的颜色
-        graph->SetMarkerColor( colors[i % 8] );
+        graph->SetMarkerColor( Color_vec[i % 8] );
         graph->SetLineWidth( 1 );
         graph->SetFillStyle( 0 );
 
@@ -539,9 +533,6 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         std::cerr << "Error: Cannot create ROOT file:" << outputFilePath << std::endl;
         return;
     }
-
-    // 创建一个颜色的数组
-    Color colors[] = { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
 
     // 为每个branch创建一个TGraphErrors
     std::vector<TGraphErrors *> graphs_vec( nBranches );
@@ -670,10 +661,10 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
         graph->SetTitle( branchName.c_str() );
 
         // 设置点的样式
-        graph->SetMarkerStyle( 21 );  // 设置点的样式为正方形
-        graph->SetMarkerSize( 0.5 );  // 设置点的大小
+        graph->SetMarkerStyle( MarkerStyle_vec[i / 8] );  // 设置点的样式
+        graph->SetMarkerSize( 0.7 );  // 设置点的大小
         // 设置TGraphErrors的颜色
-        graph->SetMarkerColor( colors[i % 8] );
+        graph->SetMarkerColor( Color_vec[i % 8] );
         graph->SetLineWidth( 1 );
         graph->SetFillStyle( 0 );
 

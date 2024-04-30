@@ -61,13 +61,13 @@ int main( int argc, char * argv[] )
     // 转换NIDAQCSV文件到ROOT文件
     myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
 
-    //myConverter->setDateInterval( "24-04-14", "24-04-21" );
+    myConverter->setDateInterval( "24-04-14", "24-04-21" );
 
-    //// 转换BlueforsTemperatureLog文件到ROOT文件
-    //myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
+    // 转换BlueforsTemperatureLog文件到ROOT文件
+    myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
 
-    //// 转换MultimeterData文件到ROOT文件
-    //myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
+    // 转换MultimeterData文件到ROOT文件
+    myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
 
     // 创建TTreePlotter的实例
     std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
@@ -79,7 +79,7 @@ int main( int argc, char * argv[] )
     myPlotter->setTimeWindow( 2.0 );
 
     // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    //myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
+    myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
 
     myPlotter->setAmpHistoBinWidth( 0.001 ); // 设置采样间隔
     myPlotter->setFFTTimeWindow( 2.0 );
@@ -87,14 +87,14 @@ int main( int argc, char * argv[] )
 
     myPlotter->createNIDAQFFTFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_FFT_plot.root" );
 
-    ////myPlotter->setTimeWindow( 300.0 );
+    myPlotter->setTimeWindow( 300.0 );
 
-    //// 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    //myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
+    // 从ROOT文件创建TGraphErrors并保存到ROOT文件
+    myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
 
-    //myPlotter->setTimeWindow( 3000.0 );
+    myPlotter->setTimeWindow( 3000.0 );
 
-    //myPlotter->createMultimeterGraphFromTree( rootDirPath.string() + "/Multimeter_data.root", plotDirPath.string() + "/Multimeter_plot.root" );
+    myPlotter->createMultimeterGraphFromTree( rootDirPath.string() + "/Multimeter_data.root", plotDirPath.string() + "/Multimeter_plot.root" );
 
     std::cout << "Hello, my project." << std::endl;
 

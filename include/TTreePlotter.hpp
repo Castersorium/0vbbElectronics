@@ -11,7 +11,11 @@ class TTreePlotter
 {
 public:
     // 构造函数，初始化isDebugModeActive为false，timeWindow为1.0，xBinWidth为0.02，xMin为-10，xMax为10
-    TTreePlotter() : isDebugModeActive( false ), timeWindow( 1.0 ), xBinWidth( 0.02 ), xMin( -10.0 ), xMax( 10.0 ), FFTtimeWindow( 1.0 ) {}
+    TTreePlotter() : isDebugModeActive( false ), timeWindow( 1.0 ), xBinWidth( 0.02 ), xMin( -10.0 ), xMax( 10.0 ), FFTtimeWindow( 1.0 ),
+        Color_vec{ kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange },
+        MarkerStyle_vec{ kFullSquare, kFullTriangleUp, kFullTriangleDown, kOpenCircle, kOpenSquare, kOpenTriangleUp, kOpenDiamond }  // 初始化Color_vec和MarkerStyle_vec
+    {
+    }
     void setDebug( bool debugStatus ) { isDebugModeActive = debugStatus; }  // 设置debug状态
     void setAmpHistoBinWidth( double newBinWidth ) { xBinWidth = newBinWidth; }  // 设置幅度直方图的bin宽度
     // 设置事件采样窗口的范围（单位是秒）
@@ -37,7 +41,10 @@ private:
     double FFTtimeWindow;  // FFT的时间窗口
 
     // 创建一个颜色的枚举类
-    enum Color { kRed, kBlue, kGreen, kMagenta, kCyan, kYellow, kBlack, kOrange };
+    std::vector<EColor> Color_vec;
+
+    // 创建一个点形状的枚举类
+    std::vector<EMarkerStyle> MarkerStyle_vec;
 };
 }
 
