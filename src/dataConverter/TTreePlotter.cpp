@@ -463,7 +463,7 @@ void TTreePlotter::createBlueforsTemperatureGraphFromTree( const std::string & r
     canvas->SetGridy();
 
     // 创建一个MultiGraph
-    TMultiGraph * multiGraph = new TMultiGraph( "mg_Temperature", "mg_Temperature" );
+    TMultiGraph * multiGraph = new TMultiGraph( "mg_Temperature", "Temperature of T1_50K, T2_4K, T5_STILL, T6_MXC and T7_SAMPLE" );
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( TGraphErrors * graphInstance : graphs_vec )
@@ -683,7 +683,7 @@ void TTreePlotter::createMultimeterGraphFromTree( const std::string & rootFilePa
     canvas->SetGridy();
 
     // 创建一个MultiGraph
-    TMultiGraph * multiGraph = new TMultiGraph( "mg_MultimeterReading", "mg_MultimeterReading" );
+    TMultiGraph * multiGraph = new TMultiGraph( "mg_MultimeterReading", "Multimeter Reading out" );
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( TGraphErrors * graphInstance : graphs_vec )
