@@ -15,12 +15,13 @@ for i = 1:length(filenames)
     data = readmatrix(fullfile(path, filename));
     fs = 1/data(2,2);  
     %     data = data(5:end, :);
-    data = data(5:end, 5:6);
+%     data = data(5:end, 5:6);
+    data = data(5:end, 7:8);
 
     % Set parameters for the PSD calculation
     % sen = 1.026;    % Sensitivity in V/g
     % g = 9.81;       % m/s2
-    wint = 30;       % Window time in s
+    wint = 10;       % Window time in s
     % gain = 10.003;       % Default gain
     gain = 412;       % Default gain
     % fs = 10000;     % Sampling frequency

@@ -39,8 +39,9 @@ for i = 1:length(filenames)
 %         data(:,2) = data(:,2)-906;
 %     end
     % plot 
-%     plot(data(:,1),data(:,2));
-    scatter(data(:,1),data(:,2),'filled','SizeData',5);
+    plot(data(:,1),data(:,2),LineWidth=2);
+%     scatter(data(:,1),data(:,2),'filled','SizeData',5);
+%     scatter(data(:,1),data(:,6),'filled','SizeData',5);
     % set(gca, 'XScale', 'log');
 %     set(gca, 'YScale', 'log');
 %     set(gca, 'ZScale', 'log');

@@ -32,7 +32,10 @@ wint = 10;       % Window time in s
 % gain = 206*8;    %MIB206*8
 % gain = 206*30;    %MIB206*30
 % gain = 206*100;    %MIB206*100
-gain = 1700;    %FRBOX
+gain = 206*17;
+% gain = 206*4;
+% gain = 206*2;
+% gain = 1700;    %FRBOX
 % rmsf0 = 0.2; %rms REG1 begin frequency
 % rmsf1 = 40; %rms REG1 end frequency
 % rmsf2 = 2500; %rms REG2 end frequency
@@ -47,9 +50,20 @@ for i = 1:length(filenames)
     data = readmatrix(fullfile(path, filename));
 
     % Remove the first 4 rows of data and reshape into a vector
-    data = data(5:end, :); 
+%     fs = 1/data(2,2);
+   if i == 1
+    gain = 206*8;    %MIB206*8
+    data = data(5:end, 1:2); 
+   else
+      gain = 206*4;    %MIB206*8
+       data = data(5:end, 3:4); 
+   end
+%     data = data(5:end, :); 
     time = data(:,1);
-    data = data(:,2)/gain;
+    data = data(:,2);
+%     data = data(:,4);
+%     data = data(:,6);
+%     data = data(:,8);
     datas{i} = data;
 
     %calculate fs
@@ -57,14 +71,14 @@ for i = 1:length(filenames)
 
 
     
-    % Set the gain based on the filename
-    if contains(filename,"1gain")
-        gain = 1; %set the gain to 1 if the filename contains "1gain"
-    elseif contains(filename,"10gain")
-        gain = 10.003; %set the gain to 10.003 if the filename contains "10gain"
-    elseif contains(filename,"100gain")
-        gain = 100.122; %set the gain to 100.122 if the filename contains "100gain"
-    end
+%     % Set the gain based on the filename
+%     if contains(filename,"1gain")
+%         gain = 1; %set the gain to 1 if the filename contains "1gain"
+%     elseif contains(filename,"10gain")
+%         gain = 10.003; %set the gain to 10.003 if the filename contains "10gain"
+%     elseif contains(filename,"100gain")
+%         gain = 100.122; %set the gain to 100.122 if the filename contains "100gain"
+%     end
     data = data/gain;
 
     % Define the window length and overlap
