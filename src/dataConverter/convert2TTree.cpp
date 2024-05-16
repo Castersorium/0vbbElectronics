@@ -489,7 +489,7 @@ void convert2TTree::convertBlueforsTemperatureLog2TTree( const std::string & Blu
                 std::cout << " - time_string: " << time_vec[0] << std::endl;
             }
 
-            // 将日期字符串转换为"YYYY-MM-DD"的格式
+            // 将日期字符串从"DD-MM-YY"转换为"YYYY-MM-DD"的格式
             for ( size_t i = 0; i < logFile_vec.size(); ++i )
             {
                 date_vec[i] = "20" + date_vec[i].substr( 6, 2 ) + "-" + date_vec[i].substr( 3, 2 ) + "-" + date_vec[i].substr( 0, 2 );
@@ -942,6 +942,150 @@ void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath,
 
             // 填充TTree
             tree->Fill();
+        }
+    }
+
+    // 检查TTree是否包含任何条目
+    if ( tree->GetEntries() == 0 )
+    {
+        std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
+    }
+
+    // 将TTree写入到ROOT文件中
+    tree->Write();
+
+    // 关闭ROOT文件
+    delete file;
+}
+
+// 定义一个函数，用于将CelsiusData格式的数据转换为TTree格式
+void convert2TTree::convertCelsiusData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
+{
+    // 创建一个新的ROOT文件
+    TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
+
+    // 创建一个新的TTree
+    TTree * tree = new TTree( "Centigrade_Humidity", "Centigrade and Humidity" );
+
+    // 如果isDebugModeActive状态为true，打印出一条消息
+    if ( isDebugModeActive )
+    {
+        std::cout << " - Input Celsius Data directory read: " << csvDirPath << std::endl;
+        std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
+    }
+
+    // 创建一个变量来存储时间戳
+    double timestamp = 0.0;
+
+    // 创建变量来存储温度和湿度
+    double centigrade = 0.0;
+    double humidity = 0.0;
+
+    // 创建时间戳branch
+    tree->Branch( "timestamp", &timestamp, "timestamp/D" );
+
+    // 创建温度和湿度branch
+    tree->Branch( "centigrade", &centigrade, "centigrade/D" );
+    tree->Branch( "humidity", &humidity, "humidity/D" );
+
+    // 遍历目录下的所有文件
+    for ( const auto & entry : std::filesystem::directory_iterator( csvDirPath ) )
+    {
+        std::string csvFilePath = entry.path().string();
+
+        // 打开CSV文件
+        std::ifstream csvFile( csvFilePath );
+        if ( !csvFile.is_open() )
+        {
+            std::cerr << "Can not open csv file: " << csvFilePath << std::endl;
+            continue;
+        }
+
+        // 创建一个变量用于检查"MM/DD/YY"作为标志出现的次数
+        size_t count_MM_DD_YY = 0;
+
+        // 跳过数据文件头部的描述信息，直至到达数据的第一行，以"MM/DD/YY"作为标志出现
+        std::string line;
+        while ( std::getline( csvFile, line ) )
+        {
+            if ( line.find( "MM/DD/YY" ) != std::string::npos )
+            {
+                count_MM_DD_YY++;
+                break;
+            }
+        }
+        // "MM/DD/YY"标志会出现两次，第二次出现的地方就是数据的第一行
+        while ( std::getline( csvFile, line ) )
+        {
+            if ( line.find( "MM/DD/YY" ) != std::string::npos )
+            {
+                count_MM_DD_YY++;
+                break;
+            }
+        }
+
+        // 检查"MM/DD/YY"标志是否出现了两次
+        if ( count_MM_DD_YY != 2 )
+        {
+            std::cerr << "Error: The number of occurrences of the string \"MM/DD/YY\" is not equal to 2." << std::endl;
+            continue;
+        }
+
+        // 读取CSV文件的数据
+        while ( std::getline( csvFile, line ) )
+        {
+            std::istringstream ssIn( line );
+            std::string date_string;
+            std::string time_string;
+            std::string centigrade_string;
+            std::string humidity_string;
+
+            std::getline( ssIn, date_string, ',' );  // 获取日期
+
+            // 将日期字符串的格式从"MM/DD/YY"转换为"yyyy-mm-dd"
+            date_string = "20" + date_string.substr( 6, 2 ) + "-" + date_string.substr( 0, 2 ) + "-" + date_string.substr( 3, 2 );
+
+            std::getline( ssIn, time_string, ',' );  // 获取时间
+
+            // 去除字符串左端的空格
+            time_string.erase( time_string.begin(), std::find_if( time_string.begin(), time_string.end(), []( auto ch ) { return !std::isspace( ch ); } ) );
+
+            TDatime datime( ( date_string + " " + time_string ).c_str() );
+            timestamp = datime.Convert();
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
+                std::cout << " - TDatime: " << datime.AsString() << std::endl;
+                std::cout << " - timestamp: " << timestamp << std::endl;
+            }
+
+
+            std::getline( ssIn, centigrade_string, ',' );  // 获取温度测量值
+
+            std::getline( ssIn, humidity_string, ',' );  // 跳过TemperatureStatus
+            std::getline( ssIn, humidity_string, ',' );  // 获取湿度测量值
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - centigrade_string: " << centigrade_string << std::endl;
+                std::cout << " - humidity_string: " << humidity_string << std::endl;
+            }
+
+            centigrade = std::stod( centigrade_string );
+            humidity = std::stod( humidity_string );
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - centigrade: " << centigrade << std::endl;
+                std::cout << " - humidity: " << humidity << std::endl;
+            }
+
+            // 填充TTree
+            tree->Fill();
+
+            centigrade = 0.0;
+            humidity = 0.0;
         }
     }
 

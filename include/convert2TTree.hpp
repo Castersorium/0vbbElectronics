@@ -17,6 +17,8 @@ public:
     void convertBlueforsTemperatureLog2TTree( const std::string & BlueforsLogDirPath, const std::string & rootFileName ) const;
     // 定义一个函数，用于将MultimeterData格式的数据转换为TTree格式
     void convertMultimeterData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const;
+    // 定义一个函数，用于将CelsiusData格式的数据转换为TTree格式
+    void convertCelsiusData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const;
 
 protected:
     bool isDebugModeActive;  // debug状态
