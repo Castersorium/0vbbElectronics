@@ -24,5 +24,4 @@ build/
 test*.root
 plots
 ROOTdata
-ROOTdatatest
-
+/output/ROOTdatatest
