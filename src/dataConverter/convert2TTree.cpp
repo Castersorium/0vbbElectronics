@@ -1028,7 +1028,7 @@ void convert2TTree::convertCelsiusData2TTree( const std::string & csvDirPath, co
         // 检查"MM/DD/YY"标志是否出现了两次
         if ( count_MM_DD_YY != 2 )
         {
-            std::cerr << "Error: The number of occurrences of the string \"MM/DD/YY\" is not equal to 2." << std::endl;
+            std::cerr << "Error: The number of occurrences of the string \"MM/DD/YY\" is not equal to 2 in file: "<<csvFilePath<<"." << std::endl;
             continue;
         }
 
