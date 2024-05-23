@@ -8,13 +8,28 @@
 
 #include "convert2TTree.hpp" // my header
 #include "TTreePlotter.hpp"
+#include "flagHandler.hpp"
 
-int main( int argc, char * argv[] )
+int main(int argc, char *argv[])
 {
+
     // 检查是否提供了文件路径
-    if ( argc < 7 )
+    if (argc < 7)
     {
-        std::cout << "Usage: " << argv[0] << " <input NIDAQCSV directory> <output ROOT directory> <output plot directory> <input BLUEFORS_LOG directory> <input MultimeterData directory> <input CelsiusData directory>" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <input NIDAQCSV directory> <output ROOT directory> <output plot directory> <input BLUEFORS_LOG directory> <input MultimeterData directory> <input CelsiusData directory> -flags" << std::endl;
+        std::cout << "  Mainflags:" << std::endl;
+        std::cout << "      -ROOT           Convert all data to ROOT files" << std::endl;
+        std::cout << "      -Plot           Plot all data" << std::endl;
+        std::cout << "  flags:" << std::endl;
+        std::cout << "      -NIROOT         Convert NIDAQ data to ROOT files" << std::endl;
+        std::cout << "      -BFROOT         Convert BlueFors thermometer data to ROOT files" << std::endl;
+        std::cout << "      -MultiROOT      Convert Multimeter data to ROOT files" << std::endl;
+        std::cout << "      -LabTempROOT    Convert Lab temperature data to ROOT files" << std::endl;
+        std::cout << "      -NIPlot         plot NIDAQ data" << std::endl;
+        std::cout << "      -NIFFTPlot      plot NIDAQ FFT" << std::endl;
+        std::cout << "      -BFPlot         plot BlueFors data" << std::endl;
+        std::cout << "      -MultiPlot      plot Multimeter data" << std::endl;
+        std::cout << "      -LabTempPlot    plot Lab temperature" << std::endl;
         return 1;
     }
 
@@ -27,88 +42,38 @@ int main( int argc, char * argv[] )
     std::filesystem::path CelsiusDataDirPath = argv[6];
 
     // 检查路径是否存在且是一个目录
-    if ( !std::filesystem::exists( NIDAQcsvDirPath ) || !std::filesystem::is_directory( NIDAQcsvDirPath ) )
+    if (!std::filesystem::exists(NIDAQcsvDirPath) || !std::filesystem::is_directory(NIDAQcsvDirPath))
     {
         std::cout << "Error: NI DAQ CSV directory " << NIDAQcsvDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    if ( !std::filesystem::exists( rootDirPath ) || !std::filesystem::is_directory( rootDirPath ) )
+    if (!std::filesystem::exists(rootDirPath) || !std::filesystem::is_directory(rootDirPath))
     {
         std::cout << "Error: ROOT directory " << rootDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    if ( !std::filesystem::exists( plotDirPath ) || !std::filesystem::is_directory( plotDirPath ) )
+    if (!std::filesystem::exists(plotDirPath) || !std::filesystem::is_directory(plotDirPath))
     {
         std::cout << "Error: Plot directory " << plotDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    if ( !std::filesystem::exists( BlueforsLogDirPath ) || !std::filesystem::is_directory( BlueforsLogDirPath ) )
+    if (!std::filesystem::exists(BlueforsLogDirPath) || !std::filesystem::is_directory(BlueforsLogDirPath))
     {
         std::cout << "Error: BLUEFORS_LOG directory " << BlueforsLogDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    if ( !std::filesystem::exists( MultimeterDataDirPath ) || !std::filesystem::is_directory( MultimeterDataDirPath ) )
+    if (!std::filesystem::exists(MultimeterDataDirPath) || !std::filesystem::is_directory(MultimeterDataDirPath))
     {
         std::cout << "Error: MultimeterDataDirPath directory " << MultimeterDataDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
-    if ( !std::filesystem::exists( CelsiusDataDirPath ) || !std::filesystem::is_directory( CelsiusDataDirPath ) )
+    if (!std::filesystem::exists(CelsiusDataDirPath) || !std::filesystem::is_directory(CelsiusDataDirPath))
     {
         std::cout << "Error: CelsiusDataDirPath directory " << CelsiusDataDirPath << " does not exist or is not a directory." << std::endl;
         return 1;
     }
 
-    // 创建convert2TTree的实例
-    std::unique_ptr<TTREEIO::convert2TTree> myConverter = std::make_unique<TTREEIO::convert2TTree>();
-
-    // 打开debug模式
-    //myConverter->setDebug( true );
-
-    // 转换NIDAQCSV文件到ROOT文件
-    myConverter->convertNIDAQCSV2TTree( NIDAQcsvDirPath.string(), rootDirPath.string() + "/NIDAQ_data.root" );
-
-    myConverter->setDateInterval( "24-04-14", "24-04-21" );
-
-    // 转换BlueforsTemperatureLog文件到ROOT文件
-    myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
-
-    // 转换MultimeterData文件到ROOT文件
-    myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
-
-    // 转换CelsiusData文件到ROOT文件
-    myConverter->convertCelsiusData2TTree( CelsiusDataDirPath.string(), rootDirPath.string() + "/Celsius_data.root" );
-
-    // 创建TTreePlotter的实例
-    std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
-
-    // 打开debug模式
-    //myPlotter->setDebug( true );
-
-    myPlotter->setAmpHistoBinWidth( 0.01 );
-    myPlotter->setTimeWindow( 2.0 );
-
-    // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    myPlotter->createNIDAQGraphFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_plot.root" );
-
-    myPlotter->setAmpHistoBinWidth( 0.001 ); // 设置采样间隔
-    myPlotter->setFFTTimeWindow( 2.0 );
-    myPlotter->setTimeWindow( 4.0 );
-
-    myPlotter->createNIDAQFFTFromTree( rootDirPath.string() + "/NIDAQ_data.root", plotDirPath.string() + "/NIDAQ_FFT_plot.root" );
-
-    myPlotter->setTimeWindow( 300.0 );
-
-    // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
-
-    myPlotter->setTimeWindow( 3000.0 );
-
-    myPlotter->createMultimeterGraphFromTree( rootDirPath.string() + "/Multimeter_data.root", plotDirPath.string() + "/Multimeter_plot.root" );
-
-    myPlotter->setTimeWindow( 3000.0 );
-
-    // 从ROOT文件创建TGraphErrors并保存到ROOT文件
-    myPlotter->createCelsiusGraphFromTree( rootDirPath.string() + "/Celsius_data.root", plotDirPath.string() + "/Celsius_plot.root" );
+    flagHandler(NIDAQcsvDirPath, rootDirPath, plotDirPath, BlueforsLogDirPath, MultimeterDataDirPath, CelsiusDataDirPath, argc, argv);
 
     std::cout << "Hello, my project." << std::endl;
 
