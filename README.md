@@ -1,10 +1,11 @@
 # Electronics testing for 0vbb experiment
 
-## directory tree
+## ARCHIVE(E:)
 
 <!-- TREE START -->
 
 ```
+/mnt/e/
 .
 ├── RUNs
 │   ├── RUN202403
