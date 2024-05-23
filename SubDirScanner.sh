@@ -37,6 +37,6 @@ find "$baseDir" -mindepth 1 -type d | while read -r dir; do
             "$runDir/Labtemperature" \
             -NIROOT \
             -NIPlot \
-	    -NIFFTPlot \
+	        -NIFFTPlot \
     )
 done
