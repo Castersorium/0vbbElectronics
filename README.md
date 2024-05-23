@@ -15,7 +15,27 @@
 │       └── NIProjectFolders...
 │           └── ...
 └── RUNs_data_analysis
-    └── RUN2403
+    ├── RUN2403
+    │   ├── BLUEFORS_LOG
+    │   │   └── dates
+    │   ├── DCPower
+    │   ├── Labtemperature
+    │   ├── Multimeter_data
+    │   ├── plots
+    │   └── Converted_Data
+    │       ├── root
+    │       │   ├── BLUEFORS_Temperature_data.root
+    │       │   ├── Multimeter_data.root
+    │       │   ├── Celsius_data.root
+    │       │   ├── NIDAQ_data_20240320.root
+    │       │   └── ...
+    │       ├── tdms
+    │       └── csv
+    │           ├── 20240504
+    │           │   ├── 记录-2024-03-20 023925 810.csv
+    │           │   └── ...
+    │           └── ...
+    └── RUN2404
         ├── BLUEFORS_LOG
         │   └── dates
         ├── DCPower
