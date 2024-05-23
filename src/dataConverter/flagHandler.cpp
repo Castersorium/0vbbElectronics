@@ -87,7 +87,7 @@ void flagHandler(
 
     if (flags["-ROOT"] || flags["-BFROOT"])
     {
-        myConverter->setDateInterval("24-04-14", "24-04-21");
+        myConverter->setDateInterval("24-04-01", "24-05-30");
         // 转换BlueforsTemperatureLog文件到ROOT文件
         myConverter->convertBlueforsTemperatureLog2TTree(BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root");
     }
