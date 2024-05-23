@@ -2,19 +2,20 @@
 
 # 检查是否提供了baseDir作为命令行参数
 if [ -z "$1" ]; then
-  echo "Usage: $0 <base_directory>"
+  echo "Usage: $0 <RUN_directory>"
 fi
 
 # 读取命令行参数
-baseDir="$1"
+runDir="$1"
+baseDir="$runDir/Converted_Data/csv"
 
 ./build/dataConverter/dataConverter.exe \
     "$baseDir" \
-    /mnt/d/storage/research/data/dataConverterTest/ROOT \
-    /mnt/d/storage/research/data/dataConverterTest/Plots \
-    /mnt/d/storage/research/data/dataConverterTest/BFTemp \
-    /mnt/d/storage/research/data/dataConverterTest/Multimeter \
-    /mnt/d/storage/research/data/dataConverterTest/LabTemp \
+    "$runDir/Converted_Data/root" \
+    "$runDir/plots" \
+    "$runDir/BLUEFORS_LOG" \
+    "$runDir/Multimeter_data/AC220V" \
+    "$runDir/Labtemperature" \
     -BFROOT \
     -BFPlot \
     -MultiROOT \
@@ -29,13 +30,13 @@ find "$baseDir" -mindepth 1 -type d | while read -r dir; do
         
         ./build/dataConverter/dataConverter.exe \
             "$dir" \
-            /mnt/d/storage/research/data/dataConverterTest/ROOT \
-            /mnt/d/storage/research/data/dataConverterTest/Plots \
-            /mnt/d/storage/research/data/dataConverterTest/BFTemp \
-            /mnt/d/storage/research/data/dataConverterTest/Multimeter \
-            /mnt/d/storage/research/data/dataConverterTest/LabTemp \
+            "$runDir/Converted_Data/root" \
+            "$runDir/plots" \
+            "$runDir/BLUEFORS_LOG" \
+            "$runDir/Multimeter_data/AC220V" \
+            "$runDir/Labtemperature" \
             -NIROOT \
             -NIPlot \
-            -NIFFTPlot \
+	    -NIFFTPlot \
     )
 done
