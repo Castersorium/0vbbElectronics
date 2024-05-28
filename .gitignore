@@ -24,6 +24,7 @@ build/
 test*.root
 plots
 ROOTdata
+output/ROOTdatatest
 
 # For MatLab .mat files
 src/MatlabCode/matdata/**
