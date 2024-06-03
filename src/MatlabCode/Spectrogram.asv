@@ -15,7 +15,7 @@ colIndices = input('Enter the column indices to read (e.g., [1 2]): ');
 for i = 1:length(filenames)
     filename = filenames{i};
     [~, name, ~] = fileparts(filename);
-    opts = detectImportOptions(fullfile(path, filename));
+    opts = detectImportOptions(fullfile(path, filename),'FileEncoding');
 
     % Validate the user input
     if any(colIndices > length(opts.VariableNames))
@@ -29,7 +29,24 @@ for i = 1:length(filenames)
     disp('Preview of data:');
     disp(data(1:10, :)); % 显示前10行数据
 
+
+    % Extract the channel name from the third row of the second column
+    channelName = data{3, 2};
+    if isnumeric(channelName)
+        channelName = num2str(channelName);
+    elseif isstring(channelName) || ischar(channelName)
+        channelName = char(channelName);
+    elseif iscategorical(channelName)
+        channelName = char(string(channelName));
+    else
+        error('Unsupported data type for channel name.');
+    end
+
+
     data = table2array(data);
+
+    % Append the channel name to the name variable
+    name = [name, '_', channelName];
 
 %     data = readmatrix(fullfile(path, filename));
     fs = 1/data(2,2);  
@@ -68,7 +85,7 @@ for i = 1:length(filenames)
 
     % Calculation
     % data(:,2) = data(:,2)/(gain*sen);
-%     data(:,2) = data(:,2)/gain;
+    data(:,2) = data(:,2)/gain;
 
     [x_3D, y_3D, z_3D] = Mide_Spectrogram(data,fs,wint);
     plot_Spectrogram(name,fs,wint,x_3D,y_3D,z_3D)
