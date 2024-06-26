@@ -28,3 +28,4 @@ output/ROOTdatatest
 
 # For MatLab .mat files
 src/MatlabCode/matdata/**
+data/test/
