@@ -27,8 +27,14 @@ TARGET_PATH_DATE := ./build/dateCategorize
 SOURCE_DATE := $(wildcard $(SOURCE_PATH_DATE)/*.cpp)
 TARGET_DATE := $(TARGET_PATH_DATE)/dateCategorize.exe
 
+## plotMerge
+SOURCE_PATH_MERGE := ./src/plotMerge
+TARGET_PATH_MERGE := ./build/plotMerge
+SOURCE_MERGE := $(wildcard $(SOURCE_PATH_MERGE)/*.cpp)
+TARGET_MERGE := $(TARGET_PATH_MERGE)/plotMerge.exe
+
 # Define all: new Program add here
-all: dataConverter plotRTrecording dateCategorize
+all: dataConverter plotRTrecording dateCategorize plotMerge
 
 # Compile
 
@@ -53,11 +59,20 @@ dateCategorize: $(SOURCE_DATE) | $(TARGET_PATH_DATE) # "|" makes sure target pat
 $(TARGET_PATH_DATE):
 	mkdir -p $(TARGET_PATH_DATE)
 
+## plotMerge
+plotMerge: $(SOURCE_MERGE) | $(TARGET_PATH_MERGE)
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_PATH)/ $(SOURCE_MERGE) $(ROOT_CONFIG) -o $(TARGET_MERGE)
+
+$(TARGET_PATH_MERGE):
+	mkdir -p $(TARGET_PATH_MERGE)
+
+
 # For debug
 debug: CXXFLAGS += $(DEBUG_FLAGS)
 debug: $(TARGET_DATACVT)
 debug: $(TARGET_PLOTRT)
 debug: $(TARGET_DATE)
+debug: $(TARGET_MERGE)
 
 # For clean
 .PHONY: clean
@@ -65,9 +80,12 @@ clean:
 	rm -rf $(TARGET_DATACVT)
 	rm -rf $(TARGET_PLOTRT)
 	rm -rf $(TARGET_DATE)
+	rm -rf $(TARGET_MERGE)
 clean_DATACVT:
 	rm -rf $(TARGET_DATACVT)
 clean_PLOTRT:
 	rm -rf $(TARGET_PLOTRT)
 clean_DATE:
 	rm -rf $(TARGET_DATE)
+clean_MERGE:
+	rm -rf $(TARGET_MERGE)

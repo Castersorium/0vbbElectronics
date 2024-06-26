@@ -25,3 +25,4 @@ test*.root
 plots
 ROOTdata
 /output/ROOTdatatest
+/data/test
