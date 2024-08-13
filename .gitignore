@@ -20,3 +20,6 @@ build/
 
 # For testing root files
 test*.root
+
+# For test folder
+data/test/
