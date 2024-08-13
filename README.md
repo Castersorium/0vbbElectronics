@@ -50,6 +50,7 @@ Here is the list of testing done:
 
 - Graphs and Fit results. 
 - For newest result, you can check [RTCurve_20-100mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/2023Nov/RTCurve_20-100mK.png) or [RTCurve_20-50mK.png](https://github.com/Castersorium/0vbbElectronics/blob/master/output/2023Nov/RTCurve_20-50mK.png)
+- typical colling down process：![image](https://github.com/Castersorium/0vbbElectronics/blob/master/output/plots/RUN2404_Temp_KelvinScale.png) ![image](https://github.com/Castersorium/0vbbElectronics/blob/master/output/plots/RUN2404_Temp_to10mK.png)
 
 ### `RTCurve.xlsx`
 
