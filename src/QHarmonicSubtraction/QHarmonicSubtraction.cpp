@@ -37,7 +37,8 @@ int main(int argc, const char* argv[])
     TApplication* myApp = new TApplication("myApp", NULL, NULL);
     gStyle->SetOptStat(1111);
     
-    std::string FILEPATH = "";
+    std::string INFILEPATH = "";
+    std::string OUTFILEPATH = "";
     int RUN = 0;
     int CHANNEL = 0;
     bool AMDEBUGGING = false;
@@ -45,11 +46,17 @@ int main(int argc, const char* argv[])
     for (unsigned int i = 1; i < static_cast<unsigned int>(argc); i++)
     {
         std::string argu = argv[i];
-        // index file path
-        if (argu == "--directory" || argu == "-d")
+        // index input file path
+        if (argu == "--InputDirectory" || argu == "-id")
         {
             i++;
-            FILEPATH = argv[i];
+            INFILEPATH = argv[i];
+        }
+        // index output file path
+        else if ( argu == "--OutputDirectory" || argu == "-od" )
+        {
+            i++;
+            OUTFILEPATH = argv[i];
         }
         // index run
         else if (argu == "--run" || argu == "-r")
@@ -72,8 +79,8 @@ int main(int argc, const char* argv[])
     
     int DTFlagOrder = 0;
     
-    TString myFileOutput = FILEPATH;
-    myFileOutput += Form("output/Baseline_from_run%d_of_ch%d.root", RUN, CHANNEL);
+    TString myFileOutput = OUTFILEPATH;
+    myFileOutput += Form("Baseline_from_run%d_of_ch%d.root", RUN, CHANNEL);
     TFile* outFile( TFile::Open(myFileOutput, "RECREATE") ); // output file handle
     if (!outFile || outFile->IsZombie())
     {
@@ -81,9 +88,9 @@ int main(int argc, const char* argv[])
        exit(-1);
     }
     
-    std::string myFileInput = FILEPATH;
+    std::string myFileInput = INFILEPATH;
     myFileInput += Form("samples_run%d_ch%d.txt", RUN, CHANNEL);
-    std::string myFileInputforDT = FILEPATH;
+    std::string myFileInputforDT = INFILEPATH;
     myFileInputforDT += Form("DTFlags_run%d_ch%d.txt", RUN, CHANNEL);
     std::ifstream infile; // input file handle
     std::ifstream infileforDT;
@@ -123,7 +130,9 @@ int main(int argc, const char* argv[])
     double myBaselineUpper = 3500;
     
     // draw a frame to define the range
-    TH1F* hr = myC0->DrawFrame(0, y_vec.at(DTFlagOrder) - myBaselineLower, 3000, y_vec.at(DTFlagOrder) + myBaselineUpper);
+    TH1F* hr = myC0->DrawFrame(0, y_vec.at(DTFlagOrder) - myBaselineLower, 
+                                300, // MaxTime
+                                y_vec.at(DTFlagOrder) + myBaselineUpper);
     hr->SetXTitle("time [s]");
     hr->SetYTitle("signal [mV]");
     hr->SetTitle(Form("Data from run %d ch %d", RUN, CHANNEL));
@@ -171,8 +180,8 @@ int main(int argc, const char* argv[])
     myC0->Update();
     
     myC0->Write();
-    myFileOutput = FILEPATH;
-    myFileOutput += Form("output/c0_run%d_ch%d.pdf", RUN, CHANNEL);
+    myFileOutput = OUTFILEPATH;
+    myFileOutput += Form("c0_run%d_ch%d.pdf", RUN, CHANNEL);
     myC0->Print(myFileOutput);     // Save the canvas in a .pdf file
     
     // Initialization for arrays.
@@ -261,8 +270,8 @@ int main(int argc, const char* argv[])
         myC1[DTFlagOrder]->Update();
         
         myC1[DTFlagOrder]->Write();
-        myFileOutput = FILEPATH;
-        myFileOutput += Form("output/c1_run%d_ch%d_Sign%d.pdf", RUN, CHANNEL, DTFlagOrder);
+        myFileOutput = OUTFILEPATH;
+        myFileOutput += Form("c1_run%d_ch%d_Sign%d.pdf", RUN, CHANNEL, DTFlagOrder);
         myC1[DTFlagOrder]->Print(myFileOutput);     // Save the canvas in a .pdf file
         
         myC2[DTFlagOrder]->cd();
@@ -280,8 +289,8 @@ int main(int argc, const char* argv[])
         myC2[DTFlagOrder]->Update();
         
         myC2[DTFlagOrder]->Write();
-        myFileOutput = FILEPATH;
-        myFileOutput += Form("output/c2_run%d_ch%d_Sign%d.pdf", RUN, CHANNEL, DTFlagOrder);
+        myFileOutput = OUTFILEPATH;
+        myFileOutput += Form("c2_run%d_ch%d_Sign%d.pdf", RUN, CHANNEL, DTFlagOrder);
         myC2[DTFlagOrder]->Print(myFileOutput);     // Save the canvas in a .pdf file
     }
     
