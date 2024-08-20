@@ -28,9 +28,9 @@ c++ -std=c++11 -o ./qFilewithFlag/QHarmonicSubtraction.exe QHarmonicSubtraction.
 #include <TMath.h>
 #include <TPaveStats.h>
 
-int searchResult( std::vector<double> arr, double k );
-Double_t BaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, double DTTime );
-int findBestBaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, double DTTime, double & BestRMS );
+int searchResult( std::vector<double> & arr, double k, double tolerance = 0.0001 );
+Double_t BaselineRMS( std::vector<double> & x_vec, std::vector<double> & y_vec, double DTTime );
+int findBestBaselineRMS( std::vector<double> & x_vec, std::vector<double> & y_vec, double DTTime, double & BestRMS );
 
 int main( int argc, const char * argv[] )
 {
@@ -128,8 +128,8 @@ int main( int argc, const char * argv[] )
         line++;
     }
 
-    double myHistoAmp = 50;
-    double myBaselineLower = 100;
+    double myHistoAmp = 200;
+    double myBaselineLower = 400;
     double myBaselineUpper = 500;
 
     // draw a frame to define the range
@@ -211,15 +211,18 @@ int main( int argc, const char * argv[] )
         myC2[DTFlagOrder] = new TCanvas( Form( "c2_Sign%d", DTFlagOrder ), Form( "Baseline_of_ch%d_Sign%d", CHANNEL, DTFlagOrder ), 200 + 40 * ( 2 * DTFlagOrder + 2 ), 10 + 40 * ( 2 * DTFlagOrder + 2 ), 700, 500 );
         myC2[DTFlagOrder]->SetGrid();
 
-        h0[DTFlagOrder] = new TH1F( Form( "h0_Sign%d", DTFlagOrder ), Form( "Baseline of ch%d for Sign%d", CHANNEL, DTFlagOrder ), 100, y_vec_DT.at( DTFlagOrder ) - myHistoAmp, y_vec_DT.at( DTFlagOrder ) + myHistoAmp );
-        h1[DTFlagOrder] = new TH1F( Form( "h1_Sign%d", DTFlagOrder ), Form( "NEWBaseline of ch%d for Sign%d", CHANNEL, DTFlagOrder ), 100, y_vec_DT.at( DTFlagOrder ) - myHistoAmp, y_vec_DT.at( DTFlagOrder ) + myHistoAmp );
+        h0[DTFlagOrder] = new TH1F( Form( "h0_Sign%d", DTFlagOrder ), Form( "Baseline of ch%d for Sign%d", CHANNEL, DTFlagOrder ), myHistoAmp, y_vec_DT.at( DTFlagOrder ) - myHistoAmp, y_vec_DT.at( DTFlagOrder ) + myHistoAmp );
+        h1[DTFlagOrder] = new TH1F( Form( "h1_Sign%d", DTFlagOrder ), Form( "NEWBaseline of ch%d for Sign%d", CHANNEL, DTFlagOrder ), myHistoAmp, y_vec_DT.at( DTFlagOrder ) - myHistoAmp, y_vec_DT.at( DTFlagOrder ) + myHistoAmp );
         h1[DTFlagOrder]->GetXaxis()->SetTitle( "signal [mV]" );
-        h1[DTFlagOrder]->GetYaxis()->SetTitle( "counts / 0.7 [mV^{-1}]" );
+        h1[DTFlagOrder]->GetYaxis()->SetTitle( "counts / [mV^{-1}]" );
 
         myC1[DTFlagOrder]->cd();
 
+        const double timeBeforeTrigger = 0.04;
+        const double timeAfterTrigger = 0.08;
+
         // draw a frame to define the range
-        hrPulse[DTFlagOrder] = myC1[DTFlagOrder]->DrawFrame( x_vec_DT.at( DTFlagOrder ) - 3.5, y_vec_DT.at( DTFlagOrder ) - myBaselineLower, x_vec_DT.at( DTFlagOrder ) + 7.5, y_vec_DT.at( DTFlagOrder ) + myBaselineUpper );
+        hrPulse[DTFlagOrder] = myC1[DTFlagOrder]->DrawFrame( x_vec_DT.at( DTFlagOrder ) - timeBeforeTrigger - 0.01, y_vec_DT.at( DTFlagOrder ) - myBaselineLower, x_vec_DT.at( DTFlagOrder ) + timeAfterTrigger + 0.01, y_vec_DT.at( DTFlagOrder ) + myBaselineUpper );
         hrPulse[DTFlagOrder]->SetXTitle( "time [s]" );
         hrPulse[DTFlagOrder]->SetYTitle( "signal [mV]" );
         hrPulse[DTFlagOrder]->SetTitle( Form( "#%d pulse from run %d ch %d", DTFlagOrder, RUN, CHANNEL ) );
@@ -227,12 +230,12 @@ int main( int argc, const char * argv[] )
 
         myGraphforSignal[DTFlagOrder] = new TGraph(); // declaring TGraph pointer
         int i = -1;                              // counter for index of data point
-        int myTimeWindowBeginIter = searchResult( x_vec, x_vec_DT.at( DTFlagOrder ) - 3 ); // - 3 s
-        int myTimeWindowEndIter = myTimeWindowBeginIter + 1000 * 10; // 10 s
+        int myTimeWindowBeginIter = searchResult( x_vec, x_vec_DT.at( DTFlagOrder ) - timeBeforeTrigger ); // - 3 s
+        int myTimeWindowEndIter = myTimeWindowBeginIter + SamplingRate * ( timeBeforeTrigger + timeAfterTrigger ); // 10 s
         for ( int tmpIter = myTimeWindowBeginIter; tmpIter < myTimeWindowEndIter; tmpIter++ )
         {
             myGraphforSignal[DTFlagOrder]->SetPoint( ++i, x_vec.at( tmpIter ), y_vec.at( tmpIter ) ); // Adding data point to graph
-            if ( tmpIter - myTimeWindowBeginIter < 1000 * 3 )
+            if ( tmpIter - myTimeWindowBeginIter < SamplingRate * timeBeforeTrigger )
                 h0[DTFlagOrder]->Fill( y_vec.at( tmpIter ) );
         }
 
@@ -244,7 +247,7 @@ int main( int argc, const char * argv[] )
         for ( int tmpIter = myTimeWindowBeginIter; tmpIter < myTimeWindowEndIter; tmpIter++ )
         {
             myGraphforShiftSignal[DTFlagOrder]->SetPoint( ++i, x_vec.at( tmpIter ), y_vec.at( tmpIter ) - y_vec.at( BestShiftIter[DTFlagOrder] + tmpIter - myTimeWindowBeginIter ) + y_vec_DT.at( 0 ) ); // Adding data point to graph
-            if ( tmpIter - myTimeWindowBeginIter < 1000 * 3 )
+            if ( tmpIter - myTimeWindowBeginIter < SamplingRate * timeBeforeTrigger )
                 h1[DTFlagOrder]->Fill( y_vec.at( tmpIter ) - y_vec.at( BestShiftIter[DTFlagOrder] + tmpIter - myTimeWindowBeginIter ) + y_vec_DT.at( 0 ) );
         }
 
@@ -311,20 +314,22 @@ int main( int argc, const char * argv[] )
     return 0;
 }
 
-int searchResult( std::vector<double> arr, double k )
+int searchResult( std::vector<double> & arr, double k, double tolerance )
 {
-    std::vector<double>::iterator it;
-    it = std::find( arr.begin(), arr.end(), k );
-    if ( it != arr.end() )
-        return static_cast<int>( it - arr.begin() );
-    else
-        return -1;
+    for ( size_t i = 0; i < arr.size(); ++i )
+    {
+        if ( std::abs( arr[i] - k ) <= tolerance )
+            return static_cast<int>( i );
+    }
+    return -1;
 }
 
-Double_t BaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, double DTTime )
+Double_t BaselineRMS( std::vector<double> & x_vec, std::vector<double> & y_vec, double DTTime )
 {
+    const double timeBeforeTrigger = 0.04;
+
     std::vector<double> Baseline; // vector for storing Baseline
-    int myTimeWindowBeginIter = searchResult( x_vec, DTTime - 3 ); // - 3 s
+    int myTimeWindowBeginIter = searchResult( x_vec, DTTime - timeBeforeTrigger ); // - 3 s
     int myDTTimeIter = searchResult( x_vec, DTTime );
     if ( myDTTimeIter != -1 )
     {
@@ -338,10 +343,15 @@ Double_t BaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, doub
         return -1;
 }
 
-int findBestBaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, double DTTime, double & BestRMS )
+int findBestBaselineRMS( std::vector<double> & x_vec, std::vector<double> & y_vec, double DTTime, double & BestRMS )
 {
+    const double timeBeforeTrigger = 0.04;
+    const double timeAfterTrigger = 0.08;
+
+    std::cout << "x_vec.size = " << x_vec.size() << std::endl;
+
     std::vector<double> Baseline; // vector for storing Baseline
-    int myTimeWindowBeginIter = searchResult( x_vec, DTTime - 3 ); // - 3 s
+    int myTimeWindowBeginIter = searchResult( x_vec, DTTime - timeBeforeTrigger ); // - 3 s
     int myDTTimeIter = searchResult( x_vec, DTTime );
     if ( myDTTimeIter != -1 )
     {
@@ -351,7 +361,7 @@ int findBestBaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, d
         }
         std::cout << "My OLD  RMS is: " << TMath::RMS( Baseline.size(), Baseline.data() ) << " [mV]" << std::endl;
 
-        int myNoiseTimeWindowBeginIter = searchResult( x_vec, DTTime - 23 ); // - 23 s
+        int myNoiseTimeWindowBeginIter = searchResult( x_vec, DTTime - timeBeforeTrigger - ( timeBeforeTrigger + timeAfterTrigger ) * 1 ); // - 23 s
 
         std::vector<double> NewBaseline; // vector for storing new Baseline
         for ( int tmpIter = 0; tmpIter != static_cast<int>( Baseline.size() ); tmpIter++ )
@@ -361,8 +371,10 @@ int findBestBaselineRMS( std::vector<double> x_vec, std::vector<double> y_vec, d
         double tmpRMS = TMath::RMS( NewBaseline.size(), NewBaseline.data() );
         // std::cout << "My initial RMS is: " << tmpRMS << " [mV]" << std::endl;
 
+        const int SamplingRate = 10000;
+
         int BestShiftIter = 0;
-        for ( int ShiftIter = 0; ShiftIter < 1000 * 5; ShiftIter++ ) // no longer than 5 s
+        for ( int ShiftIter = 0; ShiftIter < SamplingRate * ( timeBeforeTrigger + timeAfterTrigger ) / 2; ShiftIter++ ) // no longer than 5 s
         {
             NewBaseline.clear();
             for ( int tmpIter = 0; tmpIter != static_cast<int>( Baseline.size() ); tmpIter++ )
