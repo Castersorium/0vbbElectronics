@@ -10,7 +10,7 @@ c++ -std=c++11 -o ./qFilewithFlag/QHarmonicSubtraction.exe QHarmonicSubtraction.
 */
 
 /*
-./QHarmonicSubtraction.exe --directory ./ --run 302525 --channel 7
+./QHarmonicSubtraction.exe --InputDirectory ./ --OutputDirectory ./ --run 13 --channel 2
 */
 
 #include <iostream> // C++ header
