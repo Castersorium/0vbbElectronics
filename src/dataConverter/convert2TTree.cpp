@@ -748,6 +748,167 @@ void convert2TTree::convertBlueforsPressureLog2TTree( const std::string & Bluefo
     delete file;
 }
 
+// 定义一个函数，用于将BlueforsLog格式的数据转换为TTree格式
+void convert2TTree::convertBlueforsFlowLog2TTree( const std::string & BlueforsLogDirPath, const std::string & rootFileName ) const
+{
+    // 创建一个新的ROOT文件
+    TFile * file = new TFile( rootFileName.c_str(), "RECREATE" );
+
+    // 创建一个新的TTree
+    TTree * tree = new TTree( "FlowReadings", "Flow readings from BLUEFORS" );
+
+    // 如果isDebugModeActive状态为true，打印出一条消息
+    if ( isDebugModeActive )
+    {
+        std::cout << " - Input BLUEFORS_LOG directory read: " << BlueforsLogDirPath << std::endl;
+        std::cout << " - Output ROOT file created: " << rootFileName << std::endl;
+    }
+
+    // 创建一个变量来存储时间戳
+    double timestamp = 0.0;
+    double flow = 0.0;
+
+    // 创建时间戳branch
+    tree->Branch( "timestamp", &timestamp, "timestamp/D" );
+    tree->Branch( "FLOW", &flow, "FLOW_MIXTURE/D" );
+
+    std::vector<std::string> logFileString_vec = { "Flowmeter " };
+    std::vector<std::string> logFileName_vec = {};
+    std::vector<std::ifstream> logFile_vec = {};
+    std::vector<std::string> line_vec = {};
+
+    // 遍历目录下的所有日期文件夹
+    for ( const auto & entry : std::filesystem::directory_iterator( BlueforsLogDirPath ) )
+    {
+        std::string dateDir = entry.path().filename().string();
+        if ( dateDir < startDate || dateDir > endDate )
+        {
+            if ( isDebugModeActive )
+            {
+                std::cout << " - Skip date directory: " << dateDir << std::endl;
+            }
+            continue; // 跳过范围之外的日期
+        }
+
+        if ( isDebugModeActive )
+        {
+            std::cout << " - Reading date directory: " << dateDir << std::endl;
+        }
+
+        for ( const auto & logFileString : logFileString_vec )
+        {
+            logFileName_vec.emplace_back( BlueforsLogDirPath + "/" + dateDir + "/" + logFileString + dateDir + ".log" );
+            if ( isDebugModeActive )
+            {
+                std::cout << " - Input BLUEFORS_LOG file set: " << logFileName_vec.back() << std::endl;
+            }
+        }
+
+        // 打开CSV文件
+        for ( const auto & logFileName : logFileName_vec )
+        {
+            logFile_vec.emplace_back( logFileName );
+            if ( !logFile_vec.back().is_open() )
+            {
+                std::cerr << "Can not open log file: " << logFileName << std::endl;
+                logFile_vec.pop_back();
+                continue;
+            }
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - Input BLUEFORS_LOG file read: " << logFileName << std::endl;
+            }
+
+            line_vec.emplace_back( "" );
+        }
+
+        // 读取CSV文件的数据
+        while ( std::getline( logFile_vec[0], line_vec[0] ) )
+        {
+            std::vector<std::istringstream> ss_vec( logFile_vec.size() );
+            std::vector<std::string> date_vec( logFile_vec.size() );
+            std::vector<std::string> time_vec( logFile_vec.size() );
+            std::vector<std::string> field_vec( logFile_vec.size() );
+            for ( size_t i = 0; i < logFile_vec.size(); ++i )
+            {
+                ss_vec[i] = std::istringstream( line_vec[i] );
+                std::getline( ss_vec[i], date_vec[i], ',' ); // 获取日期
+
+                // 去除字符串左端的空格
+                date_vec[i].erase( date_vec[i].begin(), std::find_if( date_vec[i].begin(), date_vec[i].end(), []( auto ch )
+                                                                      {
+                                                                          return !std::isspace( ch );
+                                                                      } ) );
+
+                std::getline( ss_vec[i], time_vec[i], ',' ); // 获取时间
+                // 获取温度
+                // 如果到达了行的末尾，直接读取剩余的所有字符
+                std::getline( ss_vec[i], field_vec[i] );
+                // 检查并去掉换行符
+                if ( !field_vec[i].empty() && ( field_vec[i].back() == '\n' || field_vec[i].back() == '\r' ) )
+                {
+                    field_vec[i].pop_back();
+                }
+            }
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - date_string: " << date_vec[0] << std::endl;
+                std::cout << " - time_string: " << time_vec[0] << std::endl;
+            }
+
+            // 将日期字符串从"DD-MM-YY"转换为"YYYY-MM-DD"的格式
+            for ( size_t i = 0; i < logFile_vec.size(); ++i )
+            {
+                date_vec[i] = "20" + date_vec[i].substr( 6, 2 ) + "-" + date_vec[i].substr( 3, 2 ) + "-" + date_vec[i].substr( 0, 2 );
+            }
+
+            // 创建TDatime对象vector
+            std::vector<TDatime> datetime_vec( logFile_vec.size() );
+            for ( size_t i = 0; i < logFile_vec.size(); ++i )
+            {
+                datetime_vec[i] = TDatime( ( date_vec[i] + " " + time_vec[i] ).c_str() );
+            }
+
+            timestamp = datetime_vec[0].Convert();
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - date_string: " << date_vec[0] + " " + time_vec[0] << std::endl;
+                std::cout << " - TDatime: " << datetime_vec[0].AsString() << std::endl;
+                std::cout << " - timestamp: " << timestamp << std::endl;
+            }
+
+            flow = std::stod( field_vec[0] );
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - flow: " << flow << std::endl;
+            }
+
+            // 填充TTree
+            tree->Fill();
+        }
+
+        line_vec.clear();
+        logFile_vec.clear();
+        logFileName_vec.clear();
+    }
+
+    // 检查TTree是否包含任何条目
+    if ( tree->GetEntries() == 0 )
+    {
+        std::clog << "Warning: TTree " << tree->GetName() << " does not contain any entries." << std::endl;
+    }
+
+    // 将TTree写入到ROOT文件中
+    tree->Write();
+
+    // 关闭ROOT文件
+    delete file;
+}
+
 // 定义一个函数，用于将MultimeterData格式的数据转换为TTree格式
 void convert2TTree::convertMultimeterData2TTree( const std::string & csvDirPath, const std::string & rootFileName ) const
 {

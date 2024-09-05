@@ -92,6 +92,8 @@ void flagHandler(
         myConverter->convertBlueforsTemperatureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Temperature_data.root" );
         // 转换BlueforsPressureLog文件到ROOT文件
         myConverter->convertBlueforsPressureLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Pressure_data.root" );
+        // 转换BlueforsFlowLog文件到ROOT文件
+        myConverter->convertBlueforsFlowLog2TTree( BlueforsLogDirPath.string(), rootDirPath.string() + "/BLUEFORS_Flow_data.root" );
     }
 
     if ( flags["-ROOT"] || flags["-MultiROOT"] )
