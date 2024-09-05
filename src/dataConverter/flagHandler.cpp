@@ -139,6 +139,8 @@ void flagHandler(
 
             // 从ROOT文件创建TGraphErrors并保存到ROOT文件
             myPlotter->createBlueforsTemperatureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Temperature_data.root", plotDirPath.string() + "/BLUEFORS_Temperature_plot.root" );
+            // 从ROOT文件创建TGraphErrors并保存到ROOT文件
+            myPlotter->createBlueforsPressureGraphFromTree( rootDirPath.string() + "/BLUEFORS_Pressure_data.root", plotDirPath.string() + "/BLUEFORS_Pressure_plot.root" );
         }
 
         if ( flags["-Plot"] || flags["-MultiPlot"] )

@@ -24,6 +24,7 @@ public:
     void createNIDAQGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createNIDAQFFTFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createBlueforsTemperatureGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
+    void createBlueforsPressureGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createMultimeterGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     void createCelsiusGraphFromTree( const std::string & rootFilePath, const std::string & outputFilePath ) const;
     // 设置FFT的时间窗口（单位是秒）
