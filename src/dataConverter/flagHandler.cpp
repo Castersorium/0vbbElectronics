@@ -17,7 +17,6 @@ void flagHandler(
     const std::filesystem::path & plotDirPath,
     const std::filesystem::path & BlueforsLogDirPath,
     const std::filesystem::path & MultimeterDataDirPath,
-    const std::filesystem::path & R_BaseDataDirPath,
     const std::filesystem::path & CelsiusDataDirPath,
     int argc, char * argv[] )
 {
@@ -34,7 +33,6 @@ void flagHandler(
         {"-NIROOT", false},
         {"-BFROOT", false},
         {"-MultiROOT", false},
-        {"-R_BaseROOT", false},
         {"-LabTempROOT", false},
 
         {"-Plot", false},
@@ -42,12 +40,11 @@ void flagHandler(
         {"-NIFFTPlot", false},
         {"-BFPlot", false},
         {"-MultiPlot", false},
-        {"-R_BasePlot", false},
         {"-LabTempPlot", false},
     };
 
     // 解析flag
-    for ( int i = 8; i < argc; ++i )
+    for ( int i = 7; i < argc; ++i )
     {
         std::string arg = argv[i];
         // 去除任何潜在的空格或不可见字符
@@ -105,19 +102,13 @@ void flagHandler(
         myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
     }
 
-    if ( flags["-ROOT"] || flags["-R_BaseROOT"] )
-    {
-        // 转换R_BaseData文件到ROOT文件
-        myConverter->convertR_BaseData2TTree( R_BaseDataDirPath.string(), rootDirPath.string() + "/R_Base_data.root" );
-    }
-
     if ( flags["-ROOT"] || flags["-LabTempROOT"] )
     {
         // 转换CelsiusData文件到ROOT文件
         myConverter->convertCelsiusData2TTree( CelsiusDataDirPath.string(), rootDirPath.string() + "/Celsius_data.root" );
     }
 
-    if ( flags["-Plot"] || flags["-NIPlot"] || flags["-NIFFTPlot"] || flags["-BFPlot"] || flags["-MultiPlot"] || flags["-R_BasePlot"] || flags["-LabTempPlot"] )
+    if ( flags["-Plot"] || flags["-NIPlot"] || flags["-NIFFTPlot"] || flags["-BFPlot"] || flags["-MultiPlot"] || flags["-LabTempPlot"] )
     {
         // 创建TTreePlotter的实例
         std::unique_ptr<TTREEIO::TTreePlotter> myPlotter = std::make_unique<TTREEIO::TTreePlotter>();
@@ -159,13 +150,6 @@ void flagHandler(
             myPlotter->setTimeWindow( 3000.0 );
 
             myPlotter->createMultimeterGraphFromTree( rootDirPath.string() + "/Multimeter_data.root", plotDirPath.string() + "/Multimeter_plot.root" );
-        }
-
-        if ( flags["-Plot"] || flags["-R_BasePlot"] )
-        {
-            myPlotter->setTimeWindow( 3000.0 );
-
-            myPlotter->createR_BaseGraphFromTree( rootDirPath.string() + "/R_Base_data.root", plotDirPath.string() + "/R_Base_plot.root" );
         }
 
         if ( flags["-Plot"] || flags["-LabTempPlot"] )
