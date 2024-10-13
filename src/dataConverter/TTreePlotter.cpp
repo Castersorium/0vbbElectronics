@@ -1355,10 +1355,16 @@ void TTreePlotter::createR_BaseGraphFromTree( const std::string & rootFilePath, 
                         std::cout << "Standard deviation of reading for " << static_cast<int>( timestamp_ini ) << ": " << stddev_Y << std::endl;
                     }
 
-                    x_vec.emplace_back( average_X );
-                    y_vec.emplace_back( average_Y );
-                    ex_vec.emplace_back( stddev_X );
-                    ey_vec.emplace_back( stddev_Y );
+                    if ( !std::isnan( average_X ) &&
+                         !std::isnan( average_Y ) &&
+                         !std::isnan( stddev_X ) &&
+                         !std::isnan( stddev_Y ) )
+                    {
+                        x_vec.emplace_back( average_X );
+                        y_vec.emplace_back( average_Y );
+                        ex_vec.emplace_back( stddev_X );
+                        ey_vec.emplace_back( stddev_Y );
+                    }
                 }
 
                 timestamp_ini = floor( timestamp );
@@ -1403,10 +1409,16 @@ void TTreePlotter::createR_BaseGraphFromTree( const std::string & rootFilePath, 
                 std::cout << "Standard deviation of reading for " << static_cast<int>( timestamp_ini ) << ": " << stddev_Y << std::endl;
             }
 
-            x_vec.emplace_back( average_X );
-            y_vec.emplace_back( average_Y );
-            ex_vec.emplace_back( stddev_X );
-            ey_vec.emplace_back( stddev_Y );
+            if ( !std::isnan( average_X ) &&
+                 !std::isnan( average_Y ) &&
+                 !std::isnan( stddev_X ) &&
+                 !std::isnan( stddev_Y ) )
+            {
+                x_vec.emplace_back( average_X );
+                y_vec.emplace_back( average_Y );
+                ex_vec.emplace_back( stddev_X );
+                ey_vec.emplace_back( stddev_Y );
+            }
         }
 
         // 创建TGraphErrors并命名

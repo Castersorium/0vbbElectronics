@@ -1344,7 +1344,7 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
 
     size_t columnCount = 0;
 
-    std::vector<std::string> columnName_vec = { "DCV_V", "ACV_V", "DCI_A", "ACI_A", "Freq_Hz", "Period_s", "Res_ohm", "Cap_F", "Temp_K" };
+    std::vector<std::string> columnName_vec = { "23-L", "40-2-MC", "A4-MiB", "ACI_A", "Freq_Hz", "Period_s", "Res_ohm", "Cap_F", "Temp_K" };
 
     // 创建一个容器来存储通道名称
     std::vector<std::string> channelNames{};
@@ -1373,90 +1373,98 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
             std::cout << " - Input CSV file read: " << csvFilePath << std::endl;
         }
 
-        // 跳过第一行
-        for ( size_t i = 0; i < 1; ++i )
-        {
-            csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
-        }
-
         std::string line;
 
-        // 读取CSV文件的第二行来获取通道名称
-        std::getline( csvFile, line );
-        std::istringstream ssIn( line );
-        std::string date_string;
-        std::string time_string;
-        std::string millisecond_string;
-        std::string field;
-
-        std::getline( ssIn, date_string, '>' ); // 获取日期
-
-        // 检查并去掉短横线
-        if ( !date_string.empty() && date_string.back() == '-' )
+        // 读取CSV文件的数据
+        while ( std::getline( csvFile, line ) )
         {
-            date_string.pop_back();
-        }
-
-        // 将日期字符串的格式转换为"yyyy-mm-dd"
-        std::replace( date_string.begin(), date_string.end(), '/', '-' );
-
-        std::getline( ssIn, time_string, '.' );         // 获取时间
-        std::getline( ssIn, millisecond_string, '\t' ); // 获取毫秒
-
-        // 去除字符串左端的空格
-        millisecond_string.erase( millisecond_string.begin(), std::find_if( millisecond_string.begin(), millisecond_string.end(), []( auto ch )
-                                                                            {
-                                                                                return !std::isspace( ch );
-                                                                            } ) );
-
-        TDatime datime( ( date_string + " " + time_string ).c_str() );
-        timestamp = datime.Convert() + std::stod( millisecond_string ) / 1000.0;
-
-        if ( isDebugModeActive )
-        {
-            std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
-            std::cout << " - TDatime: " << datime.AsString() << std::endl;
-            std::cout << " - millisecond: " << millisecond_string << std::endl;
-            std::cout << " - timestamp: " << timestamp << std::endl;
-        }
-
-        do
-        {
-            std::getline( ssIn, field, '\t' ); // 获取测量值
-
-            columnCount++;
-
-            // 检查并去掉换行符
-            if ( !field.empty() && ( field.back() == '\n' || field.back() == '\r' ) )
+            if ( isDebugModeActive )
             {
-                field.pop_back();
+                if ( tree->GetEntries() >= 1000 )
+                {
+                    break;
+                }
             }
+
+            // 读取CSV文件的第二行来获取通道名称
+            std::getline( csvFile, line );
+            std::istringstream ssIn( line );
+            std::string date_string;
+            std::string time_string;
+            std::string field;
+
+            std::getline( ssIn, date_string, ' ' ); // 获取日期
+
+            // 检查并去掉短横线
+            if ( !date_string.empty() && date_string.back() == '-' )
+            {
+                date_string.pop_back();
+            }
+
+            // 将日期字符串的格式转换为"yyyy-mm-dd"
+            date_string = date_string.substr( 6, 4 ) + "-" + date_string.substr( 3, 2 ) + "-" + date_string.substr( 0, 2 );
+
+            std::getline( ssIn, time_string, '\t' );         // 获取时间
+            // 去除字符串左端的空格
+            time_string.erase( time_string.begin(), std::find_if( time_string.begin(), time_string.end(), []( auto ch )
+                                                                  {
+                                                                      return !std::isspace( ch );
+                                                                  } ) );
+
+            time_string += ":00";
+
+            TDatime datime( ( date_string + " " + time_string ).c_str() );
+            timestamp = datime.Convert();
 
             if ( isDebugModeActive )
             {
-                std::cout << " - readings_string: " << field << std::endl;
-                std::cout << " - NaN value?: " << ( field == "--" ) << std::endl;
-                std::cout << " - column count: " << columnCount << std::endl;
+                std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
+                std::cout << " - TDatime: " << datime.AsString() << std::endl;
+                std::cout << " - timestamp: " << timestamp << std::endl;
             }
-        } while ( field == "--" );
 
-        double readings = std::stod( field );
+            do
+            {
+                std::getline( ssIn, field, '\t' ); // 获取测量值
 
-        if ( isDebugModeActive )
-        {
-            std::cout << " - readings_value: " << readings << std::endl;
+                columnCount++;
+
+                // 检查并去掉换行符
+                if ( !field.empty() && ( field.back() == '\n' || field.back() == '\r' ) )
+                {
+                    field.pop_back();
+                }
+                // 将逗号转换为小数点
+                std::replace( field.begin(), field.end(), ',', '.' );
+                // 将引号忽略
+                field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
+
+                if ( isDebugModeActive )
+                {
+                    std::cout << " - readings_string: " << field << std::endl;
+                    std::cout << " - NaN value?: " << ( field == "--" ) << std::endl;
+                    std::cout << " - column count: " << columnCount << std::endl;
+                }
+            } while ( field == "--" );
+
+            double readings = std::stod( field );
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - readings_value: " << readings << std::endl;
+            }
+
+            // 检查branch是否已经存在
+            auto channelItr = std::find( channelNames.begin(), channelNames.end(), columnName_vec[columnCount - 1] );
+            if ( channelItr == channelNames.end() )
+            {
+                // 如果branch不存在，创建新branch所需的变量
+                channelNames.emplace_back( columnName_vec[columnCount - 1] );
+                readings_vec.emplace_back( 0.0 );
+            }
+
+            columnCount = 0;
         }
-
-        // 检查branch是否已经存在
-        auto channelItr = std::find( channelNames.begin(), channelNames.end(), columnName_vec[columnCount - 1] );
-        if ( channelItr == channelNames.end() )
-        {
-            // 如果branch不存在，创建新branch所需的变量
-            channelNames.emplace_back( columnName_vec[columnCount - 1] );
-            readings_vec.emplace_back( 0.0 );
-        }
-
-        columnCount = 0;
     }
 
     if ( isDebugModeActive )
@@ -1481,96 +1489,104 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
             continue;
         }
 
-        // 跳过第一行
-        for ( size_t i = 0; i < 1; ++i )
-        {
-            csvFile.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
-        }
-
         std::string line;
 
-        // 读取CSV文件的第二行来获取通道名称
-        std::getline( csvFile, line );
-        std::istringstream ssIn( line );
-        std::string date_string;
-        std::string time_string;
-        std::string millisecond_string;
-        std::string field;
-
-        std::getline( ssIn, date_string, '>' ); // 获取日期
-
-        // 检查并去掉短横线
-        if ( !date_string.empty() && date_string.back() == '-' )
+        // 读取CSV文件的数据
+        while ( std::getline( csvFile, line ) )
         {
-            date_string.pop_back();
-        }
-
-        // 将日期字符串的格式转换为"yyyy-mm-dd"
-        std::replace( date_string.begin(), date_string.end(), '/', '-' );
-
-        std::getline( ssIn, time_string, '.' );         // 获取时间
-        std::getline( ssIn, millisecond_string, '\t' ); // 获取毫秒
-
-        // 去除字符串左端的空格
-        millisecond_string.erase( millisecond_string.begin(), std::find_if( millisecond_string.begin(), millisecond_string.end(), []( auto ch )
-                                                                            {
-                                                                                return !std::isspace( ch );
-                                                                            } ) );
-
-        TDatime datime( ( date_string + " " + time_string ).c_str() );
-        timestamp = datime.Convert() + std::stod( millisecond_string ) / 1000.0;
-
-        if ( isDebugModeActive )
-        {
-            std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
-            std::cout << " - TDatime: " << datime.AsString() << std::endl;
-            std::cout << " - millisecond: " << millisecond_string << std::endl;
-            std::cout << " - timestamp: " << timestamp << std::endl;
-        }
-
-        do
-        {
-            std::getline( ssIn, field, '\t' ); // 获取测量值
-
-            columnCount++;
-
-            // 检查并去掉换行符
-            if ( !field.empty() && ( field.back() == '\n' || field.back() == '\r' ) )
+            if ( isDebugModeActive )
             {
-                field.pop_back();
+                if ( tree->GetEntries() >= 1000 )
+                {
+                    break;
+                }
             }
+
+            // 读取CSV文件的第二行来获取通道名称
+            std::getline( csvFile, line );
+            std::istringstream ssIn( line );
+            std::string date_string;
+            std::string time_string;
+            std::string field;
+
+            std::getline( ssIn, date_string, ' ' ); // 获取日期
+
+            // 检查并去掉短横线
+            if ( !date_string.empty() && date_string.back() == '-' )
+            {
+                date_string.pop_back();
+            }
+
+            // 将日期字符串的格式转换为"yyyy-mm-dd"
+            date_string = date_string.substr( 6, 4 ) + "-" + date_string.substr( 3, 2 ) + "-" + date_string.substr( 0, 2 );
+
+            std::getline( ssIn, time_string, '\t' );         // 获取时间
+            // 去除字符串左端的空格
+            time_string.erase( time_string.begin(), std::find_if( time_string.begin(), time_string.end(), []( auto ch )
+                                                                  {
+                                                                      return !std::isspace( ch );
+                                                                  } ) );
+
+            time_string += ":00";
+
+            TDatime datime( ( date_string + " " + time_string ).c_str() );
+            timestamp = datime.Convert();
 
             if ( isDebugModeActive )
             {
-                std::cout << " - readings_string: " << field << std::endl;
-                std::cout << " - NaN value?: " << ( field == "--" ) << std::endl;
-                std::cout << " - column count: " << columnCount << std::endl;
+                std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
+                std::cout << " - TDatime: " << datime.AsString() << std::endl;
+                std::cout << " - timestamp: " << timestamp << std::endl;
             }
-        } while ( field == "--" );
 
-        double readings = std::stod( field );
-
-        if ( isDebugModeActive )
-        {
-            std::cout << " - readings_value: " << readings << std::endl;
-        }
-
-        // 检查branch是否已经存在
-        TBranch * branch = tree->GetBranch( columnName_vec[columnCount - 1].c_str() );
-        if ( branch == nullptr )
-        {
-            // 如果branch不存在，创建新的branch
-            // 如果branch的名称与通道名称匹配，则将通道名称容器channelNames中的index与readings_vec中的index对应
-            for ( size_t vec_Index = 0; vec_Index < channelNames.size(); vec_Index++ )
+            do
             {
-                if ( channelNames[vec_Index] == columnName_vec[columnCount - 1] )
+                std::getline( ssIn, field, '\t' ); // 获取测量值
+
+                columnCount++;
+
+                // 检查并去掉换行符
+                if ( !field.empty() && ( field.back() == '\n' || field.back() == '\r' ) )
                 {
-                    tree->Branch( channelNames[vec_Index].c_str(), &readings_vec[vec_Index], ( channelNames[vec_Index] + "/D" ).c_str() );
+                    field.pop_back();
+                }
+                // 将逗号转换为小数点
+                std::replace( field.begin(), field.end(), ',', '.' );
+                // 将引号忽略
+                field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
+
+                if ( isDebugModeActive )
+                {
+                    std::cout << " - readings_string: " << field << std::endl;
+                    std::cout << " - NaN value?: " << ( field == "--" ) << std::endl;
+                    std::cout << " - column count: " << columnCount << std::endl;
+                }
+            } while ( field == "--" );
+
+            double readings = std::stod( field );
+
+            if ( isDebugModeActive )
+            {
+                std::cout << " - readings_value: " << readings << std::endl;
+            }
+
+            // 检查branch是否已经存在
+            TBranch * branch = tree->GetBranch( columnName_vec[columnCount - 1].c_str() );
+            if ( branch == nullptr )
+            {
+                // 如果branch不存在，创建新的branch
+                // 如果branch的名称与通道名称匹配，则将通道名称容器channelNames中的index与readings_vec中的index对应
+                for ( size_t vec_Index = 0; vec_Index < channelNames.size(); vec_Index++ )
+                {
+                    if ( channelNames[vec_Index] == columnName_vec[columnCount - 1] )
+                    {
+                        tree->Branch( channelNames[vec_Index].c_str(), &readings_vec[vec_Index], ( channelNames[vec_Index] + "/D" ).c_str() );
+                    }
                 }
             }
-        }
 
-        columnCount = 0;
+            columnCount = 0;
+        }
     }
 
     // 遍历目录下的所有文件
@@ -1613,10 +1629,9 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
             std::istringstream ssIn( line );
             std::string date_string;
             std::string time_string;
-            std::string millisecond_string;
             std::string field;
 
-            std::getline( ssIn, date_string, '>' ); // 获取日期
+            std::getline( ssIn, date_string, ' ' ); // 获取日期
 
             // 检查并去掉短横线
             if ( !date_string.empty() && date_string.back() == '-' )
@@ -1625,25 +1640,24 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
             }
 
             // 将日期字符串的格式转换为"yyyy-mm-dd"
-            std::replace( date_string.begin(), date_string.end(), '/', '-' );
+            date_string = date_string.substr( 6, 4 ) + "-" + date_string.substr( 3, 2 ) + "-" + date_string.substr( 0, 2 );
 
-            std::getline( ssIn, time_string, '.' );         // 获取时间
-            std::getline( ssIn, millisecond_string, '\t' ); // 获取毫秒
-
+            std::getline( ssIn, time_string, '\t' );         // 获取时间
             // 去除字符串左端的空格
-            millisecond_string.erase( millisecond_string.begin(), std::find_if( millisecond_string.begin(), millisecond_string.end(), []( auto ch )
-                                                                                {
-                                                                                    return !std::isspace( ch );
-                                                                                } ) );
+            time_string.erase( time_string.begin(), std::find_if( time_string.begin(), time_string.end(), []( auto ch )
+                                                                  {
+                                                                      return !std::isspace( ch );
+                                                                  } ) );
+
+            time_string += ":00";
 
             TDatime datime( ( date_string + " " + time_string ).c_str() );
-            timestamp = datime.Convert() + std::stod( millisecond_string ) / 1000.0;
+            timestamp = datime.Convert();
 
             if ( isDebugModeActive )
             {
                 std::cout << " - date_string: " << date_string + " " + time_string << std::endl;
                 std::cout << " - TDatime: " << datime.AsString() << std::endl;
-                std::cout << " - millisecond: " << millisecond_string << std::endl;
                 std::cout << " - timestamp: " << timestamp << std::endl;
             }
 
@@ -1663,6 +1677,10 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
                 {
                     field.pop_back();
                 }
+                // 将逗号转换为小数点
+                std::replace( field.begin(), field.end(), ',', '.' );
+                // 将引号忽略
+                field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
 
                 if ( isDebugModeActive )
                 {
@@ -1679,7 +1697,7 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
                 std::cout << " - readings_value: " << readings << std::endl;
             }
 
-            if ( isFirstLine == true )
+            if ( true )
             {
                 // 检查branch是否已经存在
                 TBranch * branch = tree->GetBranch( columnName_vec[columnCount - 1].c_str() );

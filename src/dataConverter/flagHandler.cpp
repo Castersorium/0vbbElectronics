@@ -101,12 +101,16 @@ void flagHandler(
 
     if ( flags["-ROOT"] || flags["-MultiROOT"] )
     {
+        // 打开debug模式
+        //myConverter->setDebug( true );
         // 转换MultimeterData文件到ROOT文件
         myConverter->convertMultimeterData2TTree( MultimeterDataDirPath.string(), rootDirPath.string() + "/Multimeter_data.root" );
     }
 
     if ( flags["-ROOT"] || flags["-R_BaseROOT"] )
     {
+        // 打开debug模式
+        //myConverter->setDebug( true );
         // 转换R_BaseData文件到ROOT文件
         myConverter->convertR_BaseData2TTree( R_BaseDataDirPath.string(), rootDirPath.string() + "/R_Base_data.root" );
     }
@@ -163,6 +167,8 @@ void flagHandler(
 
         if ( flags["-Plot"] || flags["-R_BasePlot"] )
         {
+            // 打开debug模式
+            myPlotter->setDebug( true );
             myPlotter->setTimeWindow( 3000.0 );
 
             myPlotter->createR_BaseGraphFromTree( rootDirPath.string() + "/R_Base_data.root", plotDirPath.string() + "/R_Base_plot.root" );
