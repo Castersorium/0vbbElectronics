@@ -1375,8 +1375,12 @@ void TTreePlotter::createR_BaseGraphFromTree( const std::string & rootFilePath, 
             }
 
             // 将当前的时间戳添加到向量中
-            timestamps_vec.emplace_back( timestamp );
-            readings_vec.emplace_back( reading );
+            if ( !std::isnan( timestamp ) &&
+                 !std::isnan( reading ) )
+            {
+                timestamps_vec.emplace_back( timestamp );
+                readings_vec.emplace_back( reading );
+            }
         }
 
         // 保存最后一个点
@@ -1451,31 +1455,39 @@ void TTreePlotter::createR_BaseGraphFromTree( const std::string & rootFilePath, 
     // 创建一个MultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_R_BaseReading", "R_Base Reading out" );
 
+    std::vector<std::string> columnName_vec = { "23L", "40_2MC", "A4MiB", "LMO1", "LMO2", "LMO3", "LMO4", "LMO5", "LMO6", "LD1", "LD2", "LD3", "LD4", "LD5", "LD6", "LD7", "LD8", "LD19" };
+
     // 将所有的TGraphErrors添加到MultiGraph中
-    for ( TGraphErrors * graphInstance : graphs_vec )
+    for ( const std::string & columnName : columnName_vec )
     {
-        if ( !graphInstance )
-            continue;
-
-        if ( isDebugModeActive )
+        for ( TGraphErrors * graphInstance : graphs_vec )
         {
-            std::cout << "Adding graph " << graphInstance->GetName() << " to MultiGraph" << std::endl;
-        }
+            if ( !graphInstance )
+                continue;
+            if ( graphInstance->GetName() == columnName )
+            {
+                if ( isDebugModeActive )
+                {
+                    std::cout << "Adding graph " << graphInstance->GetName() << " to MultiGraph" << std::endl;
+                }
 
-        // 将TGraphErrors添加到MultiGraph中
-        multiGraph->Add( graphInstance );
+                // 将TGraphErrors添加到MultiGraph中
+                multiGraph->Add( graphInstance );
+                break; // 跳出内层循环，继续处理下一个graphInstance
+            }
+        }
     }
 
     // 在TCanvas上绘制MultiGraph
     multiGraph->Draw( "AEP" );
 
     multiGraph->GetXaxis()->SetTitle( "Time" );
-    multiGraph->GetYaxis()->SetTitle( "R_Base Reading" );
+    multiGraph->GetYaxis()->SetTitle( "R_Base [M#Omega]" );
     multiGraph->GetXaxis()->SetRangeUser( xTimeStampMin - 60, xTimeStampMax + 60 );
     multiGraph->GetXaxis()->SetTimeDisplay( 1 );
     // 设置X轴上的时间格式
     // multiGraph->GetXaxis()->SetTimeFormat( "%a %d/%m/%y %H:%M:%S" );
-    multiGraph->GetXaxis()->SetTimeFormat( "%m/%d %H:%M:%S" );
+    multiGraph->GetXaxis()->SetTimeFormat( "%d/%m" );
 
     // 创建一个图例
     canvas->BuildLegend();
@@ -1612,8 +1624,12 @@ void TTreePlotter::createCelsiusGraphFromTree( const std::string & rootFilePath,
             }
 
             // 将当前的时间戳添加到向量中
-            timestamps_vec.emplace_back( timestamp );
-            readings_vec.emplace_back( reading );
+            if ( !std::isnan( timestamp ) &&
+                 !std::isnan( reading ) )
+            {
+                timestamps_vec.emplace_back( timestamp );
+                readings_vec.emplace_back( reading );
+            }
         }
 
         // 保存最后一个点

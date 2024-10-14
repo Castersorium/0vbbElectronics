@@ -1344,7 +1344,7 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
 
     size_t columnCount = 0;
 
-    std::vector<std::string> columnName_vec = { "23-L", "40-2-MC", "A4-MiB", "ACI_A", "Freq_Hz", "Period_s", "Res_ohm", "Cap_F", "Temp_K" };
+    std::vector<std::string> columnName_vec = { "23L", "40_2MC", "A4MiB", "LMO1", "LMO2", "LMO3", "LMO4", "LMO5", "LMO6", "LD1", "LD2", "LD3", "LD4", "LD5", "LD6", "LD7", "LD8", "LD19" };
 
     // 创建一个容器来存储通道名称
     std::vector<std::string> channelNames{};
@@ -1435,9 +1435,10 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
                     field.pop_back();
                 }
                 // 将逗号转换为小数点
-                std::replace( field.begin(), field.end(), ',', '.' );
+                //field.erase( std::remove( field.begin(), field.end(), '.' ), field.end() );
+                //std::replace( field.begin(), field.end(), ',', '.' );
                 // 将引号忽略
-                field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
+                //field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
 
                 if ( isDebugModeActive )
                 {
@@ -1551,9 +1552,10 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
                     field.pop_back();
                 }
                 // 将逗号转换为小数点
-                std::replace( field.begin(), field.end(), ',', '.' );
+                //field.erase( std::remove( field.begin(), field.end(), '.' ), field.end() );
+                //std::replace( field.begin(), field.end(), ',', '.' );
                 // 将引号忽略
-                field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
+                //field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
 
                 if ( isDebugModeActive )
                 {
@@ -1612,8 +1614,6 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
         }
 
         std::string line;
-
-        bool isFirstLine = true;
 
         // 读取CSV文件的数据
         while ( std::getline( csvFile, line ) )
@@ -1678,9 +1678,10 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
                     field.pop_back();
                 }
                 // 将逗号转换为小数点
-                std::replace( field.begin(), field.end(), ',', '.' );
+                //field.erase( std::remove( field.begin(), field.end(), '.' ), field.end() );
+                //std::replace( field.begin(), field.end(), ',', '.' );
                 // 将引号忽略
-                field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
+                //field.erase( std::remove( field.begin(), field.end(), '"' ), field.end() );
 
                 if ( isDebugModeActive )
                 {
@@ -1729,8 +1730,6 @@ void convert2TTree::convertR_BaseData2TTree( const std::string & csvDirPath, con
                         }
                     }
                 }
-
-                isFirstLine = false;
             }
 
             readings_vec[Indices_order[0]] = readings;

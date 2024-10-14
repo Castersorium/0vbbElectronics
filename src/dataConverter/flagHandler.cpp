@@ -169,7 +169,7 @@ void flagHandler(
         {
             // 打开debug模式
             myPlotter->setDebug( true );
-            myPlotter->setTimeWindow( 3000.0 );
+            myPlotter->setTimeWindow( 30000.0 );
 
             myPlotter->createR_BaseGraphFromTree( rootDirPath.string() + "/R_Base_data.root", plotDirPath.string() + "/R_Base_plot.root" );
         }
