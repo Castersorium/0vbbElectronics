@@ -1455,7 +1455,13 @@ void TTreePlotter::createR_BaseGraphFromTree( const std::string & rootFilePath, 
     // 创建一个MultiGraph
     TMultiGraph * multiGraph = new TMultiGraph( "mg_R_BaseReading", "R_Base Reading out" );
 
-    std::vector<std::string> columnName_vec = { "23L", "40_2MC", "A4MiB", "LMO1", "LMO2", "LMO3", "LMO4", "LMO5", "LMO6", "LD1", "LD2", "LD3", "LD4", "LD5", "LD6", "LD7", "LD8", "LD19" };
+    std::vector<std::string> columnName_vec = {
+        "23L", "40_2MC", "A4MiB"
+        ,
+        "LMO1", "LMO2", "LMO3", "LMO4", "LMO5", "LMO6"
+        ,
+        "LD1", "LD2", "LD3", "LD4", "LD5", "LD6", "LD7", "LD8", "LD19"
+    };
 
     // 将所有的TGraphErrors添加到MultiGraph中
     for ( const std::string & columnName : columnName_vec )
