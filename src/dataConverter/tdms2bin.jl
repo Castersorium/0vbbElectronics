@@ -87,32 +87,6 @@ function createTDMSdataConverter(filename::String, isDebug::Bool=false)
     return TDMSdataConverter(group_names, channel_names, channel_start_times, time_track_channel, data_channel)
 end
 
-## 添加头信息的函数
-function add_header(input_file::String, output_file::String)
-    header = IOBuffer()
-    try
-        # Construct the header
-        # 1. 第一个 32 位整数：(Endianness << 8) + NBits
-        write(header, UInt32(0x6C20))
-
-        # 2. 第二个 32 位浮点数：采样频率 5000.0 Hz
-        write(header, reinterpret(UInt32, 5000.0f0))
-
-        # 3. 第三个 32 位浮点数：ADC 全范围 20.0 V
-        write(header, reinterpret(UInt32, 20.0f0))
-
-        # Concatenate header and original data file
-        open(output_file, "w") do output
-            write(output, take!(header))
-            open(input_file, "r") do input
-                write(output, read(input))
-            end
-        end
-    finally
-        close(header)
-    end
-end
-
 ## 将TDMS数据转换为二进制文件并记录日志
 function toBinary(converter::TDMSdataConverter, output_dir::String, original_filename::String)
     max_file_size = 1_000_000_000  # 每个文件的最大大小（1GB）
@@ -127,6 +101,8 @@ function toBinary(converter::TDMSdataConverter, output_dir::String, original_fil
         # 遍历每个通道
         for (index, channel_name) in enumerate(converter.channel_names)
             data = converter.data_channel[channel_name]
+            intervals = converter.time_track_channel[channel_name][2] - converter.time_track_channel[channel_name][1]
+            sampling_frequency = 1.0f0 / intervals
             start_time = fromTimestamp(converter.channel_start_times[channel_name])
             date_str = Dates.format(start_time, "YYYYmmdd")
             time_str = Dates.format(start_time, "HHMMSS")
@@ -155,11 +131,12 @@ function toBinary(converter::TDMSdataConverter, output_dir::String, original_fil
                     # 1. 第一个 32 位整数：(Endianness << 8) + NBits
                     write(bin_file, UInt32(0x6C20))
 
-                    # 2. 第二个 32 位浮点数：采样频率 5000.0 Hz
-                    write(bin_file, reinterpret(UInt32, 5000.0f0))
+                    # 2. 第二个 32 位浮点数：采样频率 (先转换为 Float32 再 reinterpret 为 UInt32)
+                    write(bin_file, reinterpret(UInt32, Float32(sampling_frequency)))
 
                     # 3. 第三个 32 位浮点数：ADC 全范围 20.0 V
                     write(bin_file, reinterpret(UInt32, 20.0f0))
+
                     write(bin_file, data_slice)
                 end
 
