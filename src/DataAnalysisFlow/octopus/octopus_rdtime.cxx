@@ -98,7 +98,7 @@ void draw(const char *rootfile, const char *h1, const char *leg1, double rb, dou
     file->Close();
 }
 
-void octopus_xf() {
+void octopus_rdtime() {
 	gStyle->SetOptStat(0);	
 	gROOT->SetStyle("Modern");
 	int max=0.9;

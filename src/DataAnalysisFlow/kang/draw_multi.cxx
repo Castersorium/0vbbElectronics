@@ -86,14 +86,4 @@ void draw_multi(){
 	plot("test/LMO.root", "test/LMO_bkg.root", "calib/hadd/After_LMO.root", "tree1", "rawamp",200,0,3E6);   
 	//plot("calib/hadd/Co60_LD.root", "calib/hadd/Before_LD.root", "calib/hadd/After_LD.root", "tree1", "rawamp",200,0,3E6);   
 	//plot("calib/origin/co60/light1ld.root", "calib/origin/bkg_before/light1ld.root", "calib/origin/bkg_after/light1ld.root", "tree1", "rawamp",200,0,3E6);   
-	//plot("calib/hadd/Co60_LD.root", "calib/hadd/Before_LD.root", "calib/hadd/After_LD.root", "tree1", "filamp",200,0,3E6);   
-	//plot("calib/Co60_LMO.root", "calib/After_LMO.root", "tree1", "rawamp",500,0,200000);   
-	//plot("co60/bkg1.root", "co60/sig1.root", "tree1", "filamp",500,0,500000);   
-	//plot("co60/bkg1.root", "co60/sig1.root", "tree1", "fitted_rawamp",500,0,500000);   
-	//plot("co60LMO/bkg2.root", "co60LMO/sig2.root", "tree1", "rawamp",250,0,25000);   
-	//plot("co60LMO/bkg2.root", "co60LMO/sig2.root", "tree1", "filamp",250,0,25000);   
-	//plot("co60LMO/bkg2.root", "co60LMO/sig2.root", "tree1", "fitted_rawamp",250,0,25000);   
-	//plot("co60/bkg.root", "co60/sig1.root", "tree1", "risetime",100,-0.01,0.05);   
-	//plot("co60/bkg.root", "co60/sig1.root", "tree1", "decaytime",100,-0.01,0.07);   
-	//plot("co60/bkg.root", "co60/sig1.root", "tree1", "correlation",100,0.4,1.1);   
 }

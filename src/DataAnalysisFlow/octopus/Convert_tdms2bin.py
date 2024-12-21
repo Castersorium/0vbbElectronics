@@ -10,9 +10,6 @@ import shutil
 def process_tdms_files(input_path, output_path):
     # 获取当前文件夹下的所有TDMS文件（不递归子目录）
     #files = [f for f in os.listdir(input_path) if f.startswith("记录") and f.endswith(".tdms")]
-    #files = [f for f in os.listdir(input_path) if f.endswith(".tdms")]
-    #files = [f for f in os.listdir(input_path) if f.endswith(".tdms") and "112037" in f]
-    #files = [f for f in os.listdir(input_path) if f.endswith(".tdms") and "170604" in f ] 
     files = [f for f in os.listdir(input_path) if f.endswith(".tdms") and "12-08" in f ] 
 
     for file in files:
