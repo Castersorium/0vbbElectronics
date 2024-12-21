@@ -1,24 +1,24 @@
 # 🎉 **Data Processing Workflows** 🎉
 
 ## 📝 **Outline**
-1. [For Electronic R&D Workflow](#1-for-electronic-rd-workflow)
+1. [For Electronic R&D Workflow](#1for-electronic-rd-workflow)
 
-    1.1. From LOG to LOG  
-    1.2. From XLSX to FIG  
-    1.3. Keyu_RoverT - Temperature and Resistance Relationship  
-    1.4. Keyu_getLCTR - LC Resistance Measurement  
-    1.5. Keyu_SNR - Peak Detection in LC
-   
-3. [For Octopus Workflow](#2-for-octopus-workflow)
+    1.1. [From LOG to LOG](#11-from-log-to-log)  
+    1.2. [From XLSX to FIG](#12-from-xlsx-to-fig)  
+    1.3. [Keyu_RoverT - Temperature and Resistance Relationship](#13-keyurovert-temperature-and-resistance-relationship)  
+    1.4. [Keyu_getLCTR - LC Resistance Measurement](#14-keyugetlctr-lc-resistance-measurement)  
+    1.5. [Keyu_SNR - Peak Detection in LC](#15-keyusnr-peak-detection-in-lc)  
 
-    2.1. From TDMS to BIN  
-    2.2. From BIN to BIN  
-    2.3. From ROOT to FIG
-    
-5. [For Kangkang's R&D Workflow](#3-for-kangkangs-rd-workflow)
+2. [For Octopus Workflow](#2for-octopus-workflow)
 
-    3.1. From DIR to ROOT  
-    3.2. From ROOT to FIG  
+    2.1. [From TDMS to BIN](#21-from-tdms-to-bin)  
+    2.2. [From BIN to BIN](#22-from-bin-to-bin)  
+    2.3. [From ROOT to FIG](#23-from-root-to-fig)  
+
+3. [For Kangkang's R&D Workflow](#3for-kangkangs-rd-workflow)
+
+    3.1. [From DIR to ROOT](#31-from-dir-to-root)  
+    3.2. [From ROOT to FIG](#32-from-root-to-fig)
 
 ---
 
