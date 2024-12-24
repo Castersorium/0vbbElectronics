@@ -106,6 +106,7 @@ function toBinary(converter::TDMSdataConverter, output_dir::String, original_fil
             start_time = fromTimestamp(converter.channel_start_times[channel_name])
             date_str = Dates.format(start_time, "YYYYmmdd")
             time_str = Dates.format(start_time, "HHMMSS")
+            run_number_str_temporary = Dates.format(start_time, "mmddHH")
 
             # 格式化通道编号，作为文件名的一部分
             CHN = lpad(string(index), 3, '0')
@@ -122,7 +123,7 @@ function toBinary(converter::TDMSdataConverter, output_dir::String, original_fil
 
             for PTN in 0:(num_files-1)
                 PTN_str = lpad(string(PTN), 3, '0')
-                filename = joinpath(output_dir, "000000_$(date_str)T$(time_str)_$(CHN)_$(PTN_str).bin")
+                filename = joinpath(output_dir, "$(run_number_str_temporary)_$(date_str)T$(time_str)_$(CHN)_$(PTN_str).bin")
                 start_index = data_pointer
                 end_index = min(data_pointer + samples_per_file - 1, total_samples)
                 data_slice = converted_data[start_index:end_index]
@@ -150,7 +151,7 @@ function toBinary(converter::TDMSdataConverter, output_dir::String, original_fil
             # 在日志文件中记录信息
             write(log_file, "Channel: $channel_name\n")
             write(log_file, "Start Time: $start_time\n")
-            write(log_file, "File: $(date_str)T$(time_str)_$(CHN)_000.bin\n")
+            write(log_file, "File: $(run_number_str_temporary)_$(date_str)T$(time_str)_$(CHN)_$(PTN_str).bin\n")
             write(log_file, "\n")
 
             println("已完成通道：$channel_name 的处理")
