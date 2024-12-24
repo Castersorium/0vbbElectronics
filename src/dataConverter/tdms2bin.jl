@@ -151,7 +151,7 @@ function toBinary(converter::TDMSdataConverter, output_dir::String, original_fil
             # 在日志文件中记录信息
             write(log_file, "Channel: $channel_name\n")
             write(log_file, "Start Time: $start_time\n")
-            write(log_file, "File: $(run_number_str_temporary)_$(date_str)T$(time_str)_$(CHN)_$(PTN_str).bin\n")
+            write(log_file, "File: $(run_number_str_temporary)_$(date_str)T$(time_str)_$(CHN).bin\n")
             write(log_file, "\n")
 
             println("已完成通道：$channel_name 的处理")
