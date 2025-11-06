@@ -8,7 +8,7 @@
 int canvas_count = 0; 
 TString x_title="title"; 
 
-#define CALIB
+//#define CALIB
 #define calib_k 478.5860639
 #define calib_b 2.373786877
 
@@ -99,21 +99,23 @@ void drawhist(TH1D*& h1, const char *tleg1, double time1, TH1D*& h2,  const char
 			h2->SetXTitle("Energy(keV)");
 
 		#else
-			h1->SetXTitle("ADC Voltage(mV)");
-			h2->SetXTitle("ADC Voltage(mV)");
+			h1->SetXTitle("ADC Voltage(V)");
+			h2->SetXTitle("ADC Voltage(V)");
 		#endif
 	}
 
 
-	if (Islog){
-	h2->Scale(1/time2);
-	h1->Scale(1/time1);
-	}
-	else{
-	h2->Scale(1./h2->Integral());
-	h1->Scale(1./h1->Integral());
-	}
-	
+	// if (Islog){
+	// h2->Scale(1/time2);
+	// h1->Scale(1/time1);
+	// }
+	// else{
+	// h2->Scale(1./h2->Integral());
+	// h1->Scale(1./h1->Integral());
+	// }
+	 h2->Scale(1/time2);
+	 h1->Scale(1/time1);
+
 	if(h1->GetMaximum() > h2->GetMaximum()){
 	//h2->GetYaxis()->SetRangeUser(0,1.5*h1->GetMaximum());
 	h1->Draw("HIST");
@@ -145,13 +147,21 @@ void octopus_2in1(){
 	gROOT->SetStyle("Modern");
 
 	//const char *file1="../rootfile/Processed_20240820T010600_000012_1.root";
-	const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
+	//const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
 	//const char *file2="../rootfile/Processed_20241207T161500_000014_1.root";
-	const char *file2="../rootfile/Processed_20241208T213600_000001_1.root";
+	//const char *file2="../rootfile/Processed_20241208T213600_000001_1.root";
+
+	//const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250510T000112_000000_1.root";//USTC-LD
+	//const char *file2="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250511T000112_100000_1.root";//FDU-LD
+	const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250510T000175_000001_1.root";//USTC-LMO
+	const char *file2="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250511T000260_100002_1.root";//FDU-LMO
+
 
 	//const char *cut = "decaytime > 0.001 && decaytime < 0.04 && risetime < 0.035 && risetime > 0.0015 &&  slope > -8000 && slope < 4000 && maxtime < 45E-3 && starttime1 < stoptime1 && starttime2 < stoptime2 && starttime1 > 0.01 && stoptime1 > 0.028 && starttime2 > 0.03 && stoptime2 > 0.03";
-	const char *cut1 = "decaytime > 0.004 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.04   && starttime1 > 0.03 && stoptime1 > 0.03 && starttime2 > 0.03 && stoptime2 > 0.03";
-	const char *cut2 = "decaytime > 0.005 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.03   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
+	//const char *cut1 = "decaytime > 0.004 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.04   && starttime1 > 0.03 && stoptime1 > 0.03 && starttime2 > 0.03 && stoptime2 > 0.03";
+	//const char *cut2 = "decaytime > 0.005 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.03   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
+	const char *cut1 = "starttime1 < 0.045 && starttime1 > 0.035";
+	const char *cut2 = "starttime1 < 0.045 && starttime1 > 0.035";
 
 	double t1=16802.5192;
 	//double t2=16202.4292;
@@ -167,9 +177,9 @@ void octopus_2in1(){
 	// drawhist(h4,"With Am",t1,h6,"Without Am",t2);
 
     std::vector<std::string> variable = {"amplitude","risetime","decaytime"};
-	std::vector<int> nbins = {71*4,100,100};
-    std::vector<double> mins = {-1E2,0,0};
- 	std::vector<double> maxs = {7E3,0.05,0.06};
+	std::vector<int> nbins = {100,100,100};
+    std::vector<double> mins = {0,0,0};
+ 	std::vector<double> maxs = {10,0.005,0.05};
 
 
    for (size_t i = 0; i < variable.size(); ++i) {
@@ -180,7 +190,7 @@ void octopus_2in1(){
 		TH1D *h1, *h2, *h3, *h4, *h5, *h6 = nullptr;
 		gettree(file1,var,nbin,min,max,h3,h4,cut1);
 		gettree(file2,var,nbin,min,max,h5,h6,cut1);
-		drawhist(h4,"With Am",t1,h6,"Without Am",t2);
+		drawhist(h4,"USTC",7.5,h6,"FDU",6);
 	}
 
 }

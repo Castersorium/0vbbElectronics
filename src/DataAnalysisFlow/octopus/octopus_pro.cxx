@@ -7,11 +7,11 @@
 
 int canvas_count = 0; 
 
-#define CALIB
+// #define CALIB
 //#define calib_k 0.483618264*1E3
 //#define calib_b 2.426496603*1E3
-#define calib_k 478.5860639
-#define calib_b 2.373786877
+#define calib_k -0.912313
+#define calib_b -0.756264
 
 //void draw(const char *rootfile, const char *fillname, int nbin, double nmin, double nmax, const char *cut) {
 void draw(const char *rootfile, TString fillname, int nbin, double nmin, double nmax, const char *cut) {
@@ -24,6 +24,7 @@ void draw(const char *rootfile, TString fillname, int nbin, double nmin, double 
 	TTree *tree3 = (TTree*)file->Get("maxminusbaseline");
 	TTree *tree4 = (TTree*)file->Get("risetime");
 	TTree *tree5 = (TTree*)file->Get("decaytime");
+	TTree *tree6 = (TTree*)file->Get("numberoftriggers");
 
 	// 定义变量，用于存储树中的数据
 	double RMS, baseline;
@@ -33,6 +34,7 @@ void draw(const char *rootfile, TString fillname, int nbin, double nmin, double 
 	double starttime,stoptime;
 	double starttime1,starttime2;
 	double stoptime1,stoptime2;
+	int numberoftriggers;
 
 	// 设置树的分支地址
 	tree1->SetBranchAddress("RMS", &RMS);
@@ -47,12 +49,14 @@ void draw(const char *rootfile, TString fillname, int nbin, double nmin, double 
 	tree5->SetBranchAddress("decaytime", &decaytime);
 	tree5->SetBranchAddress("starttime", &starttime2);
 	tree5->SetBranchAddress("stoptime", &stoptime2);
+	tree6->SetBranchAddress("numberoftriggers", &numberoftriggers);
 
 	// 将所有树作为 tree1 的朋友树
 	tree1->AddFriend(tree2);
 	tree1->AddFriend(tree3);
 	tree1->AddFriend(tree4,"friend4");
 	tree1->AddFriend(tree5,"friend5");
+	tree1->AddFriend(tree6);
 
 	tree1->SetAlias("starttime1","friend4.starttime");
 	tree1->SetAlias("stoptime1","friend4.stoptime");
@@ -67,7 +71,7 @@ void draw(const char *rootfile, TString fillname, int nbin, double nmin, double 
 
 	if (fillname == "amplitude") {
 		#ifdef CALIB
-			fillname = Form("amplitude*%f + %f", calib_k, calib_b);
+			fillname = Form("amplitude - (baseline + 9)*%f", calib_k);
 		#endif
 	}
 
@@ -129,9 +133,9 @@ void octopus_pro(){
 	//gROOT->SetStyle("Pub");
 	gROOT->SetStyle("Modern");
 
-	int nbin = 71*4;
-	double min=-1E2;
-	double max=7E3;
+	int nbin = 20*100;
+	double min=-10;
+	double max=10;
 
 	// int nbin = 160*4;
 	// double min=-1;
@@ -141,16 +145,25 @@ void octopus_pro(){
 	//const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
 	//const char *file2="../rootfile/Processed_20241207T161500_000014_1.root";
 	const char *file2="../rootfile/Processed_20241208T213600_000001_1.root";
-
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1028_042001_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1445_042002_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1854_042003_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/Processed_20250421T0953_042101_1.root";
+	// const char *file1="/mnt/c/Users/sky/Desktop/temp/Processed_20250420T1028_042001_1.root";
+	const char *file1="/mnt/c/Users/sky/Downloads/Heater/heater.root";
 
 	//const char *cut = "decaytime > 0.001 && decaytime < 0.04 && risetime < 0.035 && risetime > 0.0015 &&  slope > -8000 && slope < 4000 && maxtime < 45E-3 && starttime1 < stoptime1 && starttime2 < stoptime2 && starttime1 > 0.01 && stoptime1 > 0.028 && starttime2 > 0.03 && stoptime2 > 0.03";
-	const char *cut1 = "decaytime > 0.004 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.04   && starttime1 > 0.03 && stoptime1 > 0.03 && starttime2 > 0.03 && stoptime2 > 0.03";
-	const char *cut2 = "decaytime > 0.005 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.03   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
+	//const char *cut1 = "decaytime > 0.005 && decaytime < 0.015 && risetime > 0.002 && risetime < 0.015   && starttime1 > 0.035 && starttime1 < 0.1 && stoptime1 > 0.04 && starttime2 > 0.03 && stoptime2 > 0.03";
+	//const char *cut2 = "decaytime > 0.02 && decaytime < 0.03 && risetime > 0.002 && risetime < 0.015   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
+	//const char *cut = "decaytime > 0.04 && decaytime < 0.06  && risetime > 0.005  && risetime < 0.015";
+	// const char *cut = "decaytime < 999 && numberoftriggers ==1 ";
 	const char *cut = "decaytime < 999";
+	//const char *cut2 = "decaytime > 0.02 ";
 
-	//draw(file1,"amplitude",nbin,min,max,cut);
+	draw(file1,"amplitude",nbin,min,max,cut);
+	//draw(file1,"amplitude",nbin,min,max,cut2);
 	//draw(file2,"amplitude",60*4,0,4E-2,cut1);
 	//draw(file1,"RMS",151*2,-1E3,15E4,cut);
-	draw(file2,"RMS",60*4,0,6E3,cut1);
+	//draw(file2,"RMS",60*4,0,6E3,cut1);
 
 }

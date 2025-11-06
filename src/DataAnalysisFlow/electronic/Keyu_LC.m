@@ -2,7 +2,9 @@
 clear;
 
 % Get the filenames and path of the selected Excel files
-[filename, path] = uigetfile('D:\RUNs\RUN2410\LCS_2\*.xlsx', 'Select .xlsx file');
+%[filename, path] = uigetfile('D:\RUNs\RUN2410\LCS_2\*.xlsx', 'Select .xlsx file');
+[filename, path] = uigetfile('*.xlsx', 'Select .xlsx file');
+
 
 % If the user clicked cancel, return
 if isequal(filename, 0)
@@ -26,7 +28,7 @@ num_cols = 4;
 
 for channel = 1:num_channels
     %if channel ~= 7 && channel ~= 9 && channel ~= 11 
-    if channel ~= 8 
+    if channel < 6 
         continue
     end
     % Extract data for the current channel
@@ -56,7 +58,7 @@ for channel = 1:num_channels
     sorted_current = sort(channel_current);
 
     % 计算前10%和后90%的阈值
-    threshold_low = sorted_current(floor(1 * length(sorted_current)));
+    threshold_low = sorted_current(floor(0.6 * length(sorted_current)));
     %threshold_high = sorted_current(ceil(0.2 * length(sorted_current)));
 
     % 分段索引
@@ -64,7 +66,7 @@ for channel = 1:num_channels
     idx2 = channel_current >= threshold_low; % 后10%
 
     % 第一段拟合
-    coefficients1 = polyfit(channel_current(idx1), channel_voltage(idx1), 2); % 二阶拟合
+    coefficients1 = polyfit(channel_current(idx1), channel_voltage(idx1), 1); % 二阶拟合
     fitted_voltage1 = polyval(coefficients1, channel_current(idx1));
 
     % 第二段拟合
@@ -74,7 +76,7 @@ for channel = 1:num_channels
     % 合并
     plot(channel_current(idx1), fitted_voltage1, '-r', 'LineWidth', 1.5);
     hold on;
-    plot(channel_current(idx2), fitted_voltage2, '-g', 'LineWidth', 1.5);
+    %plot(channel_current(idx2), fitted_voltage2, '-g', 'LineWidth', 1.5);
 
     % Plot the linear fit
     %plot(channel_current,fitted_voltage, '-r', 'LineWidth', 1.5, 'DisplayName', 'Fit');
@@ -89,7 +91,7 @@ for channel = 1:num_channels
 
     % Create a legend for the subplot
     legend('show', 'Location', 'southeast');
-    legend(['Channel ' num2str(channel)], ['R (\Omega): ' num2str(coefficients1(2)) newline ...
+    legend(['Channel ' num2str(channel)], ['R (\Omega): ' num2str(coefficients1(1)) newline ...
         'R^2: ' num2str(r_square)]);
     
     % Customize the plot...
