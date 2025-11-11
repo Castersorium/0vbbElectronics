@@ -267,9 +267,9 @@ void octopus_heater2(){
 	//gROOT->SetStyle("Pub");
 	gROOT->SetStyle("Modern");
 
-	int nbin = 71*4;
-	double min=-1E2;
-	double max=7E3;
+	int nbin = 81*4;
+	double min=-0.1;
+	double max=8;
 	
 	int length=180;
 	double tolerence=2;

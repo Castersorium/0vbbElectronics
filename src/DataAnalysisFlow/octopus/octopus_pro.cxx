@@ -7,11 +7,11 @@
 
 int canvas_count = 0; 
 
-// #define CALIB
+#define CALIB
 //#define calib_k 0.483618264*1E3
 //#define calib_b 2.426496603*1E3
-#define calib_k -0.912313
-#define calib_b -0.756264
+#define calib_k -0.913354
+#define calib_b -0.76026
 
 //void draw(const char *rootfile, const char *fillname, int nbin, double nmin, double nmax, const char *cut) {
 void draw(const char *rootfile, TString fillname, int nbin, double nmin, double nmax, const char *cut) {
@@ -150,14 +150,14 @@ void octopus_pro(){
 	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1854_042003_1.root";
 	//const char *file1="/mnt/c/Users/sky/Desktop/temp/Processed_20250421T0953_042101_1.root";
 	// const char *file1="/mnt/c/Users/sky/Desktop/temp/Processed_20250420T1028_042001_1.root";
-	const char *file1="/mnt/c/Users/sky/Downloads/Heater/heater.root";
+	const char *file1="/mnt/c/Users/sky/Downloads/Heater/heater3.root";
 
 	//const char *cut = "decaytime > 0.001 && decaytime < 0.04 && risetime < 0.035 && risetime > 0.0015 &&  slope > -8000 && slope < 4000 && maxtime < 45E-3 && starttime1 < stoptime1 && starttime2 < stoptime2 && starttime1 > 0.01 && stoptime1 > 0.028 && starttime2 > 0.03 && stoptime2 > 0.03";
 	//const char *cut1 = "decaytime > 0.005 && decaytime < 0.015 && risetime > 0.002 && risetime < 0.015   && starttime1 > 0.035 && starttime1 < 0.1 && stoptime1 > 0.04 && starttime2 > 0.03 && stoptime2 > 0.03";
 	//const char *cut2 = "decaytime > 0.02 && decaytime < 0.03 && risetime > 0.002 && risetime < 0.015   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
 	//const char *cut = "decaytime > 0.04 && decaytime < 0.06  && risetime > 0.005  && risetime < 0.015";
-	// const char *cut = "decaytime < 999 && numberoftriggers ==1 ";
-	const char *cut = "decaytime < 999";
+	const char *cut = "decaytime < 999 && numberoftriggers ==1 ";
+	// const char *cut = "decaytime < 999 ";
 	//const char *cut2 = "decaytime > 0.02 ";
 
 	draw(file1,"amplitude",nbin,min,max,cut);

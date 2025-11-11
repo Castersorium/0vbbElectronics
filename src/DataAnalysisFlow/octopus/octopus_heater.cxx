@@ -126,7 +126,7 @@ void draw(const char *rootfile, int nbin, double nmin, double nmax, double lengt
             // 将 (timestamp, amp) 数据点添加到 TGraph 中
             graph->SetPoint(graph->GetN(), baseline, amplitude);
    		    gAmpVsBsl_before->SetPoint(gAmpVsBsl_before->GetN(), baseline, amplitude);
-       		double baseline0 = -8.5; // 可自行设定为平均或参考 baseline
+       		double baseline0 = -9; // 可自行设定为平均或参考 baseline
         	double amp_stab = amplitude - (-0.912313) * (baseline - baseline0);
 
         	// === 新增：记录稳定化后 amp vs baseline ===
@@ -232,7 +232,7 @@ void octopus_heater(){
 	//const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
 	//const char *file2="../rootfile/Processed_20241207T161500_000014_1.root";
 	//const char *file2="../rootfile/Processed_20241208T213600_000001_1.root";
-	const char *file="/mnt/c/Users/sky/Downloads/Heater/heater2.root";
+	const char *file="/mnt/c/Users/sky/Downloads/Heater/heater3.root";
 
 	//draw(file1,"amplitude",nbin,min,max,cut);
 	//draw(file2,"amplitude",60*4,0,4E-2,cut1);
