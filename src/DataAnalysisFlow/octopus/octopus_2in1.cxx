@@ -9,8 +9,8 @@ int canvas_count = 0;
 TString x_title="title"; 
 
 #define CALIB
-#define calib_k 478.5860639
-#define calib_b 2.373786877
+#define calib_k -0.912
+#define calib_b -0.756
 
 //void draw(const char *rootfile, const char *fillname, int nbin, double nmin, double nmax, const char *cut) {
 void gettree(const char *rootfile, TString fillname, int nbin, double nmin, double nmax, TH1D *&h1, TH1D *&h2, const char *cut) {
@@ -24,6 +24,7 @@ void gettree(const char *rootfile, TString fillname, int nbin, double nmin, doub
 	TTree *tree3 = (TTree*)file->Get("maxminusbaseline");
 	TTree *tree4 = (TTree*)file->Get("risetime");
 	TTree *tree5 = (TTree*)file->Get("decaytime");
+	TTree *tree6 = (TTree*)file->Get("numberoftriggers");
 
 	// 定义变量，用于存储树中的数据
 	double RMS, baseline;
@@ -33,6 +34,8 @@ void gettree(const char *rootfile, TString fillname, int nbin, double nmin, doub
 	double starttime,stoptime;
 	double starttime1,starttime2;
 	double stoptime1,stoptime2;
+	int numberoftriggers;
+	TString fillname2;
 
 	// 设置树的分支地址
 	tree1->SetBranchAddress("RMS", &RMS);
@@ -47,12 +50,14 @@ void gettree(const char *rootfile, TString fillname, int nbin, double nmin, doub
 	tree5->SetBranchAddress("decaytime", &decaytime);
 	tree5->SetBranchAddress("starttime", &starttime2);
 	tree5->SetBranchAddress("stoptime", &stoptime2);
+	tree6->SetBranchAddress("numberoftriggers", &numberoftriggers);
 
 	// 将所有树作为 tree1 的朋友树
 	tree1->AddFriend(tree2);
 	tree1->AddFriend(tree3);
 	tree1->AddFriend(tree4,"friend4");
 	tree1->AddFriend(tree5,"friend5");
+	tree1->AddFriend(tree6);
 
 	tree1->SetAlias("starttime1","friend4.starttime");
 	tree1->SetAlias("stoptime1","friend4.stoptime");
@@ -65,7 +70,7 @@ void gettree(const char *rootfile, TString fillname, int nbin, double nmin, doub
 
 	if (fillname == "amplitude") {
 		#ifdef CALIB
-			fillname = Form("amplitude*%f + %f", calib_k, calib_b);
+			fillname = Form("amplitude* 7.5 / (%f * baseline + %f) ", calib_k, calib_b);
 		#endif
 	}
 	TCut mycut(cut);
@@ -84,10 +89,10 @@ void drawhist(TH1D*& h1, const char *tleg1, double time1, TH1D*& h2,  const char
 	// 绘制直方图
 	h1->SetLineColor(kRed);
 	h2->SetLineColor(kBlue);
-	h1->SetFillColor(kRed);
-	h2->SetFillColor(kBlue);
-	h1->SetFillStyle(3005);
-	h2->SetFillStyle(3004);
+	// h1->SetFillColor(kRed);
+	// h2->SetFillColor(kBlue);
+	// h1->SetFillStyle(3005);
+	// h2->SetFillStyle(3004);
 	h1->SetYTitle("Events");
 	h1->SetXTitle(Form("%s",x_title.Data()));
 	//h1->GetXaxis()->SetTitleSize(1);  // 设置直方图总标题字体大小
@@ -145,17 +150,21 @@ void octopus_2in1(){
 	gROOT->SetStyle("Modern");
 
 	//const char *file1="../rootfile/Processed_20240820T010600_000012_1.root";
-	const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
+	// const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
 	//const char *file2="../rootfile/Processed_20241207T161500_000014_1.root";
-	const char *file2="../rootfile/Processed_20241208T213600_000001_1.root";
+	// const char *file2="../rootfile/Processed_20241208T213600_000001_1.root";
+	const char *file1="/mnt/c/Users/jiaow/OneDrive/Desktop/ccvr3/2510/test/cs.root";
+	const char *file2="/mnt/c/Users/jiaow/OneDrive/Desktop/ccvr3/2510/test/bkg.root";
+
 
 	//const char *cut = "decaytime > 0.001 && decaytime < 0.04 && risetime < 0.035 && risetime > 0.0015 &&  slope > -8000 && slope < 4000 && maxtime < 45E-3 && starttime1 < stoptime1 && starttime2 < stoptime2 && starttime1 > 0.01 && stoptime1 > 0.028 && starttime2 > 0.03 && stoptime2 > 0.03";
 	const char *cut1 = "decaytime > 0.004 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.04   && starttime1 > 0.03 && stoptime1 > 0.03 && starttime2 > 0.03 && stoptime2 > 0.03";
-	const char *cut2 = "decaytime > 0.005 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.03   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
+	// const char *cut2 = "decaytime > 0.005 && decaytime < 0.06 && risetime > 0.002 && risetime < 0.03   && starttime1 > 0.03 && starttime1 < 0.1 && stoptime1 > 0.03 && stoptime1 < 0.1 && starttime2 > 0.03 && stoptime2 > 0.03";
+	const char *cut2 = "decaytime > 0.02 && decaytime < 0.1 && risetime > 0.003 && risetime < 0.01  && slope > -0.004 && slope < 0.04 && numberoftriggers == 1";
 
-	double t1=16802.5192;
+	double t1=56;
 	//double t2=16202.4292;
-	double t2=32400;
+	double t2=72;
 
 	//TH1D *h1, *h2, *h3, *h4, *h5, *h6 = nullptr;
 	// int nbin = 71*4;
@@ -167,12 +176,13 @@ void octopus_2in1(){
 	// drawhist(h4,"With Am",t1,h6,"Without Am",t2);
 
     std::vector<std::string> variable = {"amplitude","risetime","decaytime"};
-	std::vector<int> nbins = {71*4,100,100};
-    std::vector<double> mins = {-1E2,0,0};
- 	std::vector<double> maxs = {7E3,0.05,0.06};
+	std::vector<int> nbins = {11*50,100,100};
+    std::vector<double> mins = {-1,0,0};
+ 	std::vector<double> maxs = {10,0.05,0.06};
 
 
-   for (size_t i = 0; i < variable.size(); ++i) {
+//    for (size_t i = 0; i < variable.size(); ++i) {
+   for (size_t i = 0; i < 1; ++i) {
 		const auto &var = variable[i];
         int nbin = nbins[i];
         double min = mins[i];
@@ -180,7 +190,7 @@ void octopus_2in1(){
 		TH1D *h1, *h2, *h3, *h4, *h5, *h6 = nullptr;
 		gettree(file1,var,nbin,min,max,h3,h4,cut1);
 		gettree(file2,var,nbin,min,max,h5,h6,cut1);
-		drawhist(h4,"With Am",t1,h6,"Without Am",t2);
+		drawhist(h4,"cs",t1,h6,"bkg",t2);
 	}
 
 }
