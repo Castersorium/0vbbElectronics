@@ -86,10 +86,10 @@ void octopus_2D(){
 	gROOT->SetStyle("Modern");
 	int canvas_count = 0; 
 
-	int nbin = 120*4;
+	int nbin = 110*4;
 	double min=-1;
 	//double max=12E3;
-	double max=12;
+	double max=10;
 
 	//const char *cut = "decaytime > 0.001 && decaytime < 0.04 && risetime < 0.035 && risetime > 0.0015 &&  slope > -8000 && slope < 4000 && maxtime < 45E-3 && starttime1 < stoptime1 && starttime2 < stoptime2 && starttime1 > 0.01 && stoptime1 > 0.028 && starttime2 > 0.03 && stoptime2 > 0.03";
 	const char *cut = "decaytime < 999";
@@ -100,17 +100,33 @@ void octopus_2D(){
 	//const char *file1="../rootfile/Processed_20240824T130500_000013_1.root";
 	//const char *file1="../rootfile/Processed_20241207T161500_000014_1.root";
 	//const char *file1="../rootfile/Processed_20241208T213600_000001_1.root";
-	const char *file1="../rootfile/heater3.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1028_042001_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/Processed_20250420T1028_042001_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1445_042002_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250420T1854_042003_1.root";
+	//const char *file1="/mnt/c/Users/sky/Desktop/temp/DLMO/Processed_20250421T0953_042101_1.root";
 
-	// draw(file1,"amplitude","risetime",nbin,min,max,70,0,0.07,cut);
-	// draw(file1,"amplitude","decaytime",nbin,min,max,70,0,0.07,cut);
+	//const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250511T000112_100000_1.root";
+	//const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250510T000112_000000_1.root";//USTC-LD
+	//const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250510T000175_000001_1.root";//USTC-LMO
+	//const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250511T000112_100000_1.root";//FDU-LD
+	const char *file1="/mnt/c/Users/sky/Downloads/Reconstructed/Processed_20250511T000260_100002_1.root";//FDU-LMO
+	
+
+
+
+	 //draw(file1,"amplitude","risetime",nbin,min,max,200,0,0.2,cut);
+	 //draw(file1,"amplitude","decaytime",nbin,min,max,200,0,0.2,cut);
 	// draw(file1,"amplitude","starttime1",nbin,min,max,100,0,0.1,cut);
 	// draw(file1,"amplitude","stoptime1",nbin,min,max,100,0,0.1,cut);
 	// draw(file1,"amplitude","starttime2",nbin,min,max,100,0,0.1,cut);
 	// draw(file1,"amplitude","stoptime2",nbin,min,max,100,0,0.1,cut);
-	
+	//draw(file1,"risetime","decaytime",200,0,0.02,200,0,0.2,cut);
+	draw(file1,"amplitude","RMS",nbin,min,max,200,0,0.02,cut);
+
 	//draw(file1,"amplitude","baseline",200,0,1E8,100,-20000,-100000,cut);
-	draw(file1,"amplitude","baseline",200,0.05,0.35,100,-17,-15,cut);
+	//draw(file1,"amplitude","baseline",200,0.05,0.35,100,-17,-15,cut);
+
 
 
 }

@@ -46,11 +46,22 @@ function Keyu_RoverT(varargin)
     x_data = 1 ./ sqrt(T/1000);  % 1/sqrt(T)
     y_data = log(R);  % ln(R)
 
-    %[para,chi_square]=Keyu_Ployfit(x_data,y_data,0.9);
-    [fitresult, gof]=Keyu_Ployfit(x_data,y_data,0.99);
-    disp(fitresult);
-    disp(gof);
-    
+
+    % %[para,chi_square]=Keyu_Ployfit(x_data,y_data,0.9);
+    % [fitresult, gof]=Keyu_Ployfit(x_data,y_data,0.99);
+    % disp(fitresult);
+    % disp(gof);
+
+    figure;
+    hold on;
+    plot(x_data,y_data, '-o', 'LineWidth', 1.5);
+    coefficients = polyfit(x_data, y_data, 1);
+    fitted_voltage = polyval(coefficients, x_data);
+    % Plot the linear fit
+    plot(x_data,fitted_voltage, '-r', 'LineWidth', 1.5, 'DisplayName', 'Fit');
+    hold off;
+    disp(['拟合的斜率 (slope): ', num2str(coefficients(1))]);
+
     % 显示拟合参数
     %disp(['拟合的斜率 (slope): ', num2str(p(1))]);
     %disp(['拟合的截距 (intercept): ', num2str(p(2))]);

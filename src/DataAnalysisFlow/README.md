@@ -62,6 +62,7 @@
 - **`octopus_2in1.cxx`**: Compare two variables in one plot. 🔄📊
 - **`octopus_shape.cxx`**: Draw two histograms directly from ROOT in one plot. 📊📊
 - **`octopus_rdtime.cxx`**: Determine the rise time/decay time of a specific region from a histogram. ⏳
+- **`octopus_heater.cxx`**: Use heater to stablize the baseline drift of data stream.
 
 ---
 

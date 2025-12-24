@@ -41,6 +41,7 @@ for k = 1:length(mat_files)
 
     if temp < 0
         filename = mat_files(k).name;
+        %temp_str = regexp(filename, 'PID(\d+)(p?\.?\d+)?mK', 'tokens');
         temp_str = regexp(filename, 'PID(\d+)(p?\.?\d+)?mK', 'tokens');
         if ~isempty(temp_str)
             if length(temp_str{1}) == 1
